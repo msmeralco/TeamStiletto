@@ -1,6 +1,7 @@
 // Dev server for www/ on http://localhost:8000 (ES modules don't load from file://). PORT=8001 npm start for another port.
 // Also the demo case inbox: POST /api/cases stores a dispute file the user chose to escalate; GET lists them for dashboard.html.
 // And POST /api/understand: the chat's local-model fallback (Ollama). If Ollama is not running the chat uses rules only.
+// And /api/leads: opt-in solar leads (POST from the app, GET for the dashboard).
 // And POST /api/ocr: a photo of a paper bill -> words, read by PaddleOCR (scripts/ocr.py). Without Python + paddleocr the app hides "Scan".
 // shortcut: no login and one local JSON file; a real Meralco inbox needs authentication, HTTPS and a database.
 import { createServer } from 'node:http';
@@ -16,6 +17,7 @@ import { MODEL_PROMPT, MODEL_SCHEMA, ANSWER_PROMPT, answerSchema, answerMessage,
   FAQ_PROMPT, faqSchema, faqMessage } from '../www/lib/chat.js';
 import { faqIndex, faqSearch } from '../www/lib/faq.js';
 import { usableReason } from '../www/lib/explain.js';
+import { cleanLead } from '../www/lib/solar.js';
 
 const ROOT = resolve('www');
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.pdf': 'application/pdf',
@@ -77,6 +79,25 @@ async function caseStatus(req, res) {
     return true;
   });
   found ? send(res, 200, { ok: true }) : send(res, 400, { error: 'unknown case or status' });
+}
+
+// Opt-in solar leads for MSpectrum (concept: stored here, no MSpectrum system is connected). One lead per mobile number.
+// shortcut: GET lists names and mobiles to anyone on the network, like the case inbox; a real lead handoff needs login and HTTPS.
+const LEADS = 'data/private/leads.json';
+async function leads(req, res) {
+  const load = () => readFile(LEADS, 'utf8').then(JSON.parse).then(l => (Array.isArray(l) ? l : []), () => []);
+  if (req.method === 'GET') return send(res, 200, await load());
+  if (req.method !== 'POST') return send(res, 405, { error: 'GET or POST only' });
+  const lead = cleanLead(await readJson(req, 1e4));
+  if (!lead) return send(res, 400, { error: 'not a TANAW solar lead with consent and a mobile number' });
+  const count = await locked(async () => {
+    const list = (await load()).filter(l => l.mobile !== lead.mobile);
+    list.push({ ...lead, received: new Date().toISOString() });
+    await mkdir('data/private', { recursive: true });
+    await writeFile(LEADS, JSON.stringify(list, null, 1));
+    return list.length;
+  });
+  send(res, 201, { ok: true, leads: count });
 }
 
 // ---------- PaddleOCR (scripts/ocr.py): one Python process kept alive, because loading the models takes several seconds ----------
@@ -169,7 +190,7 @@ async function answer(req, res) {
   } catch (e) { send(res, 503, { error: `local model unavailable: ${e.message}` }); }
 }
 
-const API = { '/api/cases': cases, '/api/cases/status': caseStatus, '/api/understand': understand, '/api/answer': answer, '/api/ocr': ocr, '/api/health': health };
+const API = { '/api/cases': cases, '/api/cases/status': caseStatus, '/api/leads': leads,'/api/understand': understand, '/api/answer': answer, '/api/ocr': ocr, '/api/health': health };
 createServer(async (req, res) => {
   const route = API[req.url.split('?')[0]];
   if (route) return route(req, res).catch(e => send(res, e.code ?? 500, { error: e.message }));

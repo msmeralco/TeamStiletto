@@ -8,7 +8,7 @@ import { parseBill } from '../www/lib/parse.js';
 import { runChecks } from '../www/lib/checks.js';
 import { temps, trackerPeriods, fit, cdd, project } from '../www/lib/model.js';
 import { explain, validateRates } from '../www/lib/explain.js';
-import { solar } from '../www/lib/solar.js';
+import { solar, withSolar, solarLead, cleanLead } from '../www/lib/solar.js';
 import { billingFlags, disputeMessage, disputePacket } from '../www/lib/flags.js';
 
 // test_feedback: "nothing changed" + a big unexplained rise flags; an answer that explains it does not
@@ -52,6 +52,18 @@ function analyse(name, bill) {
   assert.ok(sm.rates.lines.length <= 5 && r.sentence.includes("Meralco's rates"), r.sentence);
   const pr = project(per, T, f, r.R1, r.F1), sol = solar(bill, bill.tracker);
   assert.ok(sol.every(s => s.payback > 0 && isFinite(s.payback)));
+  // test_solar_quote: no panels = the same bill; any system lowers it, never below zero; credits only with exports
+  near(withSolar(bill, 0).bill, bill.charges_this_period, 0.001, `${name} 0 kWp leaves the bill unchanged`);
+  assert.ok(sol.every(s => s.quote.bill >= 0 && s.quote.bill < bill.charges_this_period && (s.quote.credit === 0 || s.quote.exported > 0)), `${name} solar quote`);
+  const big = withSolar(bill, 50);
+  near(big.bill - big.credit, bill.charges_this_period - big.self * bill.charges_this_period / bill.kwh - big.exported * bill.charges.find(c => c.key === 'generation').amount_php / bill.kwh, 0.01, `${name} oversized system: bill + credit balance`);
+  // test_solar_lead: consent and a PH mobile are required; only whitelisted fields survive (never the account number)
+  const lead = solarLead(bill, sol, 0.4, { name: 'Juan', mobile: '0917 123 4567' }, true);
+  assert.equal(cleanLead(lead)?.mobile, '09171234567');
+  assert.equal(cleanLead({ ...lead, consent: false }), null);
+  assert.equal(cleanLead(solarLead(bill, sol, 0.4, { mobile: '0917 123 4567' })), null, 'no consent argument = no lead');
+  assert.equal(cleanLead({ ...lead, mobile: '12345' }), null);
+  assert.ok(!('can' in cleanLead({ ...lead, can: bill.can })) && cleanLead(lead).options.length === 3);
   // test_flags: a clean bill raises none; a doctored one raises each kind
   assert.deepEqual(billingFlags(bill, runChecks(bill), r), [], `${name} clean bill has no flags`);
   const prevMonth = bill.tracker.at(-2).month;

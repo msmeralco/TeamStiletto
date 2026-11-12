@@ -56,6 +56,7 @@ async function poll() {
     const res = await fetch('api/cases', { cache: 'no-store' });
     if (!res.ok) throw 0;
     add(await res.json(), 'the case inbox', true);
+    fetch('api/leads', { cache: 'no-store' }).then(r => (r.ok ? r.json() : [])).then(renderLeads, () => {});
     inboxSeen = true;
     $('#live').className = 'on';
     $('#livetext').textContent = 'Live: new disputes appear by themselves';
@@ -64,6 +65,18 @@ async function poll() {
     $('#livetext').textContent = 'Inbox offline (needs npm start). Load files by hand.';
   }
 }
+// Opt-in solar leads (POST /api/leads from the app), newest first. Leads are untrusted text: everything is escaped.
+function renderLeads(list) {
+  const rows = (Array.isArray(list) ? list : []).filter(l => l && Array.isArray(l.options)).sort((a, b) => String(b.received).localeCompare(String(a.received)));
+  $('#noleads').hidden = rows.length > 0;
+  $('#leads').innerHTML = !rows.length ? '' : `<thead><tr><th>Received</th><th>Customer</th><th class="n">Usage</th><th class="n">This bill</th><th>Options (bill with solar · payback)</th></tr></thead>
+    <tbody>${rows.map(l => `<tr><td class="hint">${esc(new Date(l.received).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' }))}</td>
+      <td><b>${esc(l.name || 'No name given')}</b>${l.synthetic ? ' <span class="badge">synthetic</span>' : ''}<br>${esc(l.mobile)}<br><span class="hint">${esc(l.area || 'City not given')}</span></td>
+      <td class="n">${num(l.kwh_per_year)} kWh/yr<br><span class="hint">${num(100 * l.daytime_share)}% daytime</span></td>
+      <td class="n">${peso(l.bill_php)}</td>
+      <td>${l.options.map(o => `${num(o.kWp)} kWp → ${peso(o.bill_with_solar_php)} · ${num(o.payback_years)} yrs <span class="hint">(${esc(o.name)})</span>`).join('<br>')}</td></tr>`).join('')}</tbody>`;
+}
+
 poll();
 setInterval(() => !document.hidden && poll(), POLL_MS);
 

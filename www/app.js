@@ -9,6 +9,7 @@ import { billingFlags, disputeMessage, disputePacket, unexplainedIncrease, house
 import { startChat, isReset, step, answersOf, needsModel, fromModel, isQuestion, fromModelPick, fromModelTopic, fromModelFaq, advisoryParas, billFacts } from './lib/chat.js';
 import { faqIndex, faqSearch } from './lib/faq.js';
 import { daysSince, caseKey, route, CHANNELS, FOLLOW_UP_DAYS } from './lib/disputes.js';
+import { solar, solarLead, cleanLead, SOLAR } from './lib/solar.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
 // Offline web app; the native iOS/Android apps already bundle every file.
@@ -82,7 +83,8 @@ fetch('data/fixtures/SYNTHETIC_scenarios.json').then(r => r.json()).then(({ scen
 
 // Photo of a paper bill: read by PaddleOCR on the TANAW laptop (npm start + scripts/ocr.py). The button shows only if that is running.
 // shortcut: the photo leaves the phone for the laptop; on-device OCR (ONNX in the browser) is the upgrade for a public release.
-fetch('api/health').then(r => r.json()).then(h => $('#scanbtn').toggleAttribute('hidden', !h.ocr)).catch(() => {});
+// The solar lead form needs the laptop server too (POST /api/leads): shown only when the server answers.
+fetch('api/health').then(r => r.json()).then(h => { $('#scanbtn').toggleAttribute('hidden', !h.ocr); $('#lead').hidden = false; }).catch(() => {});
 $('#photo').onchange = async e => {
   const f = e.target.files[0];
   e.target.value = '';
@@ -276,6 +278,7 @@ function renderResults() {
   $('#proj').textContent = proj.mid == null ? proj.label
     : `${proj.low != null ? `${peso(proj.low)} to ${peso(proj.high)} (middle ${peso(proj.mid)})` : `About ${peso(proj.mid)}`}, about ${Math.round(proj.kwh)} kWh. ${proj.label}` +
       (proj.backtest_mape != null ? ` Backtest on your last 3 months: off by ${(proj.backtest_mape * 100).toFixed(0)}% on average.` : '');
+  renderSolar();
 
   const rm = m => `Meralco rate table ${m}: ${rates[m].source_url}`;
   $('#sources').innerHTML = [
@@ -287,8 +290,38 @@ function renderResults() {
     `Daily temperatures: ${weather.synthetic ? 'SYNTHETIC' : 'Open-Meteo archive (CC BY 4.0)'}, ${weather.city}.`,
     `Tracker months are assumed to end on day ${new Date(bill.period_end).getUTCDate()} of each month, like this bill.`,
     `Weather split: variable-base degree-day change-point regression (ASHRAE Guideline 14 3PC / CalTRACK billing method), fitted to your bill only.`,
+    `Solar yield ${SOLAR.Y} kWh/kWp/yr (Philippine DOE, Global Solar Atlas, Metro Manila), as a yearly average; cost ₱${SOLAR.C.toLocaleString()}/kWp (Ember, May 2026); fees ₱${SOLAR.fees.toLocaleString()} (ERC certificate + meter difference).`,
+    'Solar bill estimate: power the panels make and you use at home saves this bill\'s full ₱/kWh; power sent to the grid is credited at the generation charge per kWh on your bill. Daytime share is your own estimate.',
   ].map(s => `<li>${esc(s)}</li>`).join('');
 }
+
+// ---------- "If you had solar panels" (lib/solar.js) + opt-in MSpectrum lead ----------
+let solarRows = [];
+function renderSolar() {
+  solarRows = solar(bill, bill.tracker, +$('#selfuse').value);
+  $('#solar').innerHTML = '<tr><th>Option</th><th class="n">Size</th><th class="n">This bill with it</th><th class="n">Saves/yr</th><th class="n">Payback</th></tr>' +
+    solarRows.map(s => `<tr><td>${esc(s.name)}</td><td class="n">${s.kWp.toFixed(1)} kWp</td>
+      <td class="n"><b>${peso(s.quote.bill)}</b>${s.quote.credit >= 1 ? `<br><small class="hint">+ ${peso(s.quote.credit)} credit</small>` : ''}</td>
+      <td class="n">${peso(s.save)}</td><td class="n">${s.payback.toFixed(1)} yrs</td></tr>`).join('');
+  $('#solarnote').textContent = `This bill: ${peso(bill.charges_this_period)} for ${bill.kwh} kWh over ${bill.days} days. ` +
+    'The first row is how solar is often sold: every kWh counted at the full price, so its payback looks shorter than the export-aware row below it.';
+  $('#leadmsg').textContent = '';
+}
+$('#selfuse').onchange = () => analysis && renderSolar();
+$('#leadgo').onclick = async () => {
+  const leadNote = t => ($('#leadmsg').textContent = t);
+  if (!$('#leadok').checked) return leadNote('Tick the box first: nothing is sent without your OK.');
+  const lead = cleanLead(solarLead(bill, solarRows, +$('#selfuse').value,
+    { name: $('#leadname').value, mobile: $('#leadmobile').value, area: $('#leadarea').value }, true));
+  if (!lead) return leadNote('Enter a mobile number like 0917 123 4567.');
+  $('#leadgo').disabled = true;
+  try {
+    const res = await fetch('api/leads', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(lead) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    leadNote(`Sent. MSpectrum may contact you at ${lead.mobile}. (Concept demo: it went to the TANAW laptop.)`);
+  } catch (e) { leadNote(`Couldn't reach the TANAW laptop (${e.message}). Nothing was sent.`); }
+  finally { $('#leadgo').disabled = false; }
+};
 
 // ---------- "what changed at home?" chat (lib/chat.js) ----------
 let chat;
@@ -507,4 +540,4 @@ async function sendDispute(name, packet, text) {
   return true;
 }
 
-$('#again').onclick = () => { bill = analysis = ocr = null; markSynthetic(); show('upload'); };
+$('#again').onclick = () => { bill = analysis = ocr = null; $('#leadok').checked = false; markSynthetic(); show('upload'); };

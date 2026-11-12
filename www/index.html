@@ -95,6 +95,24 @@
       <div id="flags"></div>
       <h2>Next month</h2>
       <p id="proj"></p>
+      <h2>If you had solar panels</h2>
+      <p class="hint">TANAW's estimate from your own last 12 months of usage. Not a price quote.</p>
+      <label class="hint">How much of your electricity do you use in the daytime, when panels make power?
+        <select id="selfuse"><option value="0.2">About 20% (out at work or school all day)</option><option value="0.4" selected>About 40%</option><option value="0.6">About 60% (home all day, WFH)</option></select></label>
+      <div style="overflow-x:auto;margin-top:10px"><table id="solar"></table></div>
+      <p id="solarnote" class="hint"></p>
+      <details id="lead" hidden>
+        <summary>Get a real quote from MSpectrum (optional)</summary>
+        <p class="note">Concept demo: this goes to the TANAW laptop, not to MSpectrum. Sent only if you tick the box below:
+          your name, mobile, city, last 12 months of kWh, this bill's amount and the three estimates above. Never your account number or your bill.</p>
+        <label class="hint">Name (optional) <input id="leadname" autocomplete="name"></label>
+        <label class="hint">Mobile number <input id="leadmobile" type="tel" inputmode="tel" autocomplete="tel" placeholder="09XX XXX XXXX"></label>
+        <label class="hint">City or municipality (optional) <input id="leadarea" autocomplete="address-level2"></label>
+        <label style="display:flex;gap:10px;align-items:flex-start;margin:12px 0"><input id="leadok" type="checkbox" style="margin-top:4px">
+          <span>I agree to share these details with MSpectrum, Meralco's solar company, so they can contact me about solar.</span></label>
+        <button id="leadgo" class="primary">Send to MSpectrum</button>
+        <p id="leadmsg" class="hint" role="status"></p>
+      </details>
       <h2>Hot months vs cool months</h2>
       <div id="chart"></div>
       <p id="fitinfo" class="hint"></p>
