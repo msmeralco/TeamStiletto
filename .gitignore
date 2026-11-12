@@ -1,3 +1,5 @@
 node_modules/
 ios/
 www/vendor/
+data/private/
+data/rates_pdfs/

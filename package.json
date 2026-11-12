@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "postinstall": "node -e \"const fs=require('fs');fs.mkdirSync('www/vendor',{recursive:true});for(const f of ['pdf.min.mjs','pdf.worker.min.mjs'])fs.copyFileSync('node_modules/pdfjs-dist/build/'+f,'www/vendor/'+f)\"",
+    "postinstall": "node -e \"const fs=require('fs');fs.mkdirSync('www/vendor',{recursive:true});for(const f of ['pdf.min.mjs','pdf.worker.min.mjs'])fs.copyFileSync('node_modules/pdfjs-dist/legacy/build/'+f,'www/vendor/'+f)\"",
+    "rates": "node scripts/build_rates.mjs",
+    "weather": "node scripts/fetch_weather.mjs",
     "synthetic": "node scripts/make_synthetic.mjs",
     "test": "node tests/selfcheck.mjs",
     "start": "node scripts/serve.mjs",

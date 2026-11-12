@@ -119,6 +119,7 @@ function renderResults() {
   renderSolar();
   const rm = m => `Meralco rate table ${m}: ${rates[m].source_url}`;
   $('#sources').innerHTML = [
+    `Bill: ${bill.source === 'synthetic' ? 'SYNTHETIC sample (invented household, priced at real Meralco rates)' : 'your PDF statement'}.`,
     rm(r.rate_month), rm(r.prev_rate_month),
     `Rate month detected from your generation ₱/kWh: ${r.rate_month}${r.rate_month_matches_dates ? '' : ' (does not match the billing dates; closest match used)'}.`,
     `Last month's bill is reconstructed from Meralco's table at ${per.at(-2).kwh} kWh, not read from last month's bill.`,

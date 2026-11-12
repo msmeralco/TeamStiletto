@@ -1,10 +1,13 @@
 // Rate lookup (rates.json, from Meralco's published tables) + a peso breakdown that adds up exactly.
 const months = rates => Object.keys(rates).sort();
 const LABEL = {
-  generation: 'the generation charge', transmission: 'the transmission charge', system_loss: 'the system loss charge',
-  distribution: 'the distribution charge', supply: 'the supply charge', metering: 'the metering charge',
-  subsidies: 'lifeline/senior subsidies', tax_recovery_adj: 'the tax recovery adjustment', universal: 'universal charges',
-  fit_all: 'FIT-All', gea_all: 'GEA-All', vat: 'VAT', franchise_tax: 'franchise tax',
+  generation: 'the generation charge', transmission: 'the transmission charge', ancillary: 'the ancillary service charge',
+  system_loss: 'the system loss charge', distribution: 'the distribution charge', supply: 'the supply charge', metering: 'the metering charge',
+  awat_1: 'AWAT refund 1', awat_2: 'AWAT refund 2', reg_reset: 'regulatory reset fees', lifeline_rate_adj: 'the lifeline rate adjustment',
+  senior_subsidy: 'the senior citizen subsidy', rpt: 'the RPT charge', rpt_adj: 'the RPT adjustment', lft: 'local franchise tax',
+  lft_adj: 'the LFT adjustment', vat: 'VAT', energy_tax: 'energy tax', universal: 'universal charges', fit_all: 'FIT-All',
+  gea_all: 'GEA-All', lifeline_discount: 'the lifeline discount', lifeline_subsidy: 'the lifeline subsidy',
+  power_act_reduction: 'the Power Act reduction',
 };
 
 export function lookup(rates, month, kwh) {
@@ -15,16 +18,20 @@ export function lookup(rates, month, kwh) {
   return Object.fromEntries(Object.keys(rows[lo]).map(k => [k, rows[lo][k] + t * (rows[hi][k] - rows[lo][k])]));
 }
 
-export const validateRates = rates => months(rates).flatMap(m => Object.entries(rates[m].non_lifeline).flatMap(([kwh, r]) => {
-  const s = Object.entries(r).reduce((a, [k, v]) => (k === 'total' ? a : a + v), 0);
-  return Math.abs(s - r.total) > 0.0005 ? [`${m} @ ${kwh} kWh: components ${s.toFixed(4)} != total ${r.total}`] : [];
-}));
+// Every row: per-kWh components + fixed ₱/month spread over its kWh = printed total.
+export const validateRates = rates => months(rates).flatMap(m => ['non_lifeline', 'lifeline'].flatMap(t =>
+  Object.entries(rates[m][t] ?? {}).flatMap(([kwh, r]) => {
+    const s = Object.entries(r).reduce((a, [k, v]) => (k === 'total' ? a : a + v), fixedSum(rates, m) / kwh);
+    return r.total && Math.abs(s - r.total) > 0.0005 ? [`${m} ${t} @ ${kwh} kWh: components ${s.toFixed(4)} != total ${r.total}`] : [];
+  })));
 
 export function detectRateMonth(rates, bill) {
   const g = bill.charges.find(c => c.key === 'generation');
   if (!g) throw new Error('No generation charge found on the bill, so the rate month cannot be detected.');
   const perKwh = g.amount_php / bill.kwh, gap = m => Math.abs(lookup(rates, m, bill.kwh).generation - perKwh);
   const month = months(rates).sort((a, b) => gap(a) - gap(b))[0];
+  if (gap(month) > 0.01) throw new Error(`No Meralco rate table matches this bill (generation ₱${perKwh.toFixed(4)}/kWh). ` +
+    `rates.json has ${months(rates)[0]} to ${months(rates).at(-1)}; add this month's "Residential Bills at Typical Consumption Levels" PDF.`);
   return { month, matchesDates: month === bill.period_end?.slice(0, 7) };
 }
 
@@ -38,7 +45,9 @@ export function explain(bill, per, f, T, cdd, rates, reasons = {}) {
   if (!prev) throw new Error('The bill needs at least two tracker months.');
   const q0 = prev.kwh, d0 = prev.days, q1 = bill.kwh, d1 = bill.days;
   const r0 = lookup(rates, m0, q0), r1 = lookup(rates, m1, q1), F0 = fixedSum(rates, m0), F1 = fixedSum(rates, m1);
-  const comps = Object.keys(r0).filter(k => k !== 'total');
+  // Meralco adds/splits columns between months (e.g. ancillary split from transmission in Sep 2026): missing = 0.
+  const comps = [...new Set([...Object.keys(r0), ...Object.keys(r1)])].filter(k => k !== 'total');
+  comps.forEach(k => { r0[k] ??= 0; r1[k] ??= 0; });
   const estPrev = comps.reduce((s, k) => s + r0[k] * q0, 0) + F0;
   const change = bill.charges_this_period - estPrev, R0 = r0.total, usage = (q1 - q0) * R0;
   const src0 = `rates.json ${m0} @ ${Math.round(q0)} kWh`, src1 = `rates.json ${m1} vs ${m0} @ ${Math.round(q1)} kWh`;
@@ -55,11 +64,9 @@ export function explain(bill, per, f, T, cdd, rates, reasons = {}) {
       { key: 'billing_days', label: d1 >= d0 ? 'a longer billing period' : 'a shorter billing period', php: days, source: src },
       { key: 'you', label: 'your own usage', php: usage - days - weather, source: src });
   }
+  // Refund lines (AWAT) are rate columns, so each shows as its own item here.
   for (const k of comps) items.push({ key: k, label: LABEL[k] ?? k, php: (r1[k] - r0[k]) * q1, source: src1 });
   items.push({ key: 'fixed', label: 'fixed monthly charges', php: F1 - F0, source: src1 });
-  // shortcut: assumes last month had no refund; read it from last month's bill once one is uploaded.
-  const refund = bill.charges.filter(c => c.key === 'refund').reduce((s, c) => s + c.amount_php, 0);
-  if (refund) items.push({ key: 'refund', label: 'a refund on this bill', php: refund, source: 'bill' });
   const residual = change - items.reduce((s, i) => s + i.php, 0);
   items.push({ key: 'local_tax_rounding', label: 'local tax and rounding', php: residual, source: 'bill minus rates.json' });
 
