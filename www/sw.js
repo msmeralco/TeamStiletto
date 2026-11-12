@@ -1,6 +1,6 @@
 // Web app only (the iOS/Android apps bundle every file). Precache the app so it works offline after the first visit.
 // Network first, so a new deploy (code or rates.json) is picked up whenever online; the cache is the offline fallback.
-const CACHE = 'tanaw-v4';
+const CACHE = 'tanaw-v5';
 const FILES = ['./', 'index.html', 'app.js', 'style.css', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'lib/extract.js', 'lib/parse.js', 'lib/checks.js', 'lib/model.js', 'lib/explain.js', 'lib/flags.js', 'lib/chat.js', 'lib/disputes.js', 'lib/solar.js', 'lib/ocr.js',
   'vendor/pdf.min.mjs', 'vendor/pdf.worker.min.mjs', 'data/rates.json', 'data/weather.json', 'data/reasons.json', 'data/bill_spec.json',

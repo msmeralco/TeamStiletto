@@ -181,13 +181,18 @@ function renderResults() {
   const X = v => 30 + v / mx * (W - 40), Y = v => H - 20 - v / my * (H - 30);
   $('#chart').innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily usage against cooling degree days">
     <line x1="30" y1="${H - 20}" x2="${W - 10}" y2="${H - 20}" stroke="currentColor"/><line x1="30" y1="10" x2="30" y2="${H - 20}" stroke="currentColor"/>
-    <text x="${W / 2}" y="${H - 4}" font-size="10" fill="currentColor" text-anchor="middle">cooling degree-days per day</text>
-    <text x="4" y="12" font-size="10" fill="currentColor">kWh/day</text>
+    <text x="${W / 2}" y="${H - 4}" font-size="10" fill="currentColor" text-anchor="middle">Cooler months  →  Hotter months</text>
+    <text x="4" y="12" font-size="10" fill="currentColor">↑ Electricity used per day (kWh)</text>
     ${x.map((v, i) => `<circle cx="${X(v)}" cy="${Y(y[i])}" r="3.5" fill="#1e88e5"/>`).join('')}
     ${f.baseload_kwh_per_day != null ? `<line x1="${X(0)}" y1="${Y(f.baseload_kwh_per_day)}" x2="${X(mx)}" y2="${Y(f.baseload_kwh_per_day + f.cooling_slope_kwh_per_cdd * mx)}" stroke="#e65c00" stroke-width="2"/>` : ''}
   </svg>`;
-  $('#fitinfo').textContent = `Tier ${f.tier.replace('_', ' ')}${f.tier === 'B_fixed24' ? ' (simplified)' : ''}. ${f.reason}` +
-    (f.baseload_kwh_per_day != null ? ` Baseload ${f.baseload_kwh_per_day.toFixed(1)} kWh/day, +${f.cooling_slope_kwh_per_cdd.toFixed(2)} kWh per degree-day above ${f.balance_point_c} °C.` : '');
+  const hasLine = f.baseload_kwh_per_day != null;
+  $('#fitinfo').innerHTML = `<b>How to read this:</b> each blue dot is one past billing month. The higher the dot, the more electricity you used per day. The further right, the hotter that month was.` +
+    (hasLine ? ` The orange line shows your usual pattern: how your usage climbs when it gets hotter.` : '') +
+    `<br><b>What it means:</b> ` + (hasLine
+      ? `Even on cool days your home uses about ${f.baseload_kwh_per_day.toFixed(1)} kWh a day (fridge, lights, router). For every degree the day is above ${f.balance_point_c} °C, you use about ${f.cooling_slope_kwh_per_cdd.toFixed(2)} kWh more, mostly aircon and fans. If your dots sit close to the line, a high bill in a hot month is likely the heat, not a billing mistake.`
+      : `The dots don't line up with the heat closely enough to draw a trend line. That means weather alone doesn't explain your usage, so something else (a new appliance, more people at home) may matter more.`) +
+    `<br><small>${esc(f.reason)}</small>`;
 
   $('#proj').textContent = proj.mid == null ? proj.label
     : `${proj.low != null ? `${peso(proj.low)} to ${peso(proj.high)} (middle ${peso(proj.mid)})` : `About ${peso(proj.mid)}`}, about ${Math.round(proj.kwh)} kWh. ${proj.label}` +
