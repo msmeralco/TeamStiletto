@@ -40,6 +40,16 @@ npm start            # http://localhost:8000  (case dashboard: /dashboard.html; 
 New rate month: drop its "Residential Bills at Typical Consumption Levels" PDF in `data/rates_pdfs/` and run `npm run rates`.
 If Meralco changed the columns again, the script stops and prints the header to add to `LAYOUTS`.
 
+## Chat model (optional, offline)
+The "what changed at home?" chat reads answers with keyword rules first. Messages the rules can't read go to a local model
+through `npm start`; without it the chat still works on rules only. Tested target: i5-11400H, 16 GB RAM, RTX 3050 Ti (4 GB).
+1. Install Ollama (ollama.com), then `ollama pull qwen2.5:3b` (~1.9 GB, fits in 4 GB VRAM).
+2. `npm start`: it prints `Chat model qwen2.5:3b loaded (Ollama)` once the model is in GPU memory.
+3. Other model: `OLLAMA_MODEL=gemma3:4b npm start`. Avoid 7B+ on 4 GB VRAM: it spills to CPU and gets several times slower.
+
+The model never sets watts or kWh: it only picks from the answer types and appliance list in `www/lib/chat.js`, and its
+output is checked again in the browser. Dispute files record `parser: "rules + qwen2.5:3b"` when the model read an answer.
+
 ## Web app
 Run `npm install` first (it puts pdf.js in `www/vendor/`, which is not committed), then publish the `www/` folder to
 any static HTTPS host (GitHub Pages, Netlify, Cloudflare Pages). It can be installed

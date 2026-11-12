@@ -1,6 +1,6 @@
 // SYNTHETIC sample bills (invented households) in the My Meralco statement layout, priced at the REAL rates.json and
 // driven by the REAL weather.json. Run build_rates and fetch_weather first.
-// Writes www/data/fixtures/SYNTHETIC_*.pdf and SYNTHETIC_packets.json, www/data/reasons.json, tests/SYNTHETIC_truth.json
+// Writes www/data/fixtures/SYNTHETIC_*.pdf and SYNTHETIC_packets.json, tests/SYNTHETIC_truth.json
 import { readFileSync, writeFileSync } from 'node:fs';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { trackerPeriods, temps, fit, cdd, DAY } from '../www/lib/model.js';
@@ -91,6 +91,5 @@ const packets = [
     packet: packetFor({ ...weak, can: '0000000004', total_amount_due: weak.total_amount_due + 480 }, { keys: ['away'] }) }, new Date(2026, 10, 12)),
 ];
 writeFileSync('www/data/fixtures/SYNTHETIC_packets.json', JSON.stringify(packets, null, 1));
-writeFileSync('www/data/reasons.json', '{}\n'); // only months where Meralco itself states a reason
 writeFileSync('tests/SYNTHETIC_truth.json', JSON.stringify({ params: { b0: 6, b1: 1.5, bp: 27 }, good, weak }, null, 1));
 console.log('SYNTHETIC bills written. good kWh', good.kwh, 'weak kWh', weak.kwh);

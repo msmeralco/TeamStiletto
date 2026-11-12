@@ -58,7 +58,7 @@ function analyse(name, bill) {
   assert.equal(p.strength, 'strong');
   assert.equal(p.customer_account_number, bill.can);
   assert.deepEqual(p.checks.filter(c => !c.passed).map(c => c.name), ['readings', 'tracker_latest']);
-  assert.deepEqual(p.household_answers, { changes: ['Nothing changed at home'], note: null, gadgets: [], added_kwh: null });
+  assert.deepEqual(p.household_answers, { changes: ['Nothing changed at home'], note: null, gadgets: [], added_kwh: null, parser: 'rules' });
   assert.ok(p.rates.sources.every(s => s.startsWith('https://www.meralco.com.ph/')));
   const weakOnly = billingFlags({ ...bill, days: 40 }, runChecks(bill), r);
   assert.equal(disputePacket({ bill, checks: runChecks(bill), flags: weakOnly, answers: { keys: [] }, r, rates }).strength, 'weak');
@@ -157,6 +157,30 @@ console.log('bracket lookup OK');
   assert.equal(answersOf(chat(['bumili kami ng aircon', '8', 'yung aircon pala 10 hours', 'wala']).state, 30).gadgets.length, 1, 'no double count');
 }
 console.log('chat OK');
+
+// test_chat_model: the local model is only a fallback, and its JSON is checked like user input
+{
+  const { step, startChat, answersOf, fromModel, needsModel } = await import('../www/lib/chat.js');
+  const ctx = { sentence: 'x', reason: null, days: 30, unexplained_kwh: 300 };
+  assert.ok(!needsModel(startChat(), 'bumili kami ng aircon'), 'rules read it: no model call');
+  assert.ok(needsModel(startChat(), 'nagpakabit kami ng split type'));
+  const bad = fromModel({ changes: ['appliance', 'hack'], gadgets: [{ name: 'aircon', count: 999, is_new: true, hours_per_day: 99, watts: 1 },
+    { name: 'nuclear reactor', count: 1, is_new: true }], hours_per_day: -3 }, 'qwen2.5:3b');
+  assert.deepEqual(bad.keys, ['appliance']);
+  assert.deepEqual(bad.gadgets.map(g => [g.name, g.count, g.watts, g.hours]), [['aircon', 10, 900, null]], 'watts from GADGETS, count/hours clamped');
+  assert.equal(fromModel('nonsense'), null);
+  const m = fromModel({ is_question: false, changes: ['appliance'], gadgets: [{ name: 'aircon', count: 1, is_new: true, hours_per_day: null }], hours_per_day: null }, 'qwen2.5:3b');
+  let s = step(startChat(), 'nagpakabit kami ng split type', ctx, m);
+  assert.match(s.reply, /Ilang oras/);
+  s = step(s.state, 'mga walong oras', ctx, fromModel({ is_question: false, changes: [], gadgets: [], hours_per_day: 8 }, 'qwen2.5:3b'));
+  s = step(s.state, 'wala', ctx);
+  const a = answersOf(s.state, 30);
+  assert.deepEqual([a.keys, a.added_kwh, a.parser], [['appliance'], 216, 'rules + qwen2.5:3b']);
+  const q = step(startChat(), 'system loss po?', ctx, fromModel({ is_question: true, changes: [], gadgets: [], hours_per_day: null }));
+  assert.equal(q.state.keys.length, 0);
+  assert.equal(answersOf(step(startChat(), 'wala', ctx).state, 30).parser, 'rules');
+}
+console.log('chat model OK');
 
 // test_reasons: Meralco advisories are quoted only with text, date and a meralco.com.ph link
 {

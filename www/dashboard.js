@@ -64,7 +64,7 @@ function card(p) {
     <h3>Usage</h3>
     <p>Not explained by weather or billing days: ${peso(u.unexplained_change_php)} (${num(100 * u.share_of_last_bill)}% of last month's estimated ${peso(u.estimated_last_bill_php)}).
       Recent months: ${(p.tracker ?? []).slice(-6).map(t => `${esc(t.month)} ${num(t.kwh)} kWh`).join(', ')}.</p>
-    <h3>The household says</h3>
+    <h3>The household says${h.parser && h.parser !== 'rules' ? ` <small>(answers read by ${esc(h.parser)})</small>` : ''}</h3>
     <p>${h.changes.length ? esc(h.changes.join('; ')) : 'No answers given.'}${h.note ? ` Note: "${esc(h.note)}"` : ''}</p>
     ${(h.gadgets ?? []).filter(g => g.new).length ? `<p>New appliances (customer's estimate): ${h.gadgets.filter(g => g.new).map(g =>
       `${esc(g.name)}${g.count > 1 ? ` × ${num(g.count)}` : ''}, ${num(g.hours ?? g.typical_hours)} h/day, about ${num(g.kwh)} kWh`).join('; ')}.

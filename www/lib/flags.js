@@ -94,7 +94,7 @@ export function disputePacket({ bill, checks, flags, answers, r, rates }) {
     usage: { estimated_last_bill_php: r.est_prev_bill, unexplained_change_php: u.php, unexplained_kwh: u.kwh, share_of_last_bill: u.share, household_flag_limit: u.limit },
     household_answers: { changes: answers.keys.map(k => CHANGES.find(c => c[0] === k)[1]), note: answers.note?.trim() || null,
       gadgets: (answers.gadgets ?? []).map(({ name, count, watts, hours, typical_hours, new: isNew, kwh }) => ({ name, count, watts, hours, typical_hours, new: isNew, kwh })),
-      added_kwh: answers.added_kwh ?? null },
+      added_kwh: answers.added_kwh ?? null, parser: answers.parser ?? 'rules' },
     meralco_advisory: r.reason ? { date: r.reason.date, title: r.reason.title, text: r.reason.text, url: r.reason.url } : null,
     message: disputeMessage(bill, flags, answers),
   };

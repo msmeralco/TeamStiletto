@@ -6,7 +6,7 @@ import { temps, trackerPeriods, fit, cdd, project } from './lib/model.js';
 import { explain, validateRates } from './lib/explain.js';
 import { solar, SOLAR } from './lib/solar.js';
 import { billingFlags, disputeMessage, disputePacket, unexplainedIncrease, householdExplains, STRENGTH_TEXT } from './lib/flags.js';
-import { startChat, step, answersOf } from './lib/chat.js';
+import { startChat, step, answersOf, needsModel, fromModel } from './lib/chat.js';
 import { daysSince, ercMessage, ercPacket, CHANNELS, FOLLOW_UP_DAYS } from './lib/disputes.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
@@ -156,13 +156,31 @@ function startChatUI() {
     '\nMay nagbago ba sa bahay? Halimbawa: "bumili kami ng aircon", "nag-WFH ako", "umuwi kami ng probinsya", o "wala".' +
     '\nPuwede ka ring magtanong, hal. "bakit tumaas ang generation charge?"');
 }
-$('#chatform').onsubmit = e => {
+// Local model (Ollama behind npm start) only for messages the rules can't read. One failure = rules only for this session.
+let modelOff = !!window.Capacitor?.isNativePlatform?.();
+async function modelRead(text) {
+  if (modelOff || !needsModel(chat, text)) return null;
+  try {
+    const res = await fetch('api/understand', { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ text }), signal: AbortSignal.timeout(15000) });
+    if (!res.ok) throw new Error(res.status);
+    const { model, result } = await res.json();
+    return fromModel(result, model);
+  } catch { modelOff = true; return null; }
+}
+$('#chatform').onsubmit = async e => {
   e.preventDefault();
   const t = $('#chatin').value;
-  if (!t.trim() || !analysis) return;
+  if (!t.trim() || !analysis || $('#chatin').disabled) return;
   $('#chatin').value = '';
   say('me', t);
-  const r = step(chat, t, chatCtx());
+  $('#chatin').disabled = true;
+  say('bot typing', '…');
+  const model = await modelRead(t);
+  $('#chatlog .typing')?.remove();
+  $('#chatin').disabled = false;
+  $('#chatin').focus();
+  const r = step(chat, t, chatCtx(), model);
   chat = r.state;
   if (r.reply) say('bot', r.reply);
   renderFlags();

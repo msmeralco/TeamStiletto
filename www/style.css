@@ -35,3 +35,4 @@ svg { width: 100%; max-width: 420px; height: auto; }
 #chatlog .me { align-self: flex-end; background: var(--accent); color: #fff; }
 #chatform { display: flex; gap: 6px; margin-top: 6px; }
 #chatform button { flex: none; padding: 4px 16px; }
+#chatlog .typing { opacity: .6; }
