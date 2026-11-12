@@ -11,8 +11,8 @@ Full design: [docs/tech_spec.md](docs/tech_spec.md).
 1. **Read the bill.** Open your My Meralco PDF statement (password-protected PDFs work too), or **scan a paper bill** (beta: the photo is sent to the laptop and read by PaddleOCR; blurry numbers are marked yellow for you to check). TANAW reads every field and the 17-month usage tracker, runs 4 self-checks on page 1 and, for a PDF, recomputes page 2 ("How your bill was computed": every line's base × price, each group's sum, VAT, the totals; 19 checks listed in `www/data/bill_spec.json`) from the bill's own numbers, and lets you correct anything before going on. A check is skipped, never guessed, when a number it needs wasn't read.
 2. **Explain the change.** It splits the change from last month into pesos: rate changes (real Meralco rate tables, Jan to Oct 2026), weather (real Metro Manila temperatures), and your own usage. It writes this up as a plain sentence and quotes Meralco's own advisory for the reason when one is available.
 3. **Project next month** from a usage model fitted to your tracker history.
-4. **Spot possible billing errors** (9 kinds of flag, each rated strong, medium or weak, plus a strong flag for any page-2 check that doesn't add up). A chat in English or Taglish asks "What changed at home?" (new aircon, guests, etc.) so real usage changes aren't mistaken for errors.
-5. **Send a dispute.** "Send dispute to Meralco" posts a ready-made message plus a dispute file to the case dashboard (you can still send it yourself through the share sheet). **My disputes** keeps track of each one on the phone, shows the staff's reply, and after 14 days without an answer prepares an escalation to the ERC (Energy Regulatory Commission).
+4. **Spot possible billing errors** (9 kinds of flag, each rated strong, medium or weak, plus a strong flag for any page-2 check that doesn't add up). A chat in English or Taglish asks "What changed at home?" (new aircon, guests, etc.) so real usage changes aren't mistaken for errors. The same chat answers questions from the bill, Meralco's Help FAQs and that month's Meralco advisory, quoting Meralco word for word with a link.
+5. **Send a ticket.** TANAW tells the customer whether the case needs Meralco (strong or medium evidence, or a question the chatbot could not answer) or is already answered by the chatbot. "Send ticket to Meralco" posts a ready-made message plus a dispute file to the case dashboard, which files it under Meralco tickets or Handled by chatbot (you can still send it yourself through the share sheet). **My disputes** keeps track of each one on the phone, shows the staff's reply, and after 14 days reminds the customer to follow up with Meralco.
 6. **Staff triage dashboard** (`/dashboard.html`, a concept only: it isn't connected to any Meralco system). Disputes sent from the app appear by themselves within a few seconds, sorted by flag strength, days waiting and bill amount. Staff can reply or mark a case resolved, and the customer's phone shows it.
 
 Not built yet: scanned PDFs (only photos go through OCR), live camera framing for the scan, and a warning for lifeline and senior-citizen discount lines.
@@ -23,7 +23,7 @@ The Android and iOS builds are set up but haven't been tested on a phone yet.
 | Path | What's in it |
 |---|---|
 | `www/` | The app: `index.html`, `app.js`, `style.css`, web app files (`sw.js`, `manifest.webmanifest`, icons), staff `dashboard.*` |
-| `www/lib/` | `extract` (PDF to text) → `parse` (bill fields) → `checks` → `model` (usage model, projection) → `explain` (peso breakdown) → `flags` (billing errors, dispute file) → `disputes` (follow-up, ERC escalation); `chat` (What changed at home?), `ocr` (PaddleOCR words → the same text lines as a PDF), `solar` (outside Challenge 2, not shown) |
+| `www/lib/` | `extract` (PDF to text) → `parse` (bill fields) → `checks` → `model` (usage model, projection) → `explain` (peso breakdown) → `flags` (billing errors, dispute file) → `disputes` (follow-up, ticket routing); `chat` (What changed at home?, questions), `faq` (Meralco FAQ search), `ocr` (PaddleOCR words → the same text lines as a PDF), `solar` (outside Challenge 2, not shown) |
 | `www/data/` | `rates.json`, `weather.json`, `reasons.json`, `bill_spec.json` (what to read from a bill and the arithmetic it must satisfy), and SYNTHETIC sample files in `fixtures/` |
 | `scripts/` | The data build scripts, the dev server `serve.mjs` (case inbox, chat model, OCR), `ocr.py` (PaddleOCR worker) and `validate_bill.mjs` (check real bill PDFs from the command line) |
 | `tests/` | `selfcheck.mjs`, which is all of `npm test`, and its SYNTHETIC expected values and OCR word samples |
@@ -37,15 +37,17 @@ Kept on each laptop and not committed (see `.gitignore`): `node_modules/`, `www/
 ## Commands
 ```
 npm install          # also copies pdf.js (legacy build, for older phones) into www/vendor
+npm run rates:fetch  # Meralco "Monthly Rate Summary" (meralco.com.ph/residential/rates-and-charges) -> data/rates_pdfs/*.pdf + sources.json  (needs internet)
 npm run rates        # data/rates_pdfs/*.pdf (Meralco, Jan-Oct 2026) -> www/data/rates.json
 npm run weather      # Open-Meteo daily temps (Metro Manila) -> www/data/weather.json  (needs internet, once)
-npm run advisories   # Meralco monthly rate advisories (meralco.com.ph/media/advisories) -> www/data/reasons.json  (needs internet)
+npm run advisories   # Meralco monthly rate advisories (meralco.com.ph/media/advisories, 2025 on) -> www/data/reasons.json  (needs internet)
+npm run faqs         # Meralco Help FAQs (meralco.com.ph/help/faqs/*) -> www/data/faqs.json  (needs internet)
 npm run synthetic    # SYNTHETIC sample bills and dispute files, priced at the real rates
 node scripts/validate_bill.mjs <bill.pdf> [more.pdf]   # read real bills as the app does and check their own arithmetic (add --json to see what was read)
 npm test             # all tests (+ the real golden bill if data/private/golden_bill.pdf exists)
-npm start            # http://localhost:8000  (case dashboard: /dashboard.html; PORT=8001 npm start for another port)
+npm start            # refreshes Meralco rates and FAQs first (skipped with a note if offline), then http://localhost:8000  (case dashboard: /dashboard.html; PORT=8001 npm start for another port)
 ```
-New rate month: drop its "Residential Bills at Typical Consumption Levels" PDF in `data/rates_pdfs/` and run `npm run rates`.
+New rate month: `npm run rates:fetch && npm run rates`, then `npm run advisories` for Meralco's explanation of that month.
 If Meralco changed the columns again, the script stops and prints the header to add to `LAYOUTS`.
 
 ## Demo laptop setup (everything runs on the GPU laptop)
@@ -62,7 +64,7 @@ Target laptop: i5-11400H, 16 GB RAM, RTX 3050 Ti (4 GB VRAM).
    cd TeamStiletto
    npm install
    ```
-   Rates, weather and Meralco advisories are already in the repo (`www/data/`); no fetch scripts are needed for the demo.
+   Rates, weather, Meralco advisories and FAQs are already in the repo (`www/data/`); no fetch scripts are needed for the demo.
 3. Download the model (~1.9 GB, fits in 4 GB VRAM): `ollama pull qwen2.5:3b`
 4. For "Scan a paper bill": install [Python 3.12](https://www.python.org) with **Add python.exe to PATH** ticked, then
    `pip install paddlepaddle paddleocr`. The first scan downloads the OCR models (needs internet once).
@@ -98,15 +100,21 @@ Firewall allows Node.js on the private network (it asks on the first `npm start`
 The model never sets watts or kWh: it only picks from the answer types and appliance list in `www/lib/chat.js`, and its
 output is checked again in the browser. Dispute files record `parser: "rules + qwen2.5:3b"` when the model read an answer.
 
-Questions ("bakit tumaas?") are answered only from two sources, never in the model's own words: bill facts (`billFacts` in
-`www/lib/chat.js`: sentences the app writes from the bill's own numbers and the peso breakdown) and Meralco's scraped advisories.
-The model (endpoint `/api/answer`) does two small jobs, both limited to fixed choices: it names the question's topic from a
-fixed list (`TOPIC_PROMPT` + `TOPIC_SCHEMA`), which the app maps to one of its own bill facts, and it returns the number of the
-advisory paragraph that answers the question, or `null` (`ANSWER_PROMPT` + `answerSchema`). The app then shows its own text
-word for word (the advisory with its date and meralco.com.ph link), or says neither covers it and points to the 16211 hotline.
-The model never sees the bill or any of its numbers: only the question is sent. A second check in code (`fromModelTopic`)
-drops a topic the question has no word for, and any question naming another month. The server reads the advisory from its own
-`reasons.json`.
+Questions ("bakit tumaas?", "saan makikita ang CAN ko?") are answered only from three sources, never in the model's own words:
+bill facts (`billFacts` in `www/lib/chat.js`: sentences the app writes from the bill's own numbers and the peso breakdown),
+Meralco's Help FAQs (`www/data/faqs.json`, ~380 questions) and Meralco's monthly rate advisories. At most two are shown: a
+question about the customer's own bill gets their figure plus the advisory (why it moved this month) or a FAQ; any other
+question gets Meralco's FAQ answer, with the advisory as support. Each quote carries its meralco.com.ph link.
+FAQ search (`www/lib/faq.js`) maps common Taglish words to the FAQ's English, and only uses a FAQ about one month
+("…this April?") for a bill of that month.
+The model (endpoint `/api/answer`) does three small jobs, all limited to fixed choices: it names the question's topic from a
+fixed list (`TOPIC_PROMPT` + `TOPIC_SCHEMA`), which the app maps to one of its own bill facts; it returns the number of the
+advisory paragraph that answers the question, or `null` (`ANSWER_PROMPT` + `answerSchema`); and it picks the FAQ that asks the
+same thing from a keyword shortlist of 8, or `null` (`FAQ_PROMPT` + `faqSchema`). The app then shows its own copy word for word,
+or says nothing covers it and points to the 16211 hotline (and the question goes into the customer's Meralco ticket).
+The model never sees the bill or any of its numbers: only the question is sent. Checks in code drop a topic the question has
+no word for, any question naming another month (`fromModelTopic`), and any FAQ not on the browser's own shortlist
+(`fromModelFaq`). The server reads the advisory and FAQs from its own `www/data`.
 
 ## Web app
 Run `npm install` first (it puts pdf.js in `www/vendor/`, which is not committed), then publish the `www/` folder to

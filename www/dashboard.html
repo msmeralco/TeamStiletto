@@ -16,6 +16,9 @@
     #live i { width: 9px; height: 9px; border-radius: 50%; background: #777; } #live.on i { background: #4cd07d; }
     .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
     .head h1 { margin: 0; font-size: 24px; font-weight: 800; }
+    .lanes { display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
+    .lanes button { min-height: 48px; padding: 0 18px; border-radius: 10px; font-size: 15px; font-weight: 700; }
+    .lanes button[aria-pressed=true] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
     .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 18px 0; }
     .tile { background: var(--bg); border-radius: 12px; padding: 14px 16px; }
     .tile span { font-size: 12px; font-weight: 600; color: var(--muted); } .tile b { display: block; font-size: 30px; font-weight: 800; line-height: 1.2; }
@@ -49,13 +52,15 @@
   <main>
     <p id="msg" role="alert"></p>
     <div class="head">
-      <div><h1>Disputes</h1><span class="hint">Strongest evidence first, then longest wait, then bill amount</span></div>
+      <div><h1>Cases</h1><span class="hint">Strongest evidence first, then longest wait, then bill amount</span></div>
       <div class="row">
         <button id="samples">Load the SYNTHETIC samples</button>
         <label class="primary" style="width:auto;min-height:44px;font-size:14px">Load dispute files (.json)
           <input id="files" type="file" accept="application/json,.json" multiple class="vh"></label>
       </div>
     </div>
+    <div id="lanes" class="lanes" role="group" aria-label="Which cases"></div>
+    <p id="lanehint" class="hint"></p>
     <div id="tiles" class="tiles"></div>
     <div class="chips"><span class="hint" style="font-weight:600">Show</span><span id="chips" class="row"></span>
       <label>Search <input id="q" type="search" placeholder="Account no., flag, answer"></label></div>

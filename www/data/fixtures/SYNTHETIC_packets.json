@@ -845,12 +845,6 @@
    "parser": "rules"
   },
   "meralco_advisory": null,
-  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000004).\nCharges for this billing period: ₱4,253.34. Consumption: 276 kWh (previous reading 10000, current reading 10276).\n\nWhat I noticed:\n- Remaining balance + this period + installment do not add up to \"Total Amount Due\": expected 4253.34, the bill shows 4733.34.\n\nChanges at home this period (my answers):\n- We were away or home less\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you.",
-  "meralco_follow_up": {
-   "sent": "2026-10-20",
-   "channel": "My Meralco app",
-   "reference": "SYN-0004",
-   "days_waiting": 23
-  }
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000004).\nCharges for this billing period: ₱4,253.34. Consumption: 276 kWh (previous reading 10000, current reading 10276).\n\nWhat I noticed:\n- Remaining balance + this period + installment do not add up to \"Total Amount Due\": expected 4253.34, the bill shows 4733.34.\n\nChanges at home this period (my answers):\n- We were away or home less\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
  }
 ]

@@ -100,26 +100,18 @@ if (existsSync('data/private/golden_bill.pdf')) {
 } else console.log('golden bill not present (data/private/golden_bill.pdf); skipped');
 console.log('selfcheck OK');
 
-// test_disputes: follow-up math and the ERC escalation carry the Meralco reference and the evidence
+// test_disputes: follow-up day count
 {
-  const { daysSince, ercMessage, ercPacket } = await import('../www/lib/disputes.js');
-  const now = new Date(2026, 5, 20);
-  assert.equal(daysSince('2026-06-06', now), 14);
-  const x = { sent: '2026-06-06', channel: 'My Meralco app', ref: 'REF-123', packet: {
-    customer_account_number: '0012345678', bill: { period_start: '2026-04-27', period_end: '2026-05-26' },
-    flags: [{ key: 'readings', text: 'Meter readings do not match.' }], household_answers: { changes: ['Nothing changed at home'], note: null } } };
-  const m = ercMessage(x, now);
-  for (const s of ['0012345678', 'REF-123', 'After 14 days', '- Meter readings do not match.', 'Nothing changed at home']) assert.ok(m.includes(s), s);
-  assert.deepEqual(ercPacket(x, now).meralco_follow_up, { sent: '2026-06-06', channel: 'My Meralco app', reference: 'REF-123', days_waiting: 14 });
+  const { daysSince } = await import('../www/lib/disputes.js');
+  assert.equal(daysSince('2026-06-06', new Date(2026, 5, 20)), 14);
 }
 console.log('disputes OK');
 
-// test_dashboard_samples: the sample dispute files cover every strength and an ERC escalation
+// test_dashboard_samples: the sample dispute files cover every strength
 {
   const p = json('www/data/fixtures/SYNTHETIC_packets.json');
   assert.ok(p.every(x => x.format === 'tanaw-dispute/1' && x.bill.source === 'synthetic'));
   assert.deepEqual([...new Set(p.map(x => x.strength))].sort(), ['medium', 'strong', 'weak']);
-  assert.ok(p.some(x => x.meralco_follow_up?.reference));
 }
 console.log('dashboard samples OK');
 
@@ -203,7 +195,7 @@ console.log('chat model OK');
   const picked = step(startChat(), 'bakit mas mahal ngayon?', ctx(2)).reply;
   assert.ok(picked.includes('"Transmission was flat."') && picked.includes(reason.url), 'verbatim quote + source link');
   const none = step(startChat(), 'paano magbayad online?', ctx(null)).reply;
-  assert.match(none, /Not in your bill or Meralco's advisory/);
+  assert.match(none, /Not in your bill or Meralco's FAQs or advisory/);
   assert.ok(!/Generation|peso|Transmission/.test(none), 'no advisory text passed off as an answer it does not contain');
   assert.match(step(startChat(), 'bakit tumaas ang generation charge?', ctx(undefined)).reply, /Generation charge rose/, 'no model: keyword fallback');
 }
@@ -244,7 +236,7 @@ console.log('advisory pick OK');
   assert.ok(mine.includes(`Sa bill mo (from your bill): ${facts[1]}`) && !mine.includes('Ayon sa Meralco'), 'verbatim bill fact, no advisory');
   const two = step(startChat(), 'bakit nagbago ang bill ko?', ctx(0, 0)).reply;
   assert.ok(two.includes(facts[0]) && two.includes('"Generation charge rose by P0.20 per kWh."') && two.includes(reason.url), 'bill fact + advisory quote');
-  assert.match(step(startChat(), 'paano magbayad online?', ctx(null, null)).reply, /Not in your bill or Meralco's advisory/);
+  assert.match(step(startChat(), 'paano magbayad online?', ctx(null, null)).reply, /Not in your bill or Meralco's FAQs or advisory/);
   assert.match(step(startChat(), 'paano magbayad online?', ctx(99, null)).reply, /Not in your bill/, 'an index outside our list shows nothing');
   const kw = step(startChat(), 'what is my total amount due?', ctx(undefined, undefined)).reply;
   assert.match(kw, /Sa bill mo \(from your bill\): Your total amount due is ₱/, 'no model: keyword fallback finds the bill fact');
@@ -356,3 +348,89 @@ console.log('ocr real output OK');
   for (const g of spec.groups) assert.equal(new Set(g.lines.flatMap(l => [l.label, ...(l.alt ?? [])])).size, g.lines.reduce((n, l) => n + 1 + (l.alt?.length ?? 0), 0), g.key);
 }
 console.log('page 2 OK');
+
+// Ticket routing: a Meralco ticket only when a person has something to do; staff can move a case either way.
+{
+  const { route } = await import('../www/lib/disputes.js');
+  const { step, startChat, answersOf } = await import('../www/lib/chat.js');
+  const to = (flags, extra = {}) => route({ flags: flags.map(strength => ({ strength })), ...extra }).to;
+  assert.equal(to(['strong', 'weak']), 'meralco');
+  assert.equal(to(['medium']), 'meralco');
+  assert.equal(to(['weak']), 'chatbot');
+  assert.equal(to([]), 'chatbot');
+  assert.equal(to([], { unanswered_questions: ['paano magbayad sa GCash?'] }), 'meralco');
+  assert.equal(to(['strong'], { route_override: 'chatbot' }), 'chatbot', 'staff override wins');
+  assert.equal(to([], { route_override: 'bogus' }), 'chatbot', 'unknown override ignored');
+  // The chat remembers a question it could not answer from the bill or the advisory, and only that one.
+  const ctx = { sentence: 'Your bill rose.', facts: ['Generation charge this month: ₱1,940.10'], reason: null, days: 30 };
+  let s = step(startChat(), 'paano magbayad sa GCash?', ctx).state;
+  s = step(s, 'magkano ang generation charge?', ctx).state;
+  assert.deepEqual(answersOf(s, 30).unanswered, ['paano magbayad sa GCash?']);
+  const msg = disputeMessage({ period_start: '2026-04-27', period_end: '2026-05-26', kwh: 300, charges_this_period: 4500 }, [], { keys: [], unanswered: ['paano magbayad sa GCash?'] });
+  assert.match(msg, /help with questions[\s\S]*could not answer[\s\S]*- paano magbayad sa GCash\?[\s\S]*Please answer my questions/);
+  // Nothing flagged, nothing asked: the customer can still escalate, as a plain review request.
+  assert.match(disputeMessage({ period_start: '2026-04-27', period_end: '2026-05-26', kwh: 300, charges_this_period: 4500 }, []), /request a review[\s\S]*Please recheck/);
+  assert.doesNotMatch(msg, /What I noticed/);
+}
+console.log('routing OK');
+
+// Meralco FAQs in the chat: Taglish questions find the right FAQ, month-specific FAQs only for that month, unrelated -> nothing.
+{
+  const { faqIndex, faqBest, faqSearch, faqQuote } = await import('../www/lib/faq.js');
+  const { step, startChat, answersOf, fromModelFaq } = await import('../www/lib/chat.js');
+  const F = (id, q, ...answer) => ({ id, topic: 'Bills and Payments', category: null, q, answer, url: `https://www.meralco.com.ph/help/faqs/x#${id}` });
+  const ix = faqIndex({ faqs: [
+    F('can', 'What is Meralco CAN?', 'Meralco CAN is your Customer Account Number. It is the 10-digit permanent number.'),
+    F('find-can', 'Where can I find my Meralco CAN?', 'Your Meralco CAN is found at the top right portion of your Meralco paper bill.'),
+    F('outage', 'What is an outage?', 'An outage is an interruption of electric service.'),
+    F('april', 'Why did my electricity bill increase this April?', 'Higher generation charge and hotter weather.'),
+    F('paperless', 'What is Paperless Billing?', 'Paperless Billing lets you receive your bill by email instead of paper.'),
+    F('read', 'How often is my meter read?', 'Meralco reads your meter once a month.'),
+    F('deposit', 'What is the Bill Deposit?', 'The bill deposit guarantees payment of your bills.', 'It is refundable.'),
+  ] });
+  const best = (q, m = '2026-10') => faqBest(ix, q, m)?.id ?? null;
+  assert.equal(best('ano ang Meralco CAN?'), 'can');
+  assert.equal(best('saan makikita ang CAN ko?'), 'find-can');
+  assert.equal(best('may brownout ba sa amin?'), 'outage');
+  assert.equal(best('paano basahin ang metro?'), 'read');
+  assert.equal(best('ano ang WESM?'), null, 'nothing about it: no FAQ, never a near miss');
+  assert.equal(best('can I pay with GCash?'), null, 'lowercase "can" is the verb, not the account number');
+  assert.ok(!faqSearch(ix, 'bakit tumaas ang bill ko?', '2026-10').some(r => r.f.id === 'april'), 'an April FAQ never answers an October bill');
+  assert.ok(faqSearch(ix, 'bakit tumaas ang bill ko?', '2026-04').some(r => r.f.id === 'april'));
+  assert.match(faqQuote(ix.docs.at(-1).f, 50), /"What is the Bill Deposit\?"\nThe bill deposit guarantees payment of your bills\.\n…\nhttps:/, 'cut at a paragraph, marked, linked');
+  // The model's FAQ pick only counts if it is on our own shortlist for that question.
+  const short = faqSearch(ix, 'ano ang Meralco CAN?', '2026-10');
+  assert.equal(fromModelFaq('can', short), 'can');
+  assert.equal(fromModelFaq('april', short), undefined);
+  assert.equal(fromModelFaq(null, short), null);
+  // In the chat: a FAQ answers it (no ticket); the customer's own bill figure wins over a general FAQ.
+  const ctx = { sentence: 'Your bill rose.', facts: ['Generation charge this month: ₱1,940.10'], reason: null, days: 30, faqIndex: ix, month: '2026-10' };
+  let r = step(startChat(), 'saan makikita ang CAN ko?', ctx);
+  assert.match(r.reply, /Meralco FAQ: "Where can I find my Meralco CAN\?"[\s\S]*top right portion[\s\S]*#find-can/);
+  assert.deepEqual(answersOf(r.state, 30).unanswered, []);
+  r = step(startChat(), 'magkano ang generation charge ko?', ctx);
+  assert.match(r.reply, /^Sa bill mo \(from your bill\): Generation charge/);
+  r = step(startChat(), 'ano ang WESM?', ctx);
+  assert.deepEqual(answersOf(r.state, 30).unanswered, ['ano ang WESM?'], 'not in the bill, FAQs or advisory: a question for Meralco');
+  // With the model: its FAQ pick is shown verbatim.
+  r = step(startChat(), 'ano yung number sa taas ng bill?', { ...ctx, fact: null, pick: null, faq: 'find-can' });
+  assert.match(r.reply, /Meralco FAQ: "Where can I find my Meralco CAN\?"/);
+}
+// The scraped FAQ file: unique ids, links to the exact question on meralco.com.ph, verbatim answers.
+{
+  const data = json('www/data/faqs.json');
+  assert.ok(data.faqs.length > 50, `${data.faqs.length} FAQs`);
+  assert.equal(new Set(data.faqs.map(f => f.id)).size, data.faqs.length);
+  assert.ok(data.faqs.every(f => f.q && f.answer.length && f.answer.every(p => typeof p === 'string' && p) && f.url === `${f.url.split('#')[0]}#${f.id}` && f.url.startsWith('https://www.meralco.com.ph/help/faqs/')));
+}
+console.log('faqs OK');
+// A one-word overlap with a bill sentence ("Meralco") must not beat an exact FAQ match.
+{
+  const { faqIndex } = await import('../www/lib/faq.js');
+  const { step, startChat } = await import('../www/lib/chat.js');
+  const ix = faqIndex({ faqs: [{ id: 'can', q: 'What is Meralco CAN?', answer: ['Meralco CAN is your Customer Account Number.'], url: 'https://www.meralco.com.ph/help/faqs/x#can' },
+    { id: 'o', q: 'What is an outage?', answer: ['An interruption of service.'], url: 'https://www.meralco.com.ph/help/faqs/x#o' }] });
+  const ctx = { sentence: 'x', facts: ["Meralco's rates this month: ₱15.06 per kWh."], reason: null, days: 30, faqIndex: ix, month: '2026-10' };
+  assert.match(step(startChat(), 'ano ang Meralco CAN?', ctx).reply, /^Meralco FAQ: "What is Meralco CAN\?"/);
+}
+console.log('faq vs bill fact OK');

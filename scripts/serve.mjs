@@ -2,7 +2,7 @@
 // Also the demo case inbox: POST /api/cases stores a dispute file the user chose to escalate; GET lists them for dashboard.html.
 // And POST /api/understand: the chat's local-model fallback (Ollama). If Ollama is not running the chat uses rules only.
 // And POST /api/ocr: a photo of a paper bill -> words, read by PaddleOCR (scripts/ocr.py). Without Python + paddleocr the app hides "Scan".
-// shortcut: no login and one local JSON file; a real ERC inbox needs authentication, HTTPS and a database.
+// shortcut: no login and one local JSON file; a real Meralco inbox needs authentication, HTTPS and a database.
 import { createServer } from 'node:http';
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { extname, resolve, sep, join } from 'node:path';
@@ -10,8 +10,10 @@ import { spawn, execFile } from 'node:child_process';
 import { createInterface } from 'node:readline';
 import { tmpdir } from 'node:os';
 import { randomUUID } from 'node:crypto';
-import { caseKey } from '../www/lib/disputes.js';
-import { MODEL_PROMPT, MODEL_SCHEMA, ANSWER_PROMPT, answerSchema, answerMessage, advisoryParas, TOPIC_PROMPT, TOPIC_SCHEMA, ADVISORY_TOPICS, questionMessage } from '../www/lib/chat.js';
+import { caseKey, ROUTES } from '../www/lib/disputes.js';
+import { MODEL_PROMPT, MODEL_SCHEMA, ANSWER_PROMPT, answerSchema, answerMessage, advisoryParas, TOPIC_PROMPT, TOPIC_SCHEMA, ADVISORY_TOPICS, questionMessage,
+  FAQ_PROMPT, faqSchema, faqMessage } from '../www/lib/chat.js';
+import { faqIndex, faqSearch } from '../www/lib/faq.js';
 import { usableReason } from '../www/lib/explain.js';
 
 const ROOT = resolve('www');
@@ -34,9 +36,12 @@ async function cases(req, res) {
   if (req.method !== 'POST') return send(res, 405, { error: 'GET or POST only' });
   const p = await readJson(req, 1e6);
   if (p?.format !== 'tanaw-dispute/1' || !p.bill || !Array.isArray(p.flags)) return send(res, 400, { error: 'not a TANAW dispute file' });
-  // One case per bill: sending again (an edited message, or the ERC escalation) replaces the old file and reopens the case.
+  // One case per bill: sending again (e.g. an edited message) replaces the old file and reopens the case.
   const all = await loadCases(), old = all.find(c => caseKey(c) === caseKey(p)), list = all.filter(c => c !== old);
-  list.push({ ...p, received: new Date().toISOString(), first_received: old?.first_received ?? old?.received ?? new Date().toISOString(), status: 'open', reply: old?.reply ?? '' });
+  // route_override is staff-only: never taken from the customer's file, kept from the old case on a resend.
+  const { route_override, ...q } = p, asked = Array.isArray(p.unanswered_questions) ? p.unanswered_questions.slice(0, 20).map(s => String(s).slice(0, 500)) : [];
+  list.push({ ...q, unanswered_questions: asked, received: new Date().toISOString(), first_received: old?.first_received ?? old?.received ?? new Date().toISOString(),
+    status: 'open', reply: old?.reply ?? '', ...(old?.route_override ? { route_override: old.route_override } : {}) });
   await saveCases(list);
   send(res, 201, { ok: true, cases: list.length });
 }
@@ -51,9 +56,10 @@ async function caseStatus(req, res) {
     return c ? send(res, 200, { status: c.status ?? 'open', reply: c.reply ?? '' }) : send(res, 404, { error: 'no such case' });
   }
   if (req.method !== 'POST') return send(res, 405, { error: 'GET or POST only' });
-  const { key, status, reply } = (await readJson(req, 1e4)) ?? {}, c = list.find(c => caseKey(c) === key);
+  const { key, status, reply, route } = (await readJson(req, 1e4)) ?? {}, c = list.find(c => caseKey(c) === key);
   if (!c || !STATUSES.includes(status)) return send(res, 400, { error: 'unknown case or status' });
-  Object.assign(c, { status, reply: String(reply ?? c.reply ?? '').slice(0, 2000), updated: new Date().toISOString() });
+  if (route !== undefined && !ROUTES[route]) return send(res, 400, { error: 'unknown route' });
+  Object.assign(c, { status, reply: String(reply ?? c.reply ?? '').slice(0, 2000), updated: new Date().toISOString() }, route ? { route_override: route } : {});
   await saveCases(list);
   send(res, 200, { ok: true });
 }
@@ -112,17 +118,20 @@ async function understand(req, res) {
   send(res, 200, { model: MODEL, result: JSON.parse(out.message?.content ?? 'null') });
 }
 
-// A customer question -> (1) its topic (a fixed list; the browser maps the topic to a sentence it wrote itself from the bill)
-// and (2) the number of the paragraph in that month's scraped Meralco advisory that answers it, or null.
-// The bill never comes here and the model never sees it. The advisory comes from our own www/data/reasons.json (never from
+// A customer question -> (1) its topic (a fixed list; the browser maps the topic to a sentence it wrote itself from the bill),
+// (2) the number of the paragraph in that month's scraped Meralco advisory that answers it, or null, and (3) the Meralco FAQ
+// that answers it, chosen from a keyword shortlist (faq.js), or null.
+// The bill never comes here and the model never sees it. The advisory and FAQs come from our own www/data (never from
 // the request). The model can only output enum values, and the browser shows its own text for them, so nothing the model
 // returns is ever shown as text. Hard-coded on purpose: no setting turns this into free-text generation.
 const reasons = readFile(resolve(ROOT, 'data/reasons.json'), 'utf8').then(JSON.parse);
+const faqs = readFile(resolve(ROOT, 'data/faqs.json'), 'utf8').then(s => faqIndex(JSON.parse(s)), () => faqIndex(null)); // no file: no FAQs
 async function answer(req, res) {
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
   const { text, month } = (await readJson(req, 4000)) ?? {};
   const reason = usableReason((await reasons)[String(month)]), n = advisoryParas(reason).length;
   if (!String(text ?? '').trim()) return send(res, 400, { error: 'empty' });
+  const shortlist = faqSearch(await faqs, String(text), /^\d{4}-\d{2}$/.test(month) ? month : null);
   // Two short single-purpose calls: a 3B model sorts a question into a topic far better than it picks from a long mixed list.
   const pick = async (system, user, format) => {
     const r = await fetch(`${OLLAMA}/api/chat`, {
@@ -136,7 +145,9 @@ async function answer(req, res) {
   try {
     const t = await pick(TOPIC_PROMPT, questionMessage(text), TOPIC_SCHEMA);
     const p = n && ADVISORY_TOPICS.includes(t?.topic) ? await pick(ANSWER_PROMPT, answerMessage(reason, text), answerSchema(n)) : null;
-    send(res, 200, { model: MODEL, result: { topic: t?.topic, charge: t?.charge ?? null, paragraph: p ? p.paragraph : null } });
+    const q = shortlist.length ? await pick(FAQ_PROMPT, faqMessage(shortlist, text), faqSchema(shortlist.length)) : null;
+    const faq = Number.isInteger(q?.faq) && shortlist[q.faq] ? shortlist[q.faq].f.id : null;
+    send(res, 200, { model: MODEL, result: { topic: t?.topic, charge: t?.charge ?? null, paragraph: p ? p.paragraph : null, faq } });
   } catch (e) { send(res, 503, { error: `local model unavailable: ${e.message}` }); }
 }
 

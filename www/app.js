@@ -6,8 +6,9 @@ import { temps, trackerPeriods, fit, cdd, project } from './lib/model.js';
 import { explain, validateRates } from './lib/explain.js';
 import { ocrLines } from './lib/ocr.js';
 import { billingFlags, disputeMessage, disputePacket, unexplainedIncrease, householdExplains, STRENGTH_TEXT } from './lib/flags.js';
-import { startChat, step, answersOf, needsModel, fromModel, isQuestion, fromModelPick, fromModelTopic, advisoryParas, billFacts } from './lib/chat.js';
-import { daysSince, ercMessage, ercPacket, caseKey, CHANNELS, FOLLOW_UP_DAYS } from './lib/disputes.js';
+import { startChat, step, answersOf, needsModel, fromModel, isQuestion, fromModelPick, fromModelTopic, fromModelFaq, advisoryParas, billFacts } from './lib/chat.js';
+import { faqIndex, faqSearch } from './lib/faq.js';
+import { daysSince, caseKey, route, CHANNELS, FOLLOW_UP_DAYS } from './lib/disputes.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
 // Offline web app; the native iOS/Android apps already bundle every file.
@@ -29,6 +30,8 @@ const msg = t => ($('#msg').textContent = t ?? '');
 const today = () => new Date().toLocaleDateString('en-CA');
 
 const [rates, weather, reasons, billSpec] = await Promise.all(['rates', 'weather', 'reasons', 'bill_spec'].map(n => fetch(`data/${n}.json`).then(r => r.json())));
+// Meralco FAQs for the chat (scripts/fetch_faqs.mjs). Optional: without the file the chat answers from the bill and advisory only.
+const faqs = faqIndex(await fetch('data/faqs.json').then(r => (r.ok ? r.json() : null)).catch(() => null));
 const T = temps(weather);
 const rateErrors = validateRates(rates);
 if (rateErrors.length) msg('rates.json failed validation: ' + rateErrors.join('; '));
@@ -213,8 +216,11 @@ function renderResults() {
 
 // ---------- "what changed at home?" chat (lib/chat.js) ----------
 let chat;
-const say = (who, t) => { $('#chatlog').insertAdjacentHTML('beforeend', `<p class="${who}">${esc(t)}</p>`); $('#chatlog').scrollTop = 1e9; };
-const chatCtx = () => ({ sentence: analysis.r.sentence, reason: analysis.r.reason, facts: billFacts(bill, analysis).map(x => x.text), days: bill.days, unexplained_kwh: unexplainedIncrease(bill, analysis.r).kwh });
+// Meralco links (FAQ and advisory sources) are tappable; escaped first, and only meralco.com.ph links become <a>.
+const linked = h => h.replace(/https:\/\/www\.meralco\.com\.ph\/[\w\-./#%?=]+/g, u => `<a href="${u}" target="_blank" rel="noopener">Basahin sa Meralco ↗</a>`);
+const say = (who, t) => { $('#chatlog').insertAdjacentHTML('beforeend', `<p class="${who}">${linked(esc(t))}</p>`); $('#chatlog').scrollTop = 1e9; };
+const chatCtx = () => ({ sentence: analysis.r.sentence, reason: analysis.r.reason, facts: billFacts(bill, analysis).map(x => x.text), days: bill.days, unexplained_kwh: unexplainedIncrease(bill, analysis.r).kwh,
+  faqIndex: faqs, month: analysis.r.rate_month });
 function startChatUI() {
   chat = startChat();
   $('#chatlog').innerHTML = '';
@@ -222,7 +228,7 @@ function startChatUI() {
   say('bot', `Hi! ${analysis.r.bill_change_php >= 0 ? 'Tumaas' : 'Bumaba'} ng ${peso(Math.abs(analysis.r.bill_change_php))} ang bill mo.` +
     (php > 0 ? ` Mga ${Math.round(kwh)} kWh (${peso(php)}) dito ang hindi maipaliwanag ng init ng panahon o haba ng billing period.` : '') +
     '\nMay nagbago ba sa bahay? Halimbawa: "bumili kami ng aircon", "nag-WFH ako", "umuwi kami ng probinsya", o "wala".' +
-    '\nPuwede ka ring magtanong, hal. "bakit tumaas ang generation charge?"');
+    '\nPuwede ka ring magtanong, hal. "bakit tumaas ang generation charge?" o "saan makikita ang CAN ko?"');
 }
 // Local model (Ollama behind npm start) only for messages the rules can't read. One failure = rules only for this session.
 let modelOff = !!window.Capacitor?.isNativePlatform?.();
@@ -236,20 +242,21 @@ async function modelRead(text) {
     return fromModel(result, model);
   } catch { modelOff = true; return null; }
 }
-// A question: the model may only name its topic (mapped here to one of our own bill facts) and/or pick a paragraph of this
-// month's Meralco advisory; we show our own text for both. Only the question is sent, never the bill.
+// A question: the model may only name its topic (mapped here to one of our own bill facts), pick a paragraph of this month's
+// Meralco advisory and pick a Meralco FAQ from a shortlist; we show our own copy of all three. Only the question is sent, never the bill.
 // Returns {} when the model is not used (keyword fallback).
 async function modelPick(text, model) {
   const reason = analysis.r.reason;
   if (modelOff || !isQuestion(chat, text, model)) return {};
   try {
     const res = await fetch('api/answer', { method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ text, month: analysis.r.rate_month }), signal: AbortSignal.timeout(20000) });
+      body: JSON.stringify({ text, month: analysis.r.rate_month }), signal: AbortSignal.timeout(30000) });
     if (!res.ok) throw new Error(res.status);
     const { result } = await res.json();
     const pick = fromModelPick(result, advisoryParas(reason).length), fact = fromModelTopic(result, billFacts(bill, analysis), text);
-    // One side unusable while the other is fine: treat the unusable side as "not there", never as a guess.
-    return pick === undefined && fact === undefined ? {} : { pick: pick ?? null, fact: fact ?? null };
+    const faq = fromModelFaq(result?.faq ?? null, faqSearch(faqs, text, analysis.r.rate_month)); // must be on our own shortlist
+    // One side unusable while the others are fine: treat the unusable side as "not there", never as a guess.
+    return pick === undefined && fact === undefined && faq === undefined ? {} : { pick: pick ?? null, fact: fact ?? null, faq: faq ?? null };
   } catch { modelOff = true; return {}; }
 }
 $('#chatform').onsubmit = async e => {
@@ -285,15 +292,17 @@ const DASH = 'the TANAW case dashboard';
 function renderFlags() {
   const a = answers(), checks = runChecks(bill, billSpec), flags = billingFlags(bill, checks, analysis.r, a);
   const u = unexplainedIncrease(bill, analysis.r);
-  const packet = flags.length && disputePacket({ bill, checks, flags, answers: a, r: analysis.r, rates });
+  const packet = disputePacket({ bill, checks, flags, answers: a, r: analysis.r, rates }); // always offered: the customer decides whether to escalate
   const explained = u.php > 0 && householdExplains(u, a)
     ? `<p class="note">Your answers may explain the ${peso(u.php)} rise in usage, so a dispute is less likely to help.</p>` : '';
-  $('#flags').innerHTML = explained + (!flags.length ? '<p>No signs of a billing error in the numbers we can check.</p>'
-    : `<p><b>Evidence strength: ${esc(STRENGTH_TEXT[packet.strength])}</b></p>
+  const way = route(packet), ticket = way.to === 'meralco';
+  $('#flags').innerHTML = explained + (`${flags.length ? `<p><b>Evidence strength: ${esc(STRENGTH_TEXT[packet.strength])}</b></p>` : ''}
        ${flags.map(f => `<div class="card flag"><span class="badge ${esc(f.strength)}">${esc(f.strength)}</span><span>${esc(f.text)}</span></div>`).join('')}
-       <p>This is worth asking Meralco to recheck. Review the message below, then send it. If it is not resolved, contact the ERC: consumer@erc.ph, 8687-5577.</p>
+       <p class="note">${ticket
+         ? `<b>This needs Meralco.</b> ${esc(way.why)} Review the message below, then send it as a ticket.`
+         : `<b>No Meralco ticket needed.</b> ${esc(way.why)} You can still send it: it is filed as handled by the chatbot, and Meralco staff can move it to a ticket.`}</p>
        <textarea id="dispute" rows="12" aria-label="Message to Meralco">${esc(disputeMessage(bill, flags, a))}</textarea>
-       <button id="send" class="primary">Send dispute to Meralco</button>
+       <button id="send" class="${ticket ? 'primary' : ''}">${ticket ? 'Send ticket to Meralco' : 'Send anyway'}</button>
        <p class="hint">Sends this message and an evidence file (your account number, readings, charges and answers) to the TANAW case dashboard,
        a demo that is not connected to a real Meralco system, and saves it in My disputes.
        <button id="share" class="link">Send it yourself instead</button> · <button id="copy" class="link">Copy the message only</button></p>
@@ -304,7 +313,6 @@ function renderFlags() {
          <button id="trackbtn">Save in My disputes</button>
        </details>
        <p id="tracked" class="hint" role="status"></p>`);
-  if (!packet) return;
   const edited = () => ({ ...packet, message: $('#dispute').value }); // keep the user's edits to the message
   const track = (channel = $('#channel').value, sent = $('#sent').value, ref = $('#ref').value.trim()) => {
     if (!sent) return msg('Enter the date you sent it.');
@@ -343,13 +351,13 @@ function renderMine() {
       <div class="row between"><div><b>Bill ${esc(b.period_start)} to ${esc(b.period_end)}</b><br>
         <span class="hint">${peso(b.charges_this_period)} · ${esc(x.packet.strength)} evidence</span></div><span class="badge ${badge}">${badge}</span></div>
       ${done ? '' : `<div class="row between hint"><span>Day ${n} of ${FOLLOW_UP_DAYS}</span>
-        <span>${n >= FOLLOW_UP_DAYS ? 'Time to follow up, or escalate to the ERC' : `Follow up in ${FOLLOW_UP_DAYS - n} day${FOLLOW_UP_DAYS - n === 1 ? '' : 's'}`}</span></div>
+        <span>${n >= FOLLOW_UP_DAYS ? 'Time to follow up with Meralco' : `Follow up in ${FOLLOW_UP_DAYS - n} day${FOLLOW_UP_DAYS - n === 1 ? '' : 's'}`}</span></div>
         <div class="progress"><i style="width:${Math.min(100, 100 * n / FOLLOW_UP_DAYS)}%"></i></div>`}
       <p class="hint">Sent ${esc(x.sent)} via ${esc(x.channel)}${x.ref ? `, reference ${esc(x.ref)}` : ''}.</p>
       ${x.reply ? `<p class="note"><b>Meralco replied:</b> ${esc(x.reply)}</p>` : ''}
       <div class="row"><button data-act="send">Share file</button>
-      ${done ? '' : '<button data-act="erc">Escalate to ERC</button> <button data-act="resolve">Mark resolved</button>'}
-      <button data-act="delete">Delete</button></div><div class="erc"></div></li>`;
+      ${done ? '' : '<button data-act="resolve">Mark resolved</button>'}
+      <button data-act="delete">Delete</button></div></li>`;
   }).join('');
 }
 
@@ -365,7 +373,7 @@ async function syncMine() {
       if ((s.reply ?? '') !== (x.reply ?? '') || status !== x.status) { Object.assign(x, { reply: s.reply ?? '', status }); changed = true; }
     } catch { return; } // no TANAW server (static host or offline): nothing to sync
   }
-  if (changed && !document.querySelector('#minelist textarea') && saveDisputes(list)) renderMine();
+  if (changed && saveDisputes(list)) renderMine();
 }
 setInterval(() => !$('#upload').hidden && !document.hidden && syncMine(), 10000);
 
@@ -374,22 +382,6 @@ $('#minelist').onclick = e => {
   if (!act || !li) return;
   const list = loadDisputes(), x = list.find(y => y.id === li.dataset.id);
   if (act === 'send') return sendDispute(`tanaw-dispute-${x.packet.bill.period_end}.json`, x.packet, x.packet.message);
-  if (act === 'erc') {
-    const box = li.querySelector('.erc');
-    box.innerHTML = `<p>Send this to the ERC at consumer@erc.ph (or call 8687-5577) with the evidence file.</p>
-      <textarea rows="12" aria-label="Message to the ERC">${esc(ercMessage(x))}</textarea>
-      <button data-erc="post">Send to the case dashboard</button> <button data-erc="send">Share with the ERC yourself</button> <button data-erc="copy">Copy message only</button>`;
-    box.querySelector('[data-erc=copy]').onclick = ev => copyText(box.querySelector('textarea'), ev.target);
-    box.querySelector('[data-erc=post]').onclick = async ev => {
-      if (!await postCase({ ...ercPacket(x), message: box.querySelector('textarea').value })) return;
-      x.posted = true;
-      saveDisputes(list);
-      Object.assign(ev.target, { textContent: 'Sent to the case dashboard', disabled: true });
-    };
-    box.querySelector('[data-erc=send]').onclick = () =>
-      sendDispute(`tanaw-erc-${x.packet.bill.period_end}.json`, ercPacket(x), box.querySelector('textarea').value);
-    return;
-  }
   if (act === 'delete' && !confirm('Delete this dispute record from this phone?')) return;
   if (act === 'delete') list.splice(list.indexOf(x), 1);
   if (act === 'resolve') x.status = 'resolved';

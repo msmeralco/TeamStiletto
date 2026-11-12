@@ -38,7 +38,7 @@ export function unexplainedIncrease(bill, r) {
 }
 
 // Do the household's answers explain the unexplained rise? With a priced gadget list (chat), it must cover at least half the kWh.
-// shortcut: "half" is a judgment call, not a Meralco or ERC rule; tune it against real disputes.
+// shortcut: "half" is a judgment call, not a Meralco rule; tune it against real disputes.
 export function householdExplains(u, a) {
   if (!a.keys.some(k => CHANGES.find(c => c[0] === k)?.[2])) return false;
   return a.added_kwh == null || u.kwh == null || a.added_kwh >= 0.5 * u.kwh;
@@ -73,7 +73,7 @@ export function billingFlags(bill, checks, r, answers = { keys: [] }) {
   return flags.map(f => ({ ...f, strength: f.strength ?? STRENGTH[f.key] }));
 }
 
-// Machine-readable evidence for Meralco (or the ERC) to triage without re-reading the bill. Nothing is sent: the user shares it.
+// Machine-readable evidence for Meralco to triage without re-reading the bill. Nothing is sent: the user shares it.
 export function disputePacket({ bill, checks, flags, answers, r, rates }) {
   const u = unexplainedIncrease(bill, r);
   return {
@@ -97,6 +97,7 @@ export function disputePacket({ bill, checks, flags, answers, r, rates }) {
       gadgets: (answers.gadgets ?? []).map(({ name, count, watts, hours, typical_hours, new: isNew, kwh }) => ({ name, count, watts, hours, typical_hours, new: isNew, kwh })),
       added_kwh: answers.added_kwh ?? null, parser: answers.parser ?? 'rules' },
     meralco_advisory: r.reason ? { date: r.reason.date, title: r.reason.title, text: r.reason.text, url: r.reason.url } : null,
+    unanswered_questions: answers.unanswered ?? [], // the chatbot found no answer in the bill or the advisory
     message: disputeMessage(bill, flags, answers),
   };
 }
@@ -105,18 +106,18 @@ export function disputeMessage(bill, flags, answers = { keys: [] }) {
   const home = answers.keys.map(k => CHANGES.find(c => c[0] === k)[1])
     .concat((answers.gadgets ?? []).filter(g => g.new).map(g => `New: ${g.count > 1 ? g.count + ' × ' : ''}${g.name}, ${g.hours ?? g.typical_hours} h/day, about ${g.kwh} kWh`))
     .concat(answers.note?.trim() || []);
+  const asked = answers.unanswered ?? [], review = flags.length || !asked.length; // nothing flagged and no questions = the customer still wants a review
   return [
     'Good day, Meralco.',
     '',
-    `I would like to request a review of my bill for ${bill.period_start} to ${bill.period_end}` +
+    `I would like ${review ? 'to request a review of' : 'help with questions about'} my bill for ${bill.period_start} to ${bill.period_end}` +
       (bill.can ? ` (Customer Account Number ${bill.can}).` : '.'),
     `Charges for this billing period: ${peso(bill.charges_this_period)}. Consumption: ${bill.kwh} kWh ` +
       `(previous reading ${bill.previous_reading}, current reading ${bill.current_reading}).`,
-    '',
-    'What I noticed:',
-    ...flags.map(f => `- ${f.text}`),
+    ...(flags.length ? ['', 'What I noticed:', ...flags.map(f => `- ${f.text}`)] : []),
+    ...(asked.length ? ['', 'My questions (the TANAW app could not answer them from my bill or your advisory):', ...asked.map(q => `- ${q}`)] : []),
     ...(home.length ? ['', 'Changes at home this period (my answers):', ...home.map(h => `- ${h}`)] : []),
     '',
-    'Please recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you.',
+    review ? 'Please recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you.' : 'Please answer my questions. Thank you.',
   ].join('\n');
 }

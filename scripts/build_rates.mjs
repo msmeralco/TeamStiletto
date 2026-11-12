@@ -1,6 +1,6 @@
 // Meralco "Residential Bills at Typical Consumption Levels" PDFs (data/rates_pdfs/*.pdf) -> www/data/rates.json.
 // Reads the per-kWh table (rows after the 2nd "For Lifeline Customers"). Fails loudly on an unknown layout or a row that doesn't add up.
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { pdfLines } from '../www/lib/extract.js';
 import { validateRates } from '../www/lib/explain.js';
@@ -26,15 +26,8 @@ const LAYOUTS = {
 const FIXED = ['supply_cust', 'metering_cust']; // ₱ per customer per month, printed spread over kWh
 const MON = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const num = s => (s === '-' ? 0 : (s.startsWith('(') ? -1 : 1) * parseFloat(s.replace(/[(),]/g, '')));
-const URLS = { // where each PDF came from; Jan-Jun and Oct use random file names on meralco.com.ph/residential/rates-and-charges
-  '2026-01': 'https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/79/meralco-doc-793d5eaae26cee22.pdf',
-  '2026-02': 'https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/be/meralco-doc-beb8598407e3501a.pdf',
-  '2026-03': 'https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/69/meralco-doc-69f1b65b2efc9062.pdf',
-  '2026-04': 'https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/6e/meralco-doc-6e2793d83fb71be4.pdf',
-  '2026-05': 'https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/03/meralco-doc-03585bf9910a16cd.pdf',
-  '2026-06': 'https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/d4/meralco-doc-d405a608726a2569.pdf',
-  '2026-10': 'https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf',
-};
+// Where each PDF came from, written by fetch_rates.mjs (file names are random for some months).
+const URLS = existsSync('data/rates_pdfs/sources.json') ? JSON.parse(readFileSync('data/rates_pdfs/sources.json', 'utf8')) : {};
 
 const rates = {};
 for (const f of readdirSync('data/rates_pdfs').filter(f => f.endsWith('.pdf')).sort()) {
@@ -45,7 +38,7 @@ for (const f of readdirSync('data/rates_pdfs').filter(f => f.endsWith('.pdf')).s
   const header = lines.find(l => l[0] === 'kWh' && l[1] === 'Generation')?.join(' ');
   const cols = LAYOUTS[header];
   if (!cols) throw new Error(`${f}: unknown column layout, add it to LAYOUTS:\n${header}`);
-  const out = { source_url: URLS[month] ?? `https://www.meralco.com.ph/uploads/documents/regulatory/rates/${month}/${month.slice(5)}-${month.slice(0, 4)}-residential-bills.pdf`,
+  const out = { source_url: URLS[month]?.typical ?? `https://www.meralco.com.ph/uploads/documents/regulatory/rates/${month}/${month.slice(5)}-${month.slice(0, 4)}-residential-bills.pdf`,
     lft_assumed: 0.005, fixed: {}, non_lifeline: {}, lifeline: {} };
   let section = null, lifelineSeen = 0;
   for (const l of lines) {

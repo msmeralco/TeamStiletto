@@ -7,7 +7,6 @@ import { trackerPeriods, temps, fit, cdd, DAY } from '../www/lib/model.js';
 import { lookup, explain } from '../www/lib/explain.js';
 import { runChecks } from '../www/lib/checks.js';
 import { billingFlags, disputePacket } from '../www/lib/flags.js';
-import { ercPacket } from '../www/lib/disputes.js';
 
 let seed = 42;
 const rand = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
@@ -87,8 +86,7 @@ const packets = [
   packetFor({ ...good, can: '0000000001', current_reading: good.current_reading + 150 }, { keys: ['nothing'] }),
   packetFor({ ...lastMonthZero(good), can: '0000000002' }, { keys: ['nothing'] }),
   packetFor({ ...weak, can: '0000000003', days: 36 }, { keys: ['people'], note: 'Relatives stayed for two weeks.' }),
-  ercPacket({ sent: '2026-10-20', channel: 'My Meralco app', ref: 'SYN-0004',
-    packet: packetFor({ ...weak, can: '0000000004', total_amount_due: weak.total_amount_due + 480 }, { keys: ['away'] }) }, new Date(2026, 10, 12)),
+  packetFor({ ...weak, can: '0000000004', total_amount_due: weak.total_amount_due + 480 }, { keys: ['away'] }),
 ];
 writeFileSync('www/data/fixtures/SYNTHETIC_packets.json', JSON.stringify(packets, null, 1));
 writeFileSync('tests/SYNTHETIC_truth.json', JSON.stringify({ params: { b0: 6, b1: 1.5, bp: 27 }, good, weak }, null, 1));
