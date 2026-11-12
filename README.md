@@ -40,12 +40,35 @@ npm start            # http://localhost:8000  (case dashboard: /dashboard.html; 
 New rate month: drop its "Residential Bills at Typical Consumption Levels" PDF in `data/rates_pdfs/` and run `npm run rates`.
 If Meralco changed the columns again, the script stops and prints the header to add to `LAYOUTS`.
 
-## Chat model (optional, offline)
+## Demo laptop setup (everything runs on the GPU laptop)
 The "what changed at home?" chat reads answers with keyword rules first. Messages the rules can't read go to a local model
-through `npm start`; without it the chat still works on rules only. Tested target: i5-11400H, 16 GB RAM, RTX 3050 Ti (4 GB).
-1. Install Ollama (ollama.com), then `ollama pull qwen2.5:3b` (~1.9 GB, fits in 4 GB VRAM).
-2. `npm start`: it prints `Chat model qwen2.5:3b loaded (Ollama)` once the model is in GPU memory.
-3. Other model: `OLLAMA_MODEL=gemma3:4b npm start`. Avoid 7B+ on 4 GB VRAM: it spills to CPU and gets several times slower.
+(Ollama) through `npm start`; without Ollama the chat still works on rules only. Nothing goes to the cloud.
+Target laptop: i5-11400H, 16 GB RAM, RTX 3050 Ti (4 GB VRAM).
+
+**One-time install** (needs internet):
+1. Install [Git](https://git-scm.com), [Node.js 20 LTS](https://nodejs.org) and [Ollama](https://ollama.com).
+   Update the NVIDIA driver too: Ollama uses the GPU automatically when the driver is recent.
+2. Get the code and its dependencies:
+   ```
+   git clone https://github.com/msmeralco/TeamStiletto.git
+   cd TeamStiletto
+   npm install
+   ```
+   Rates, weather and Meralco advisories are already in the repo (`www/data/`); no fetch scripts are needed for the demo.
+3. Download the model (~1.9 GB, fits in 4 GB VRAM): `ollama pull qwen2.5:3b`
+
+**Each demo:**
+1. Make sure Ollama is running (its icon is in the system tray; start "Ollama" from the Start menu if not).
+2. In the `TeamStiletto` folder: `npm start`. Wait for both lines:
+   `TANAW on http://localhost:8000` and `Chat model qwen2.5:3b loaded (Ollama)`.
+   "Ollama not running" means step 1 was missed; "Ollama has no qwen2.5:3b" means the pull did not finish.
+3. Open `http://localhost:8000` (the app) and `http://localhost:8000/dashboard.html` (the case dashboard).
+4. Optional check that the GPU is used: after the first chat message, `ollama ps` should show `100% GPU`.
+
+Updating before a demo: `git pull`, then `npm install` if `package.json` changed. The model stays downloaded.
+Other model: PowerShell `$env:OLLAMA_MODEL="gemma3:4b"; npm start` (pull it first). Avoid 7B+ on 4 GB VRAM: it spills to the
+CPU and gets several times slower. Phones on the same Wi-Fi can open `http://<laptop IP from ipconfig>:8000` if Windows
+Firewall allows Node.js on the private network (it asks on the first `npm start`); without HTTPS the offline install is off.
 
 The model never sets watts or kWh: it only picks from the answer types and appliance list in `www/lib/chat.js`, and its
 output is checked again in the browser. Dispute files record `parser: "rules + qwen2.5:3b"` when the model read an answer.
