@@ -195,6 +195,7 @@
   "usage": {
    "estimated_last_bill_php": 3272.1268,
    "unexplained_change_php": -0.3511144862638389,
+   "unexplained_kwh": -0.023327231227292525,
    "share_of_last_bill": -0.00010730466993633587,
    "household_flag_limit": 0.23963133640552994
   },
@@ -202,8 +203,11 @@
    "changes": [
     "Nothing changed at home"
    ],
-   "note": null
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null
   },
+  "meralco_advisory": null,
   "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000001).\nCharges for this billing period: ₱3,747.32. Consumption: 243 kWh (previous reading 10000, current reading 10393).\n\nWhat I noticed:\n- Meter readings do not match the kWh billed (current − previous reading × multiplier): expected 393.00, the bill shows 243.00.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
  },
  {
@@ -402,6 +406,7 @@
   "usage": {
    "estimated_last_bill_php": 3556.7544000000003,
    "unexplained_change_php": -29.577758208328333,
+   "unexplained_kwh": -1.9650775798300746,
    "share_of_last_bill": -0.008315940568831047,
    "household_flag_limit": 0.2996941896024465
   },
@@ -409,8 +414,11 @@
    "changes": [
     "Nothing changed at home"
    ],
-   "note": null
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null
   },
+  "meralco_advisory": null,
   "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000002).\nCharges for this billing period: ₱3,747.32. Consumption: 243 kWh (previous reading 10000, current reading 10243).\n\nWhat I noticed:\n- Last month (2026-09) shows 0 kWh. This bill may include usage carried over from a missed or estimated reading.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
  },
  {
@@ -609,6 +617,7 @@
   "usage": {
    "estimated_last_bill_php": 4873.920899999999,
    "unexplained_change_php": -629.8092,
+   "unexplained_kwh": -41,
    "share_of_last_bill": -0.12922023416506415,
    "household_flag_limit": 0.1947565543071161
   },
@@ -616,8 +625,11 @@
    "changes": [
     "More people at home (guests, new member, work or school from home)"
    ],
-   "note": "Relatives stayed for two weeks."
+   "note": "Relatives stayed for two weeks.",
+   "gadgets": [],
+   "added_kwh": null
   },
+  "meralco_advisory": null,
   "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000003).\nCharges for this billing period: ₱4,253.34. Consumption: 276 kWh (previous reading 10000, current reading 10276).\n\nWhat I noticed:\n- This billing period is 36 days long; Meralco normally bills about every 30 days.\n\nChanges at home this period (my answers):\n- More people at home (guests, new member, work or school from home)\n- Relatives stayed for two weeks.\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
  },
  {
@@ -816,6 +828,7 @@
   "usage": {
    "estimated_last_bill_php": 4873.920899999999,
    "unexplained_change_php": -629.8092,
+   "unexplained_kwh": -41,
    "share_of_last_bill": -0.12922023416506415,
    "household_flag_limit": 0.1947565543071161
   },
@@ -823,8 +836,11 @@
    "changes": [
     "We were away or home less"
    ],
-   "note": null
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null
   },
+  "meralco_advisory": null,
   "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000004).\nCharges for this billing period: ₱4,253.34. Consumption: 276 kWh (previous reading 10000, current reading 10276).\n\nWhat I noticed:\n- Remaining balance + this period + installment do not add up to \"Total Amount Due\": expected 4253.34, the bill shows 4733.34.\n\nChanges at home this period (my answers):\n- We were away or home less\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you.",
   "meralco_follow_up": {
    "sent": "2026-10-20",

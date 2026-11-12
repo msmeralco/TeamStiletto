@@ -5,6 +5,7 @@ www/vendor/
 data/private/
 data/rates_pdfs/
 android/
+.opencode/
 
 # OS / editor
 .DS_Store
