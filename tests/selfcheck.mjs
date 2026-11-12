@@ -434,3 +434,18 @@ console.log('faqs OK');
   assert.match(step(startChat(), 'ano ang Meralco CAN?', ctx).reply, /^Meralco FAQ: "What is Meralco CAN\?"/);
 }
 console.log('faq vs bill fact OK');
+
+// Hot vs cool months chart: hotter half by each period's own mean temperature, averages weighted by days.
+{
+  const { heatSplit } = await import('../www/lib/model.js');
+  const T0 = Date.UTC(2025, 0, 1), day = 864e5, per = [[0, 30], [1, 26], [2, 32], [3, 24]].map(([i, t]) => ({ month: `2025-0${i + 1}`, start: T0 + i * 10 * day, end: T0 + (i * 10 + 9) * day, days: 10, kwh: t * 10, t }));
+  const h = heatSplit([...per].reverse(), ms => per.find(p => ms >= p.start && ms <= p.end).t);
+  assert.deepEqual(h.rows.map(r => r.month), ['2025-01', '2025-02', '2025-03', '2025-04'], 'bars in date order');
+  assert.deepEqual(h.rows.map(r => r.hot), [true, false, true, false]);
+  near(h.hot_kwh_per_day, 31, 1e-9, 'hot average'); near(h.cool_kwh_per_day, 25, 1e-9, 'cool average'); near(h.diff_share, 0.24, 1e-9, 'hot vs cool');
+  assert.equal(heatSplit([], () => 0).diff_share, null);
+  console.log('heat split OK');
+  const { isReset } = await import('../www/lib/chat.js');
+  assert.ok(['restart', ' Reset! ', 'Start over', 'simula ulit', 'ULITIN'].every(isReset), 'reset phrases');
+  assert.ok(!['wala', 'bumili kami ng aircon ulit', 'how do I restart my meter?', ''].some(isReset), 'normal messages are not resets');
+}

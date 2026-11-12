@@ -2,11 +2,11 @@ import * as pdfjs from './vendor/pdf.min.mjs';
 import { pdfLines } from './lib/extract.js';
 import { parseBill } from './lib/parse.js';
 import { runChecks } from './lib/checks.js';
-import { temps, trackerPeriods, fit, cdd, project } from './lib/model.js';
+import { temps, trackerPeriods, fit, cdd, project, heatSplit } from './lib/model.js';
 import { explain, validateRates } from './lib/explain.js';
 import { ocrLines } from './lib/ocr.js';
 import { billingFlags, disputeMessage, disputePacket, unexplainedIncrease, householdExplains, STRENGTH_TEXT } from './lib/flags.js';
-import { startChat, step, answersOf, needsModel, fromModel, isQuestion, fromModelPick, fromModelTopic, fromModelFaq, advisoryParas, billFacts } from './lib/chat.js';
+import { startChat, isReset, step, answersOf, needsModel, fromModel, isQuestion, fromModelPick, fromModelTopic, fromModelFaq, advisoryParas, billFacts } from './lib/chat.js';
 import { faqIndex, faqSearch } from './lib/faq.js';
 import { daysSince, caseKey, route, CHANNELS, FOLLOW_UP_DAYS } from './lib/disputes.js';
 
@@ -179,23 +179,25 @@ function renderResults() {
   startChatUI();
   renderFlags();
 
-  // fit chart: kWh/day vs CDD/day
-  const { x, y } = f.points, W = 320, H = 200, mx = Math.max(...x, 0.1) * 1.1, my = Math.max(...y) * 1.1;
-  const X = v => 30 + v / mx * (W - 40), Y = v => H - 20 - v / my * (H - 30);
-  $('#chart').innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily usage against cooling degree days">
-    <line x1="30" y1="${H - 20}" x2="${W - 10}" y2="${H - 20}" stroke="currentColor"/><line x1="30" y1="10" x2="30" y2="${H - 20}" stroke="currentColor"/>
-    <text x="${W / 2}" y="${H - 4}" font-size="10" fill="currentColor" text-anchor="middle">Cooler months  →  Hotter months</text>
-    <text x="4" y="12" font-size="10" fill="currentColor">↑ Electricity used per day (kWh)</text>
-    ${x.map((v, i) => `<circle cx="${X(v)}" cy="${Y(y[i])}" r="3.5" fill="#1e88e5"/>`).join('')}
-    ${f.baseload_kwh_per_day != null ? `<line x1="${X(0)}" y1="${Y(f.baseload_kwh_per_day)}" x2="${X(mx)}" y2="${Y(f.baseload_kwh_per_day + f.cooling_slope_kwh_per_cdd * mx)}" stroke="#e65c00" stroke-width="2"/>` : ''}
+  // Hot months vs cool months: one bar per past billing month, coloured by that month's heat. Reads fine even when usage doesn't follow the weather.
+  const h = heatSplit(per, T), W = 320, H = 190, n = h.rows.length, my = Math.max(...h.rows.map(x => x.kwh_per_day)) * 1.1 || 1;
+  const bw = (W - 34) / (n || 1), Y = v => H - 22 - v / my * (H - 36), MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const HOT = '#F26522', COOL = '#7C8A99', k1 = v => v.toFixed(1);
+  $('#chart').innerHTML = `<p class="heatnums"><span><i class="dot" style="background:${HOT}"></i>Hotter months<b>${h.hot_kwh_per_day == null ? 'n/a' : k1(h.hot_kwh_per_day) + ' kWh a day'}</b></span>
+    <span><i class="dot" style="background:${COOL}"></i>Cooler months<b>${h.cool_kwh_per_day == null ? 'n/a' : k1(h.cool_kwh_per_day) + ' kWh a day'}</b></span></p>
+    <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Electricity used per day in each past billing month, hotter months in orange and cooler months in grey">
+    <text x="0" y="10" font-size="10" fill="currentColor">Electricity used per day (kWh)</text>
+    <line x1="30" y1="${H - 22}" x2="${W}" y2="${H - 22}" stroke="currentColor"/>
+    <text x="26" y="${Y(my / 1.1) + 3}" font-size="9" fill="currentColor" text-anchor="end">${Math.round(my / 1.1)}</text><text x="26" y="${H - 19}" font-size="9" fill="currentColor" text-anchor="end">0</text>
+    ${h.rows.map((x, i) => `<rect x="${32 + i * bw + bw * .12}" y="${Y(x.kwh_per_day)}" width="${bw * .76}" height="${H - 22 - Y(x.kwh_per_day)}" rx="2" fill="${x.hot ? HOT : COOL}"><title>${esc(x.month)}: ${k1(x.kwh_per_day)} kWh a day, average ${k1(x.temp_c)} °C</title></rect>
+      <text x="${32 + i * bw + bw / 2}" y="${H - 10}" font-size="9" fill="currentColor" text-anchor="middle">${MON[+x.month.slice(5) - 1].slice(0, n > 12 ? 1 : 3)}</text>`).join('')}
   </svg>`;
-  const hasLine = f.baseload_kwh_per_day != null;
-  $('#fitinfo').innerHTML = `<b>How to read this:</b> each blue dot is one past billing month. The higher the dot, the more electricity you used per day. The further right, the hotter that month was.` +
-    (hasLine ? ` The orange line shows your usual pattern: how your usage climbs when it gets hotter.` : '') +
-    `<br><b>What it means:</b> ` + (hasLine
-      ? `Even on cool days your home uses about ${f.baseload_kwh_per_day.toFixed(1)} kWh a day (fridge, lights, router). For every degree the day is above ${f.balance_point_c} °C, you use about ${f.cooling_slope_kwh_per_cdd.toFixed(2)} kWh more, mostly aircon and fans. If your dots sit close to the line, a high bill in a hot month is likely the heat, not a billing mistake.`
-      : `The dots don't line up with the heat closely enough to draw a trend line. That means weather alone doesn't explain your usage, so something else (a new appliance, more people at home) may matter more.`) +
-    `<br><small>${esc(f.reason)}</small>`;
+  const d = h.diff_share;
+  $('#fitinfo').innerHTML = `<b>What it means:</b> ` + (d == null ? 'There are not enough past months on this bill to compare hot and cool months.'
+    : Math.abs(d) < 0.05 ? 'You use about the same electricity in hot and cool months, so heat is not what drives your bill. Something else (appliances, people at home) matters more.'
+    : d > 0 ? `You use about ${Math.round(d * 100)}% more electricity in your hotter months, mostly aircon and fans. A higher bill in a hot month is likely the heat, not a billing mistake.`
+    : `You use about ${Math.round(-d * 100)}% less electricity in your hotter months, so heat is not what pushes your bill up. Something else (appliances, people at home) matters more.`) +
+    `<br><b>How to read this:</b> each bar is one past billing month. Orange bars are the hotter half of your months (average above ${k1(h.median_c)} °C), grey bars the cooler half.`;
 
   $('#proj').textContent = proj.mid == null ? proj.label
     : `${proj.low != null ? `${peso(proj.low)} to ${peso(proj.high)} (middle ${peso(proj.mid)})` : `About ${peso(proj.mid)}`}, about ${Math.round(proj.kwh)} kWh. ${proj.label}` +
@@ -228,7 +230,8 @@ function startChatUI() {
   say('bot', `Hi! ${analysis.r.bill_change_php >= 0 ? 'Tumaas' : 'Bumaba'} ng ${peso(Math.abs(analysis.r.bill_change_php))} ang bill mo.` +
     (php > 0 ? ` Mga ${Math.round(kwh)} kWh (${peso(php)}) dito ang hindi maipaliwanag ng init ng panahon o haba ng billing period.` : '') +
     '\nMay nagbago ba sa bahay? Halimbawa: "bumili kami ng aircon", "nag-WFH ako", "umuwi kami ng probinsya", o "wala".' +
-    '\nPuwede ka ring magtanong, hal. "bakit tumaas ang generation charge?" o "saan makikita ang CAN ko?"');
+    '\nPuwede ka ring magtanong, hal. "bakit tumaas ang generation charge?" o "saan makikita ang CAN ko?"' +
+    '\nGusto mong magsimula ulit? I-type ang "restart".');
 }
 // Local model (Ollama behind npm start) only for messages the rules can't read. One failure = rules only for this session.
 let modelOff = !!window.Capacitor?.isNativePlatform?.();
@@ -264,6 +267,7 @@ $('#chatform').onsubmit = async e => {
   const t = $('#chatin').value;
   if (!t.trim() || !analysis || $('#chatin').disabled) return;
   $('#chatin').value = '';
+  if (isReset(t)) { startChatUI(); renderFlags(); return; } // back to the first question; the dispute section follows the empty answers
   say('me', t);
   $('#chatin').disabled = true;
   say('bot typing', '…');

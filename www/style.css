@@ -125,3 +125,6 @@ svg.chart { width: 100%; max-width: 420px; height: auto; }
 @keyframes introFade { from { opacity: 0; transform: translateY(8px); } }
 @keyframes introWire { from { transform: translateX(-100%); } to { transform: translateX(230vw); } }
 @media (prefers-reduced-motion: reduce) { #intro { display: none; } }
+.heatnums { display: flex; gap: 12px; margin: 0 0 10px; }
+.heatnums span { flex: 1; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; font-size: 13px; color: var(--muted); }
+.heatnums b { display: block; margin-top: 2px; font-size: 17px; color: var(--fg); }

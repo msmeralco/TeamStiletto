@@ -286,6 +286,8 @@ export function answersOf(s, days) {
   };
 }
 
+// Whole message only, so "ulit" inside a normal sentence does not wipe the chat.
+export const isReset = t => /^(restart|reset|start over|start again|new chat|clear|simula ulit|magsimula ulit|simula tayo ulit|ulitin|bagong chat)[.!s]*$/i.test(t.trim());
 export const startChat = () => ({ keys: [], gadgets: [], notes: [], unanswered: [], unquantified: false, ask: 'open', pending: null });
 const label = g => `${g.count > 1 ? g.count + ' × ' : ''}${g.name}`;
 const STOP = new Set(['bakit', 'why', 'what', 'paano', 'ang', 'ano', 'yung', 'mga', 'this', 'that', 'month', 'ngayon', 'buwan', 'mataas', 'tumaas', 'bill', 'ko', 'namin', 'there']);

@@ -90,3 +90,18 @@ export function project(per, T, f, R1, F1) {
     label: "Typical weather for these dates, at this month's rates. Not a weather forecast.",
   };
 }
+
+// Chart only: split past months into hotter and cooler halves by each period's mean temperature (this household's own median).
+// shortcut: "hotter" is relative to the months printed on the bill, not a fixed temperature.
+export function heatSplit(per, T) {
+  const rows = [...per].sort((a, b) => a.start - b.start).map(p => {
+    let t = 0;
+    for (let d = p.start; d <= p.end; d += DAY) t += T(d);
+    return { month: p.month, days: p.days, kwh: p.kwh, kwh_per_day: p.kwh / p.days, temp_c: t / p.days };
+  });
+  const s = rows.map(r => r.temp_c).sort((a, b) => a - b), median = s.length ? (s[(s.length - 1) >> 1] + s[s.length >> 1]) / 2 : 0;
+  for (const r of rows) r.hot = r.temp_c > median;
+  const avg = hot => { const g = rows.filter(r => r.hot === hot); return g.length ? sum(g.map(r => r.kwh)) / sum(g.map(r => r.days)) : null; };
+  const hot = avg(true), cool = avg(false);
+  return { rows, median_c: median, hot_kwh_per_day: hot, cool_kwh_per_day: cool, diff_share: hot != null && cool ? hot / cool - 1 : null };
+}
