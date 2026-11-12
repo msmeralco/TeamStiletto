@@ -99,14 +99,15 @@ function renderConfirm() {
   if (ocr) $('#ocrnote').textContent = `Read from your photo by PaddleOCR: ${ocr.clear} of ${ocr.total} pieces of text were clear. Yellow fields were blurry: please check them against your paper bill.`;
   $('#fields').innerHTML =
     `<div class="grid2">${SCALARS.map(([k, l]) => `<label class="f"><span>${esc(l)}${low(bill[k]) ? ' <em>· please check</em>' : ''}</span>
-       <input data-k="${k}" class="${low(bill[k]) ? 'low' : ''}" value="${esc(bill[k] ?? '')}"></label>`).join('')}</div>
+       <input data-k="${k}" ${k.startsWith('period') ? 'type="date"' : 'inputmode="decimal"'} class="${low(bill[k]) ? 'low' : ''}" value="${esc(bill[k] ?? '')}"></label>`).join('')}</div>
      <h3>Charges</h3><table>${bill.charges.map((c, i) => row(c.label, `data-c="${i}" inputmode="decimal"`, c.amount_php)).join('')}</table>
      <h3>Monthly Consumption Tracker (${bill.tracker.length} months, kWh)</h3>
      <div id="bars" class="bars" aria-hidden="true"></div>
      <div class="axis"><span>${esc(bill.tracker[0]?.month ?? '')}</span><span>${esc(bill.tracker.at(-1)?.month ?? '')}</span></div>
      <details><summary>Edit tracker months</summary>
        <table>${bill.tracker.map((t, i) => row(t.month, `data-t="${i}" inputmode="decimal"`, t.kwh)).join('')}</table></details>`;
-  renderChecks();
+  // All checks pass on a PDF: the numbers stay one tap away. A failed check or a photo opens them, since those need a look.
+  $('#editbox').open = renderChecks() > 0 || !!ocr;
 }
 
 function renderChecks() {
@@ -122,6 +123,11 @@ function renderChecks() {
     bad.has(el.dataset.k) || (el.dataset.c && bad.has('charges')) || (el.dataset.t == bill.tracker.length - 1 && bad.has('tracker'))));
   const max = Math.max(1, ...bill.tracker.map(t => t.kwh || 0));
   $('#bars').innerHTML = bill.tracker.map(t => `<i style="height:${100 * (t.kwh || 0) / max}%"></i>`).join('');
+  const num = v => (Number.isFinite(v) ? v : '?'), nw = v => `<span class="nw">${esc(v || '?')}</span>`; // a date must not break at its hyphen
+  $('#readsum').innerHTML = [['Billing period', `${nw(bill.period_start)} to ${nw(bill.period_end)}`], ['Electricity used', esc(`${num(bill.kwh)} kWh`)],
+    ['Charges this period', esc(Number.isFinite(bill.charges_this_period) ? peso(bill.charges_this_period, 2) : '?')]]
+    .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+  return failed.length;
 }
 
 $('#fields').oninput = e => {
@@ -147,6 +153,62 @@ $('#go').onclick = () => {
 };
 
 const CAUSE = { usage: '#1e88e5', rates: '#26a69a' };
+
+// ---------- hot vs cool months chart: tap a bar for that month, or a card for the months in that group ----------
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const HOT = '#F26522', COOL = '#7C8A99', k1 = v => v.toFixed(1);
+const monthName = m => `${MONTH_FULL[+m.slice(5) - 1]} ${m.slice(0, 4)}`;
+let heat; // { h: heatSplit(...), sel: null | { i: bar index } | { g: 'hot' | 'cool' } }
+
+function heatDetail() {
+  const { h, sel } = heat;
+  if (!h.rows.length) return '';
+  const avg = h.rows.reduce((s, r) => s + r.kwh, 0) / h.rows.reduce((s, r) => s + r.days, 0);
+  const vs = (v, base, what) => { const p = Math.round((v / base - 1) * 100); return p === 0 ? `the same as ${what}` : `${Math.abs(p)}% ${p > 0 ? 'above' : 'below'} ${what}`; };
+  if (sel?.i != null) {
+    const r = h.rows[sel.i], grp = r.hot ? h.hot_kwh_per_day : h.cool_kwh_per_day;
+    return `<b><i class="dot" style="background:${r.hot ? HOT : COOL}"></i>${esc(monthName(r.month))}: ${r.hot ? 'a hotter month' : 'a cooler month'}</b>
+      <br>${k1(r.kwh_per_day)} kWh a day (${Math.round(r.kwh)} kWh over ${r.days} days), average ${k1(r.temp_c)} °C.
+      <br>That is ${vs(r.kwh_per_day, avg, 'your average month')}, and ${vs(r.kwh_per_day, grp, `the average ${r.hot ? 'hotter' : 'cooler'} month`)}.`;
+  }
+  if (sel?.g) {
+    const hot = sel.g === 'hot', list = h.rows.map((r, i) => ({ r, i })).filter(x => x.r.hot === hot);
+    return `<b><i class="dot" style="background:${hot ? HOT : COOL}"></i>${hot ? 'Hotter' : 'Cooler'} months (average ${hot ? 'above' : 'at or below'} ${k1(h.median_c)} °C)</b>
+      <ul class="heatlist">${list.map(({ r, i }) => `<li><button type="button" class="link" data-i="${i}">${esc(monthName(r.month))}</button>
+        <span>${k1(r.kwh_per_day)} kWh a day, ${k1(r.temp_c)} °C</span></li>`).join('')}</ul>`;
+  }
+  return '<span class="hint">Tap a bar to see that month, or a card to list the hotter or cooler months.</span>';
+}
+
+function drawHeat() {
+  const { h, sel } = heat, W = 320, H = 190, n = h.rows.length, my = Math.max(...h.rows.map(x => x.kwh_per_day)) * 1.1 || 1;
+  const bw = (W - 34) / (n || 1), Y = v => H - 22 - v / my * (H - 36);
+  const lit = (r, i) => !sel || (sel.i != null ? sel.i === i : sel.g === (r.hot ? 'hot' : 'cool'));
+  $('#chart').innerHTML = `<div class="heatnums">${[['hot', 'Hotter months', HOT, h.hot_kwh_per_day], ['cool', 'Cooler months', COOL, h.cool_kwh_per_day]].map(([g, label, c, v]) =>
+    `<button type="button" class="heatcard" data-g="${g}" aria-pressed="${sel?.g === g}"><span><i class="dot" style="background:${c}"></i>${label}</span><b>${v == null ? 'n/a' : k1(v) + ' kWh a day'}</b></button>`).join('')}</div>
+    <svg class="chart" viewBox="0 0 ${W} ${H}" role="group" aria-label="Electricity used per day in each past billing month, hotter months in orange and cooler months in grey">
+    <text x="0" y="10" font-size="10" fill="currentColor">Electricity used per day (kWh)</text>
+    <line x1="30" y1="${H - 22}" x2="${W}" y2="${H - 22}" stroke="currentColor"/>
+    <text x="26" y="${Y(my / 1.1) + 3}" font-size="9" fill="currentColor" text-anchor="end">${Math.round(my / 1.1)}</text><text x="26" y="${H - 19}" font-size="9" fill="currentColor" text-anchor="end">0</text>
+    ${h.rows.map((x, i) => `<g class="hbar" data-i="${i}" tabindex="0" role="button" aria-pressed="${sel?.i === i}" opacity="${lit(x, i) ? 1 : .3}"
+      aria-label="${esc(monthName(x.month))}: ${k1(x.kwh_per_day)} kWh a day, ${x.hot ? 'hotter' : 'cooler'} month">
+      <rect x="${32 + i * bw}" y="14" width="${bw}" height="${H - 36}" fill="transparent"/>
+      <rect x="${32 + i * bw + bw * .12}" y="${Y(x.kwh_per_day)}" width="${bw * .76}" height="${H - 22 - Y(x.kwh_per_day)}" rx="2" fill="${x.hot ? HOT : COOL}" stroke="${sel?.i === i ? 'currentColor' : 'none'}" stroke-width="2"/>
+      <text x="${32 + i * bw + bw / 2}" y="${H - 10}" font-size="9" fill="currentColor" text-anchor="middle">${MON[+x.month.slice(5) - 1].slice(0, n > 12 ? 1 : 3)}</text></g>`).join('')}
+  </svg>
+  <div class="heatdetail" role="status" aria-live="polite">${heatDetail()}</div>`;
+  const back = sel?.i != null ? `[data-i="${sel.i}"]` : sel?.g ? `[data-g="${sel.g}"]` : null; // a redraw would drop keyboard focus
+  if (back && $('#chart').contains(document.activeElement) === false) $(`#chart ${back}`)?.focus({ preventScroll: true });
+}
+$('#chart').onclick = e => {
+  const t = e.target.closest('[data-i],[data-g]');
+  if (!t) return;
+  const next = t.dataset.i != null ? { i: +t.dataset.i } : { g: t.dataset.g };
+  heat.sel = JSON.stringify(next) === JSON.stringify(heat.sel) ? null : next; // tap the same one again to close it
+  drawHeat();
+};
+$('#chart').onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.hbar')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); } };
 
 function renderResults() {
   const { per, f, r, proj } = analysis, s = r.summary, signed = (v, d = 0) => (v >= 0 ? '+' : '') + peso(v, d);
@@ -180,24 +242,14 @@ function renderResults() {
   renderFlags();
 
   // Hot months vs cool months: one bar per past billing month, coloured by that month's heat. Reads fine even when usage doesn't follow the weather.
-  const h = heatSplit(per, T), W = 320, H = 190, n = h.rows.length, my = Math.max(...h.rows.map(x => x.kwh_per_day)) * 1.1 || 1;
-  const bw = (W - 34) / (n || 1), Y = v => H - 22 - v / my * (H - 36), MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const HOT = '#F26522', COOL = '#7C8A99', k1 = v => v.toFixed(1);
-  $('#chart').innerHTML = `<p class="heatnums"><span><i class="dot" style="background:${HOT}"></i>Hotter months<b>${h.hot_kwh_per_day == null ? 'n/a' : k1(h.hot_kwh_per_day) + ' kWh a day'}</b></span>
-    <span><i class="dot" style="background:${COOL}"></i>Cooler months<b>${h.cool_kwh_per_day == null ? 'n/a' : k1(h.cool_kwh_per_day) + ' kWh a day'}</b></span></p>
-    <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Electricity used per day in each past billing month, hotter months in orange and cooler months in grey">
-    <text x="0" y="10" font-size="10" fill="currentColor">Electricity used per day (kWh)</text>
-    <line x1="30" y1="${H - 22}" x2="${W}" y2="${H - 22}" stroke="currentColor"/>
-    <text x="26" y="${Y(my / 1.1) + 3}" font-size="9" fill="currentColor" text-anchor="end">${Math.round(my / 1.1)}</text><text x="26" y="${H - 19}" font-size="9" fill="currentColor" text-anchor="end">0</text>
-    ${h.rows.map((x, i) => `<rect x="${32 + i * bw + bw * .12}" y="${Y(x.kwh_per_day)}" width="${bw * .76}" height="${H - 22 - Y(x.kwh_per_day)}" rx="2" fill="${x.hot ? HOT : COOL}"><title>${esc(x.month)}: ${k1(x.kwh_per_day)} kWh a day, average ${k1(x.temp_c)} °C</title></rect>
-      <text x="${32 + i * bw + bw / 2}" y="${H - 10}" font-size="9" fill="currentColor" text-anchor="middle">${MON[+x.month.slice(5) - 1].slice(0, n > 12 ? 1 : 3)}</text>`).join('')}
-  </svg>`;
-  const d = h.diff_share;
+  heat = { h: heatSplit(per, T), sel: null };
+  drawHeat();
+  const h = heat.h, d = h.diff_share;
   $('#fitinfo').innerHTML = `<b>What it means:</b> ` + (d == null ? 'There are not enough past months on this bill to compare hot and cool months.'
     : Math.abs(d) < 0.05 ? 'You use about the same electricity in hot and cool months, so heat is not what drives your bill. Something else (appliances, people at home) matters more.'
     : d > 0 ? `You use about ${Math.round(d * 100)}% more electricity in your hotter months, mostly aircon and fans. A higher bill in a hot month is likely the heat, not a billing mistake.`
     : `You use about ${Math.round(-d * 100)}% less electricity in your hotter months, so heat is not what pushes your bill up. Something else (appliances, people at home) matters more.`) +
-    `<br><b>How to read this:</b> each bar is one past billing month. Orange bars are the hotter half of your months (average above ${k1(h.median_c)} °C), grey bars the cooler half.`;
+    `<br><b>How to read this:</b> each bar is one past billing month. Orange bars are the hotter half of your months (average above ${k1(h.median_c)} °C), grey bars the cooler half. Tap a bar for that month, or a card to list those months.`;
 
   $('#proj').textContent = proj.mid == null ? proj.label
     : `${proj.low != null ? `${peso(proj.low)} to ${peso(proj.high)} (middle ${peso(proj.mid)})` : `About ${peso(proj.mid)}`}, about ${Math.round(proj.kwh)} kWh. ${proj.label}` +
@@ -300,16 +352,21 @@ function renderFlags() {
   const explained = u.php > 0 && householdExplains(u, a)
     ? `<p class="note">Your answers may explain the ${peso(u.php)} rise in usage, so a dispute is less likely to help.</p>` : '';
   const way = route(packet), ticket = way.to === 'meralco';
+  // No ticket needed: the message and send options sit one tap away (still always offered). Keep it open across chat re-renders.
+  const open = ticket || $('#escalate')?.open;
   $('#flags').innerHTML = explained + (`${flags.length ? `<p><b>Evidence strength: ${esc(STRENGTH_TEXT[packet.strength])}</b></p>` : ''}
        ${flags.map(f => `<div class="card flag"><span class="badge ${esc(f.strength)}">${esc(f.strength)}</span><span>${esc(f.text)}</span></div>`).join('')}
        <p class="note">${ticket
          ? `<b>This needs Meralco.</b> ${esc(way.why)} Review the message below, then send it as a ticket.`
-         : `<b>No Meralco ticket needed.</b> ${esc(way.why)} You can still send it: it is filed as handled by the chatbot, and Meralco staff can move it to a ticket.`}</p>
-       <textarea id="dispute" rows="12" aria-label="Message to Meralco">${esc(disputeMessage(bill, flags, a))}</textarea>
-       <button id="send" class="${ticket ? 'primary' : ''}">${ticket ? 'Send ticket to Meralco' : 'Send anyway'}</button>
+         : `<b>No Meralco ticket needed.</b> ${esc(way.why)}`}</p>
+       <details id="escalate" ${open ? 'open' : ''}><summary>${ticket ? 'Message to Meralco' : 'Still want Meralco to review it?'}</summary>
+       ${ticket ? '' : '<p class="hint">You can still send it: it is filed as handled by the chatbot, and Meralco staff can move it to a ticket.</p>'}
+       <textarea id="dispute" rows="10" aria-label="Message to Meralco">${esc(disputeMessage(bill, flags, a))}</textarea>
+       <button id="send" class="${ticket ? 'primary' : 'wide'}">${ticket ? 'Send ticket to Meralco' : 'Send anyway'}</button>
        <p class="hint">Sends this message and an evidence file (your account number, readings, charges and answers) to the TANAW case dashboard,
-       a demo that is not connected to a real Meralco system, and saves it in My disputes.
-       <button id="share" class="link">Send it yourself instead</button> · <button id="copy" class="link">Copy the message only</button></p>
+       a demo that is not connected to a real Meralco system, and saves it in My disputes.</p>
+       <div class="samples"><button id="share">Send it yourself</button><button id="copy">Copy message</button></div>
+       </details>
        <details id="track"><summary>Sent it yourself? Record how, and Meralco's reference number</summary>
          <label>How did you send it? <select id="channel">${CHANNELS.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>
          <label>Date sent <input id="sent" type="date" value="${today()}"></label>

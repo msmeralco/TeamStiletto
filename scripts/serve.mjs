@@ -5,6 +5,7 @@
 // shortcut: no login and one local JSON file; a real Meralco inbox needs authentication, HTTPS and a database.
 import { createServer } from 'node:http';
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
+import { readdirSync } from 'node:fs';
 import { extname, resolve, sep, join } from 'node:path';
 import { spawn, execFile } from 'node:child_process';
 import { createInterface } from 'node:readline';
@@ -68,7 +69,10 @@ async function caseStatus(req, res) {
 let ocrPy = null, ocrProc = null, ocrWaiting = null, ocrQueue = Promise.resolve();
 const ocrReady = (async () => {
   // Not the Windows "py" launcher: started from a background process it can take the whole server down. Set OCR_PYTHON instead.
-  for (const py of process.env.OCR_PYTHON ? [process.env.OCR_PYTHON] : ['python', 'python3']) {
+  // On Windows, "python" is often the Microsoft Store stub, so try the python.org install folders (Python312 and so on) first.
+  const base = process.env.LOCALAPPDATA && join(process.env.LOCALAPPDATA, 'Programs', 'Python');
+  const installed = base ? (() => { try { return readdirSync(base).sort().reverse().map(d => join(base, d, 'python.exe')); } catch { return []; } })() : [];
+  for (const py of process.env.OCR_PYTHON ? [process.env.OCR_PYTHON] : [...installed, 'python', 'python3']) {
     const ok = await new Promise(done => execFile(py, ['scripts/ocr.py', '--check'], { timeout: 60000 }, (e, out) => done(!e && /ok/.test(out))));
     if (ok) return (ocrPy = py);
   }

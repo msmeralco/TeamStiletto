@@ -13,6 +13,9 @@ a, .link { color: var(--brand-ink); }
 button, select, input, textarea { font: inherit; color: inherit; }
 button { min-height: 44px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); font-weight: 600; cursor: pointer; }
 button:disabled { opacity: .55; cursor: default; }
+button, .primary, .rowbtn, .drop, summary { -webkit-tap-highlight-color: transparent; transition: transform .1s, background-color .15s; }
+button:not(:disabled):active, .primary:active, .rowbtn:active, .drop:active { transform: scale(.98); } /* press feedback on touch */
+button.wide { width: 100%; }
 :focus-visible, label:focus-within { outline: 3px solid var(--fg); outline-offset: 2px; }
 input:focus-visible, textarea:focus-visible, select:focus-visible { outline-offset: 0; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } /* focusable, unlike [hidden] */
@@ -61,9 +64,16 @@ input:focus-visible, textarea:focus-visible, select:focus-visible { outline-offs
 .checks li::before { content: "✓ "; font-weight: 700; } .checks li.fail::before { content: "✗ "; }
 .checks li.fail { font-weight: 700; }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 14px; }
-.f { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); }
+.f { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); }
 .f em { font-style: normal; color: var(--warn); }
-input, textarea, select { width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); font-size: 15px; }
+/* 16px: iOS Safari zooms the whole page into any smaller input on focus */
+input, textarea, select { width: 100%; min-height: 44px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); font-size: 16px; }
+.readsum { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0 0; }
+.readsum div { background: var(--soft); border-radius: 12px; padding: 10px 14px; }
+.readsum dt { font-size: 13px; color: var(--muted); font-weight: 600; } .readsum dd { margin: 2px 0 0; font-size: 17px; font-weight: 700; }
+#editbox > summary, #escalate > summary { min-height: 44px; }
+.nw { white-space: nowrap; }
+#escalate .samples { margin-top: 4px; }
 input[type=checkbox] { width: auto; }
 input.low { border-color: var(--warnline); background: var(--warnbg); }
 input.bad { border-color: var(--bad); background: var(--badbg); }
@@ -99,7 +109,7 @@ details label { display: block; padding: 4px 0; font-size: 13px; }
 #chatform button { flex: none; background: var(--fg); color: var(--bg); border: 0; }
 .flag { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
 .flag .badge { flex: none; margin-top: 2px; }
-#dispute { margin: 10px 0; font-size: 14px; }
+#dispute { margin: 10px 0; }
 #proj { background: var(--tint); border-radius: 12px; padding: 14px; font-weight: 600; }
 #sources, pre { overflow-wrap: anywhere; font-size: 13px; } /* long Meralco URLs must not widen the page on a phone */
 svg.chart { width: 100%; max-width: 420px; height: auto; }
@@ -126,5 +136,11 @@ svg.chart { width: 100%; max-width: 420px; height: auto; }
 @keyframes introWire { from { transform: translateX(-100%); } to { transform: translateX(230vw); } }
 @media (prefers-reduced-motion: reduce) { #intro { display: none; } }
 .heatnums { display: flex; gap: 12px; margin: 0 0 10px; }
-.heatnums span { flex: 1; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 12px; font-size: 13px; color: var(--muted); }
-.heatnums b { display: block; margin-top: 2px; font-size: 17px; color: var(--fg); }
+.heatcard { flex: 1; display: block; padding: 10px 12px; text-align: left; font-weight: 400; font-size: 13px; color: var(--muted); border-radius: 12px; }
+.heatcard[aria-pressed="true"] { border-color: var(--brand); background: var(--tint); }
+.heatcard b { display: block; margin-top: 2px; font-size: 17px; color: var(--fg); }
+.hbar { cursor: pointer; transition: opacity .15s; } .hbar:focus-visible { outline: 3px solid var(--fg); outline-offset: 1px; }
+.heatdetail { margin: 8px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--soft); font-size: 14px; }
+.heatlist { list-style: none; margin: 8px 0 0; padding: 0; max-height: 264px; overflow-y: auto; }
+.heatlist li { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 44px; border-top: 1px solid var(--line); }
+.heatlist span { color: var(--muted); font-size: 13px; text-align: right; }
