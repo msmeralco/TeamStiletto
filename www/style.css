@@ -81,10 +81,9 @@ details label { display: block; padding: 4px 0; font-size: 13px; }
 .sticky { position: sticky; bottom: 0; background: var(--bg); padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); margin-top: 16px; }
 
 /* 3. results */
-.hero { background: var(--brand); color: #111; margin: -16px -16px 16px; padding: 4px 16px 20px; }
-.hero > * { max-width: 688px; margin-left: auto; margin-right: auto; }
-.big { font-size: 21px; font-weight: 700; line-height: 1.3; margin-top: 0; }
-.fromto { margin: 4px 0 0; font-weight: 600; }
+.hero { background: var(--tint); border: 1.5px solid var(--brand); border-radius: 16px; margin: 4px 0 16px; padding: 18px 20px; }
+.big { font-size: 24px; font-weight: 800; line-height: 1.25; letter-spacing: -.3px; margin: 0; }
+.fromto { margin: 6px 0 0; color: var(--muted); font-weight: 600; }
 .cause { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .cause b { display: block; } .cause .amt { font-size: 18px; white-space: nowrap; }
 .cause .hint { display: block; margin-top: 2px; }
@@ -105,3 +104,25 @@ details label { display: block; padding: 4px 0; font-size: 13px; }
 #proj { background: var(--tint); border-radius: 12px; padding: 14px; font-weight: 600; }
 #sources, pre { overflow-wrap: anywhere; font-size: 13px; } /* long Meralco URLs must not widen the page on a phone */
 svg.chart { width: 100%; max-width: 420px; height: auto; }
+
+/* Opening animation: logo + wordmark, power-line stripes, then panel and curtain lift at different speeds (parallax). Tap to skip. */
+#intro { position: fixed; inset: 0; z-index: 100; overflow: hidden; cursor: pointer; }
+#intro .curtain, #intro .panel { position: absolute; inset: 0; animation: introUp .8s cubic-bezier(.76,0,.24,1) 1.9s forwards; }
+#intro .curtain { background: var(--brand); animation-delay: 2.08s; }
+#intro .panel { background: #111; display: grid; place-items: center; }
+#intro .mark { display: grid; justify-items: center; gap: 10px; color: #fff; text-align: center; animation: introLift .8s cubic-bezier(.76,0,.24,1) 1.9s forwards; }
+#intro svg { animation: introPop .7s cubic-bezier(.34,1.56,.64,1) .1s both; }
+#intro b { display: flex; overflow: hidden; font-size: 44px; font-weight: 800; letter-spacing: 4px; line-height: 1.1; }
+#intro b span { display: block; animation: introRise .6s cubic-bezier(.22,1,.36,1) calc(.45s + var(--i) * 60ms) both; }
+#intro small { font-size: 15px; color: #FFB48A; animation: introFade .6s ease .95s both; }
+#intro .wire { position: absolute; left: 0; height: 2px; width: 45vw; background: linear-gradient(90deg, transparent, var(--brand)); animation: introWire 1.6s cubic-bezier(.45,0,.2,1) both; }
+#intro .w1 { top: 22%; animation-delay: .05s; }
+#intro .w2 { top: 74%; height: 3px; animation-duration: 1.2s; animation-delay: .25s; }
+#intro .w3 { top: 84%; height: 1px; animation-duration: 2s; opacity: .6; }
+@keyframes introUp { to { transform: translateY(-100%); } }
+@keyframes introLift { to { transform: translateY(-35vh); opacity: 0; } }
+@keyframes introPop { from { transform: scale(.4) rotate(-90deg); opacity: 0; } }
+@keyframes introRise { from { transform: translateY(110%); } }
+@keyframes introFade { from { opacity: 0; transform: translateY(8px); } }
+@keyframes introWire { from { transform: translateX(-100%); } to { transform: translateX(230vw); } }
+@media (prefers-reduced-motion: reduce) { #intro { display: none; } }
