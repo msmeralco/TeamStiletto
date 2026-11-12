@@ -1,8 +1,33 @@
 # TANAW: why did my Meralco bill change?
 
+Meralco IDOL Hackathon 2026, Challenge 2 (Know Your Bill, Manage Your Usage).
+
 One codebase (`www/`), three ways to ship it: web app, Android app, iOS app. Everything runs on the device: no backend,
 no login, no network calls at runtime. Full design: [docs/tech_spec.md](docs/tech_spec.md).
 
+## What it does
+1. **Read the bill.** Open your My Meralco PDF statement (password-protected PDFs work too). TANAW reads every field and the 17-month usage tracker, runs 4 self-checks, and lets you correct anything before going on.
+2. **Explain the change.** It splits the change from last month into pesos: rate changes (real Meralco rate tables, Jan to Oct 2026), weather (real Metro Manila temperatures), and your own usage. It writes this up as a plain sentence and quotes Meralco's own advisory for the reason when one is available.
+3. **Project next month** from a usage model fitted to your tracker history.
+4. **Spot possible billing errors** (9 kinds of flag, each rated strong, medium or weak). A chat in English or Taglish asks "What changed at home?" (new aircon, guests, etc.) so real usage changes aren't mistaken for errors.
+5. **Send a dispute.** Your phone's share sheet sends a ready-made message plus a dispute file. **My disputes** keeps track of each one on the phone and, after 14 days without an answer, prepares an escalation to the ERC (Energy Regulatory Commission).
+6. **Staff triage dashboard** (`/dashboard.html`, a concept only: it isn't connected to any Meralco system). Load dispute files and they're sorted by flag strength, days waiting and bill amount.
+
+Not built yet: reading a photo of a paper bill or a scanned PDF (planned for v1.1), and a warning for lifeline and senior-citizen discount lines.
+The Android and iOS builds are set up but haven't been tested on a phone yet.
+
+## Project layout
+| Path | What's in it |
+|---|---|
+| `www/` | The app: `index.html`, `app.js`, `style.css`, web app files (`sw.js`, `manifest.webmanifest`, icons), staff `dashboard.*` |
+| `www/lib/` | `extract` (PDF to text) → `parse` (bill fields) → `checks` → `model` (usage model, projection) → `explain` (peso breakdown) → `flags` (billing errors, dispute file) → `disputes` (follow-up, ERC escalation); `chat` (What changed at home?), `solar` (outside Challenge 2) |
+| `www/data/` | `rates.json`, `weather.json`, `reasons.json`, and SYNTHETIC sample files in `fixtures/` |
+| `scripts/` | The data build scripts and the dev server (commands below) |
+| `tests/` | `selfcheck.mjs`, which is all of `npm test` |
+| `docs/tech_spec.md` | Technical spec that matches the code |
+| `requirements.md`, `tech_spec.md`, `hackathon_challenges.md` | Requirements, the earlier draft of the spec, the official challenge text |
+
+## Commands
 ```
 npm install          # also copies pdf.js (legacy build, for older phones) into www/vendor
 npm run rates        # data/rates_pdfs/*.pdf (Meralco, Jan-Oct 2026) -> www/data/rates.json
