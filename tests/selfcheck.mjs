@@ -449,3 +449,97 @@ console.log('faq vs bill fact OK');
   assert.ok(['restart', ' Reset! ', 'Start over', 'simula ulit', 'ULITIN'].every(isReset), 'reset phrases');
   assert.ok(!['wala', 'bumili kami ng aircon ulit', 'how do I restart my meter?', ''].some(isReset), 'normal messages are not resets');
 }
+
+// test_qa_edge_cases: regressions from the edge-case QA pass (2026-11-13)
+{
+  const { understand, step, startChat, answersOf, hoursIn, needsModel, isQuestion } = await import('../www/lib/chat.js');
+  const { billProblems } = await import('../www/lib/checks.js');
+  const { route, daysSince } = await import('../www/lib/disputes.js');
+  const { faqIndex } = await import('../www/lib/faq.js');
+  const { detectRateMonth } = await import('../www/lib/explain.js');
+  const k = t => understand(t).keys.join('+');
+  // a denied gadget is never recorded as a change at home (the answers become dispute evidence)
+  for (const t of ['hindi kami bumili ng aircon', 'we did NOT buy an aircon', 'wala kaming bagong aircon', 'no aircon', 'bumili kami ng 0 aircon']) {
+    const u = understand(t);
+    assert.deepEqual([u.keys, u.gadgets, u.negated], [[], [], true], t);
+    assert.ok(!needsModel(startChat(), t), `${t}: the model is not asked to re-read a denial`);
+  }
+  assert.equal(k('wala kami sa bahay, pero naka-on ang aircon'), 'away+aircon', 'a negation in another clause does not cancel the gadget');
+  assert.equal(k('nothing changed except the aircon'), 'aircon');
+  // "I don't know" is not "nothing changed", and does not end the chat
+  for (const t of ['hindi ko alam', 'no idea', 'di ko sure']) {
+    assert.equal(k(t), '', t);
+    assert.equal(step(startChat(), t, { sentence: 'x', days: 30 }).state.ask, 'open', t);
+  }
+  assert.equal(k('hindi'), 'nothing');
+  assert.equal(k('wala po'), 'nothing');
+  // counts and hours are clamped on the rules path too; the 2 of "2 hp" is not a count
+  const g = t => understand(t).gadgets[0];
+  assert.equal(g('bumili kami ng 100 aircon').count, 10);
+  assert.equal(g('bumili ng aircon 30 hours').hours, 24);
+  assert.equal(g('bumili ng 2 hp aircon').count, 1);
+  // hours without a model: number words, h:mm, capped at 24
+  assert.deepEqual(['walong oras', '8:30', '99', 'mga 2.5 hrs', 'buong araw', 'hmm'].map(hoursIn), [8, 8.5, 24, 2.5, 24, null]);
+  const ctx = { sentence: 'Your bill rose.', reason: null, days: 30, unexplained_kwh: 0 };
+  let s = step(startChat(), 'bumili kami ng aircon', ctx);
+  assert.ok(isQuestion(s.state, 'ano ang system loss?') && !isQuestion(s.state, '8'));
+  s = step(s.state, 'ano ang system loss?', ctx);
+  assert.equal(s.state.ask, 'hours', 'a question while waiting for hours is answered, then the hours are asked again');
+  assert.match(s.reply, /Balik tayo: ilang oras/);
+  s = step(s.state, 'walong oras', ctx);
+  assert.equal(answersOf(step(s.state, 'wala', ctx).state, 30).added_kwh, 216);
+  // confirm screen: cleared or impossible fields are named before the analysis runs
+  const ok = { period_start: '2026-09-15', period_end: '2026-10-14', kwh: 243, charges_this_period: 3747, charges: [{ label: 'Generation', amount_php: 2000 }], remaining_balance: 0 };
+  assert.deepEqual(billProblems(ok), []);
+  assert.equal(billProblems({ ...ok, kwh: NaN }).length, 1);
+  assert.equal(billProblems({ ...ok, kwh: 0, charges_this_period: NaN, period_start: '' }).length, 3);
+  assert.match(billProblems({ ...ok, period_start: ok.period_end, period_end: ok.period_start })[0], /ends before it starts/);
+  assert.match(billProblems({ ...ok, remaining_balance: NaN, charges: [{ label: 'Generation', amount_php: NaN }] })[0], /Remaining Balance, Generation/);
+  assert.throws(() => detectRateMonth(rates, { kwh: NaN, charges: [{ key: 'generation', amount_php: 2000 }] }), /kWh used/);
+  assert.throws(() => T(Date.parse('2031-01-01')), /saved weather covers/);
+  // a text PDF that is not a bill reads as "nothing found", not as 0 kWh
+  assert.equal(parseBill([{ y: 1, page: 1, items: [{ str: 'Hello world', x: 10 }] }]).kwh, null);
+  // untrusted dispute files and scraped FAQs cannot throw
+  assert.equal(route({ flags: [null, 'x', { strength: 'strong' }] }).to, 'meralco');
+  assert.equal(route({ flags: [null] }).to, 'chatbot');
+  assert.equal(faqIndex({ faqs: [{ q: 'no answer' }, null, { q: 'ok', answer: ['yes'], url: 'u', id: 1 }] }).docs.length, 1);
+  assert.equal(daysSince('abc'), 0);
+  assert.match(disputeMessage({ period_start: 'a', period_end: 'b', charges_this_period: 1, kwh: 1 }, [], { keys: ['bogus'] }), /- bogus/);
+}
+console.log('qa edge cases OK');
+
+// test_scenarios: each SYNTHETIC scenario bill (npm run scenarios) is read through the real pipeline and must still do what the catalogue
+// recorded, and the catalogue must cover every flag, every page-2 check, every model tier and both routes.
+{
+  const { analyse } = await import('../scripts/scenario_lib.mjs');
+  const { route } = await import('../www/lib/disputes.js');
+  const cat = json('www/data/fixtures/SYNTHETIC_scenarios.json').scenarios, spec = json('www/data/bill_spec.json');
+  // Only what must stay put when rates or weather are refreshed: no peso or kWh projections.
+  const stable = o => ({ stage: o.stage, tier: o.tier, rate_month: o.rate_month, rate_month_matches_dates: o.rate_month_matches_dates, prev_exact: o.prev_exact,
+    warn_residual: o.warn_residual, flags: o.flags, flags_if_nothing_changed: o.flags_if_nothing_changed, route: o.route, checks_failed: o.checks?.failed, problems: o.problems, failed: !!o.error });
+  assert.ok(cat.length >= 60 && new Set(cat.map(s => s.id)).size === cat.length, `${cat.length} unique scenarios`);
+  for (const s of cat) {
+    const seen = await analyse(readFileSync(`www/data/fixtures/${s.file}`));
+    assert.deepEqual(stable(seen), stable(s.observed), `${s.id} no longer behaves as recorded (run "npm run scenarios" if rates or weather changed on purpose)`);
+    if (s.expect.error) assert.match(seen.error, new RegExp(s.expect.error.regex), s.id);
+  }
+  const all = cat.map(s => s.observed), has = (f, v) => all.some(o => (o[f] ?? []).includes?.(v) || o[f] === v);
+  const flagKeys = new Set(all.flatMap(o => [...(o.flags ?? []), ...(o.flags_if_nothing_changed ?? [])].map(f => f.split(':')[0])));
+  for (const k of ['readings', 'tracker_latest', 'line_sum', 'total', 'rate_mismatch', 'missed_reading', 'spike', 'long_period', 'unexplained_increase']) assert.ok(flagKeys.has(k), `a scenario raises ${k}`);
+  const failedChecks = new Set(all.flatMap(o => o.checks?.failed ?? []));
+  for (const c of spec.checks) assert.ok(failedChecks.has(c.name), `a scenario trips the ${c.name} check`);
+  for (const t of ['A_3pc', 'B_fixed24', 'C_refused']) assert.ok(has('tier', t), `a scenario lands in tier ${t}`);
+  for (const r of ['meralco', 'chatbot']) assert.ok(has('route', r), `a scenario routes to ${r}`);
+  for (const st of ['strong', 'medium', 'weak']) assert.ok(all.some(o => (o.flags ?? []).some(f => f.endsWith(`:${st}`))), `a ${st} flag`);
+  for (const st of ['result', 'analysis', 'pdf', 'not_a_bill', 'confirm']) assert.ok(has('stage', st), `a scenario ends at stage ${st}`);
+  for (let m = 2; m <= 10; m++) assert.ok(has('rate_month', `2026-${String(m).padStart(2, '0')}`), `a bill priced at 2026-${m}`);
+  assert.ok(has('prev_exact', true) && has('prev_exact', false) && has('rate_month_matches_dates', false), 'exact and estimated previous bill, and a rate month that differs from the dates');
+  // the dispute files that go with them
+  const pk = json('www/data/fixtures/SYNTHETIC_scenario_packets.json');
+  assert.ok(pk.length >= 20 && pk.every(p => p.format === 'tanaw-dispute/1' && p.bill.source === 'synthetic'));
+  assert.equal(new Set(pk.map(p => `${p.customer_account_number}|${p.bill.period_end}`)).size, pk.length, 'one dashboard case per file');
+  assert.deepEqual([...new Set(pk.map(p => p.strength))].sort(), ['medium', 'strong', 'weak']);
+  assert.deepEqual([...new Set(pk.map(p => route(p).to))].sort(), ['chatbot', 'meralco']);
+  assert.ok(pk.some(p => p.status === 'resolved') && pk.some(p => p.route_override) && pk.some(p => p.unanswered_questions.length), 'resolved, staff-moved and unanswered-question cases');
+}
+console.log('scenarios OK');

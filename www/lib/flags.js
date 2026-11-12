@@ -29,6 +29,7 @@ export const CHANGES = [
 ];
 
 // Usage change not explained by weather or billing days, as a share of last month's bill, vs this household's own normal swing.
+const changeLabel = k => CHANGES.find(c => c[0] === k)?.[1] ?? String(k); // an unknown key is shown as it is, never a crash
 export function unexplainedIncrease(bill, r) {
   const item = r.breakdown.find(i => i.key === 'you' || i.key === 'usage');
   const k = bill.tracker.map(t => t.kwh).slice(-13);
@@ -66,7 +67,7 @@ export function billingFlags(bill, checks, r, answers = { keys: [] }) {
   const u = r && unexplainedIncrease(bill, r);
   if (u && answers.keys.length && !householdExplains(u, answers) && u.share > u.limit) flags.push({ key: 'unexplained_increase',
     text: `${peso(u.php)} of the increase (${(100 * u.share).toFixed(0)}% of last month's bill) is not explained by weather, billing days or changes at home ` +
-      `(you said: ${answers.keys.map(k => CHANGES.find(c => c[0] === k)[1].toLowerCase()).join('; ')}` +
+      `(you said: ${answers.keys.map(k => changeLabel(k).toLowerCase()).join('; ')}` +
       (answers.added_kwh != null ? `; new appliances add about ${answers.added_kwh} kWh of the ${Math.round(u.kwh)} kWh rise` : '') +
       `). Your usual month-to-month change is under ${(50 * u.limit).toFixed(0)}%.` });
   // shortcut: an "estimated reading" marker is not detected; add it once a real bill with an estimated reading is seen.
@@ -93,7 +94,7 @@ export function disputePacket({ bill, checks, flags, answers, r, rates }) {
       bill_minus_published_php: r.breakdown.find(i => i.key === 'local_tax_rounding').php,
     },
     usage: { estimated_last_bill_php: r.est_prev_bill, unexplained_change_php: u.php, unexplained_kwh: u.kwh, share_of_last_bill: u.share, household_flag_limit: u.limit },
-    household_answers: { changes: answers.keys.map(k => CHANGES.find(c => c[0] === k)[1]), note: answers.note?.trim() || null,
+    household_answers: { changes: answers.keys.map(changeLabel), note: answers.note?.trim() || null,
       gadgets: (answers.gadgets ?? []).map(({ name, count, watts, hours, typical_hours, new: isNew, kwh }) => ({ name, count, watts, hours, typical_hours, new: isNew, kwh })),
       added_kwh: answers.added_kwh ?? null, parser: answers.parser ?? 'rules' },
     meralco_advisory: r.reason ? { date: r.reason.date, title: r.reason.title, text: r.reason.text, url: r.reason.url } : null,
@@ -103,7 +104,7 @@ export function disputePacket({ bill, checks, flags, answers, r, rates }) {
 }
 
 export function disputeMessage(bill, flags, answers = { keys: [] }) {
-  const home = answers.keys.map(k => CHANGES.find(c => c[0] === k)[1])
+  const home = answers.keys.map(changeLabel)
     .concat((answers.gadgets ?? []).filter(g => g.new).map(g => `New: ${g.count > 1 ? g.count + ' × ' : ''}${g.name}, ${g.hours ?? g.typical_hours} h/day, about ${g.kwh} kWh`))
     .concat(answers.note?.trim() || []);
   const asked = answers.unanswered ?? [], review = flags.length || !asked.length; // nothing flagged and no questions = the customer still wants a review

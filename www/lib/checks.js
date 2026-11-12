@@ -4,6 +4,21 @@
 const check = (name, expected, found, fields) => ({ name, expected, found, passed: Math.abs(expected - found) <= 1, fields });
 const r2 = x => Math.round((x + Math.sign(x) * 1e-9) * 100) / 100, sum = a => a.reduce((s, x) => s + x, 0), has = (...v) => v.every(x => typeof x === 'number' && isFinite(x));
 
+// What stops the analysis before it starts: plain sentences for the customer, empty when the confirmed numbers can be analysed.
+// A field the customer cleared or mistyped is NaN; without this it reaches the result as "₱NaN" or a misleading rate-table error.
+const OPTIONAL = [['previous_reading', 'Previous Reading'], ['current_reading', 'Current Reading'], ['multiplier', 'Multiplier'],
+  ['remaining_balance', 'Remaining Balance'], ['installment_due', 'Installment Due'], ['total_amount_due', 'Total Amount Due']];
+export function billProblems(b) {
+  const date = s => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(Date.parse(s)), out = [];
+  if (!date(b.period_start) || !date(b.period_end)) out.push('Enter the billing period start and end dates.');
+  else if (Date.parse(b.period_end) < Date.parse(b.period_start)) out.push('The billing period ends before it starts: check the two dates.');
+  if (!(has(b.kwh) && b.kwh > 0)) out.push('Enter the kWh used (more than 0).');
+  if (!(has(b.charges_this_period) && b.charges_this_period > 0)) out.push('Enter "Charges for this billing period" (more than 0).');
+  const blank = [...OPTIONAL.filter(([k]) => b[k] != null && !has(b[k])).map(([, l]) => l), ...(b.charges ?? []).filter(c => !has(c.amount_php)).map(c => c.label)];
+  if (blank.length) out.push(`Enter a number (0 if none) for: ${blank.join(', ')}.`);
+  return out;
+}
+
 export function runChecks(b, spec = null) {
   const s = b.charges.reduce((s, c) => s + c.amount_php, 0);
   return [

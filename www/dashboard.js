@@ -28,7 +28,8 @@ const status = p => p.status ?? 'open';
 function add(list, from, live = false) {
   let skipped = 0, changed = false;
   for (let p of [].concat(list)) {
-    const ok = p?.format === 'tanaw-dispute/1' && RANK[p.strength] && p.bill && Array.isArray(p.flags) && Array.isArray(p.checks);
+    const obj = x => x !== null && typeof x === 'object';
+    const ok = p?.format === 'tanaw-dispute/1' && RANK[p.strength] && obj(p.bill) && Array.isArray(p.flags) && p.flags.every(obj) && Array.isArray(p.checks) && p.checks.every(obj);
     if (!ok) { skipped++; continue; }
     // A file loaded by hand comes from a customer: it can't pick its own lane (route_override is staff-only, like on the server).
     const { route_override, ...q } = p;
@@ -48,7 +49,7 @@ $('#files').onchange = async e => {
   }
   e.target.value = '';
 };
-$('#samples').onclick = async () => add(await (await fetch('data/fixtures/SYNTHETIC_packets.json')).json(), 'the samples');
+$('#samples').onclick = async () => add([...await (await fetch('data/fixtures/SYNTHETIC_packets.json')).json(), ...await (await fetch('data/fixtures/SYNTHETIC_scenario_packets.json')).json()], 'the samples');
 
 async function poll() {
   try {

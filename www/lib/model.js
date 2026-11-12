@@ -6,7 +6,9 @@ export function temps(w) {
   const t0 = Date.parse(w.start);
   return ms => {
     const v = w.t[Math.round((ms - t0) / DAY)];
-    if (v == null) throw new Error(`No cached weather for ${new Date(ms).toISOString().slice(0, 10)}`);
+    if (v == null) throw new Error(isNaN(ms) ? 'The billing dates are not valid dates.'
+      : `No temperature data for ${new Date(ms).toISOString().slice(0, 10)}: the saved weather covers ${w.start} to ${new Date(t0 + (w.t.length - 1) * DAY).toISOString().slice(0, 10)}. ` +
+        'Check the billing dates, or refresh it with "npm run weather".');
     return v;
   };
 }

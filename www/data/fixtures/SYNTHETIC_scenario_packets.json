@@ -1,0 +1,7924 @@
+[
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T08:00:00.000Z",
+  "strength": "medium",
+  "customer_account_number": "5500000107",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 243,
+   "previous_reading": 10000,
+   "current_reading": 10243,
+   "multiplier": 1,
+   "charges_this_period": 3739.19,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3739.19,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2478.72
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 278.04
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.01
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 290.5
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 288.27
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.58
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.62
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.43
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 195
+   },
+   {
+    "month": "2025-02",
+    "kwh": 199
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 330
+   },
+   {
+    "month": "2025-06",
+    "kwh": 304
+   },
+   {
+    "month": "2025-07",
+    "kwh": 203
+   },
+   {
+    "month": "2025-08",
+    "kwh": 233
+   },
+   {
+    "month": "2025-09",
+    "kwh": 194
+   },
+   {
+    "month": "2025-10",
+    "kwh": 188
+   },
+   {
+    "month": "2025-11",
+    "kwh": 226
+   },
+   {
+    "month": "2025-12",
+    "kwh": 207
+   },
+   {
+    "month": "2026-01",
+    "kwh": 190
+   },
+   {
+    "month": "2026-02",
+    "kwh": 186
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 261
+   },
+   {
+    "month": "2026-05",
+    "kwh": 352
+   },
+   {
+    "month": "2026-06",
+    "kwh": 324
+   },
+   {
+    "month": "2026-07",
+    "kwh": 277
+   },
+   {
+    "month": "2026-08",
+    "kwh": 235
+   },
+   {
+    "month": "2026-10",
+    "kwh": 243
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 243,
+    "found": 243
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 243,
+    "found": 243
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3739.189999999999,
+    "found": 3739.19
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3739.19,
+    "found": 3739.19
+   }
+  ],
+  "flags": [
+   {
+    "key": "missed_reading",
+    "text": "Last month (2026-09) shows no reading. This bill may include usage carried over from a missed or estimated reading.",
+    "strength": "medium"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -0.5389000000000976
+  },
+  "usage": {
+   "estimated_last_bill_php": 3541.7740000000003,
+   "unexplained_change_php": -14.302451044836516,
+   "unexplained_kwh": -0.9502216390730958,
+   "share_of_last_bill": -0.004038216736820733,
+   "household_flag_limit": 0.168141592920354
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000107).\nCharges for this billing period: ₱3,739.19. Consumption: 243 kWh (previous reading 10000, current reading 10243).\n\nWhat I noticed:\n- Last month (2026-09) shows no reading. This bill may include usage carried over from a missed or estimated reading.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T09:01:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000109",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 244,
+   "previous_reading": 10000,
+   "current_reading": 10393,
+   "multiplier": 1,
+   "charges_this_period": 3754.5,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3754.5,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2488.92
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 279.19
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.94
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 291.62
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 289.45
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.96
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.96
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.44
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 193
+   },
+   {
+    "month": "2025-02",
+    "kwh": 196
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 296
+   },
+   {
+    "month": "2025-05",
+    "kwh": 326
+   },
+   {
+    "month": "2025-06",
+    "kwh": 307
+   },
+   {
+    "month": "2025-07",
+    "kwh": 208
+   },
+   {
+    "month": "2025-08",
+    "kwh": 235
+   },
+   {
+    "month": "2025-09",
+    "kwh": 192
+   },
+   {
+    "month": "2025-10",
+    "kwh": 184
+   },
+   {
+    "month": "2025-11",
+    "kwh": 225
+   },
+   {
+    "month": "2025-12",
+    "kwh": 206
+   },
+   {
+    "month": "2026-01",
+    "kwh": 189
+   },
+   {
+    "month": "2026-02",
+    "kwh": 189
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 262
+   },
+   {
+    "month": "2026-05",
+    "kwh": 351
+   },
+   {
+    "month": "2026-06",
+    "kwh": 326
+   },
+   {
+    "month": "2026-07",
+    "kwh": 281
+   },
+   {
+    "month": "2026-08",
+    "kwh": 234
+   },
+   {
+    "month": "2026-09",
+    "kwh": 219
+   },
+   {
+    "month": "2026-10",
+    "kwh": 244
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": false,
+    "expected": 393,
+    "found": 244
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   }
+  ],
+  "flags": [
+   {
+    "key": "readings",
+    "text": "Meter readings do not match the kWh billed (current − previous reading × multiplier): expected 393.00, the bill shows 244.00.",
+    "strength": "strong"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.740499999999713
+  },
+  "usage": {
+   "estimated_last_bill_php": 3302.0876,
+   "unexplained_change_php": -16.987215600408035,
+   "unexplained_kwh": -1.1285911624871632,
+   "share_of_last_bill": -0.005144386720815049,
+   "household_flag_limit": 0.228310502283105
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000109).\nCharges for this billing period: ₱3,754.50. Consumption: 244 kWh (previous reading 10000, current reading 10393).\n\nWhat I noticed:\n- Meter readings do not match the kWh billed (current − previous reading × multiplier): expected 393.00, the bill shows 244.00.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T10:02:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000110",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 245,
+   "previous_reading": 10000,
+   "current_reading": 10245,
+   "multiplier": 1,
+   "charges_this_period": 3769.81,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3769.81,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2499.12
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 280.33
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 227.87
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 292.74
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 290.63
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 94.35
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 82.3
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.45
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 191
+   },
+   {
+    "month": "2025-02",
+    "kwh": 201
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 299
+   },
+   {
+    "month": "2025-05",
+    "kwh": 328
+   },
+   {
+    "month": "2025-06",
+    "kwh": 306
+   },
+   {
+    "month": "2025-07",
+    "kwh": 205
+   },
+   {
+    "month": "2025-08",
+    "kwh": 235
+   },
+   {
+    "month": "2025-09",
+    "kwh": 195
+   },
+   {
+    "month": "2025-10",
+    "kwh": 185
+   },
+   {
+    "month": "2025-11",
+    "kwh": 226
+   },
+   {
+    "month": "2025-12",
+    "kwh": 206
+   },
+   {
+    "month": "2026-01",
+    "kwh": 186
+   },
+   {
+    "month": "2026-02",
+    "kwh": 188
+   },
+   {
+    "month": "2026-03",
+    "kwh": 201
+   },
+   {
+    "month": "2026-04",
+    "kwh": 260
+   },
+   {
+    "month": "2026-05",
+    "kwh": 349
+   },
+   {
+    "month": "2026-06",
+    "kwh": 323
+   },
+   {
+    "month": "2026-07",
+    "kwh": 285
+   },
+   {
+    "month": "2026-08",
+    "kwh": 233
+   },
+   {
+    "month": "2026-09",
+    "kwh": 216
+   },
+   {
+    "month": "2026-10",
+    "kwh": 285
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 245,
+    "found": 245
+   },
+   {
+    "name": "tracker_latest",
+    "passed": false,
+    "expected": 285,
+    "found": 245
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3769.8099999999995,
+    "found": 3769.81
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3769.81,
+    "found": 3769.81
+   }
+  ],
+  "flags": [
+   {
+    "key": "tracker_latest",
+    "text": "This month's bar in the consumption tracker does not match the kWh billed: expected 285.00, the bill shows 245.00.",
+    "strength": "strong"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -2.0152000000008456
+  },
+  "usage": {
+   "estimated_last_bill_php": 3257.146400000001,
+   "unexplained_change_php": -6.568870881270527,
+   "unexplained_kwh": -0.4364205293269549,
+   "share_of_last_bill": -0.002016756410233978,
+   "household_flag_limit": 0.23529411764705882
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000110).\nCharges for this billing period: ₱3,769.81. Consumption: 245 kWh (previous reading 10000, current reading 10245).\n\nWhat I noticed:\n- This month's bar in the consumption tracker does not match the kWh billed: expected 285.00, the bill shows 245.00.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T11:03:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000111",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 244,
+   "previous_reading": 10000,
+   "current_reading": 10244,
+   "multiplier": 1,
+   "charges_this_period": 3754.5,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3754.5,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2488.92
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 279.19
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.94
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 291.62
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 289.45
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 343.96
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.96
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.44
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 192
+   },
+   {
+    "month": "2025-02",
+    "kwh": 197
+   },
+   {
+    "month": "2025-03",
+    "kwh": 213
+   },
+   {
+    "month": "2025-04",
+    "kwh": 297
+   },
+   {
+    "month": "2025-05",
+    "kwh": 327
+   },
+   {
+    "month": "2025-06",
+    "kwh": 304
+   },
+   {
+    "month": "2025-07",
+    "kwh": 206
+   },
+   {
+    "month": "2025-08",
+    "kwh": 230
+   },
+   {
+    "month": "2025-09",
+    "kwh": 197
+   },
+   {
+    "month": "2025-10",
+    "kwh": 187
+   },
+   {
+    "month": "2025-11",
+    "kwh": 226
+   },
+   {
+    "month": "2025-12",
+    "kwh": 210
+   },
+   {
+    "month": "2026-01",
+    "kwh": 188
+   },
+   {
+    "month": "2026-02",
+    "kwh": 189
+   },
+   {
+    "month": "2026-03",
+    "kwh": 200
+   },
+   {
+    "month": "2026-04",
+    "kwh": 260
+   },
+   {
+    "month": "2026-05",
+    "kwh": 350
+   },
+   {
+    "month": "2026-06",
+    "kwh": 326
+   },
+   {
+    "month": "2026-07",
+    "kwh": 278
+   },
+   {
+    "month": "2026-08",
+    "kwh": 232
+   },
+   {
+    "month": "2026-09",
+    "kwh": 218
+   },
+   {
+    "month": "2026-10",
+    "kwh": 244
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "line_sum",
+    "passed": false,
+    "expected": 4004.5,
+    "found": 3754.5
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   }
+  ],
+  "flags": [
+   {
+    "key": "line_sum",
+    "text": "The charges do not add up to \"Charges for this billing period\": expected 4004.50, the bill shows 3754.50.",
+    "strength": "strong"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.8118000000002894
+  },
+  "usage": {
+   "estimated_last_bill_php": 3287.1072000000004,
+   "unexplained_change_php": 4.103081040539905,
+   "unexplained_kwh": 0.2725991775374147,
+   "share_of_last_bill": 0.0012482346302973948,
+   "household_flag_limit": 0.23853211009174313
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000111).\nCharges for this billing period: ₱3,754.50. Consumption: 244 kWh (previous reading 10000, current reading 10244).\n\nWhat I noticed:\n- The charges do not add up to \"Charges for this billing period\": expected 4004.50, the bill shows 3754.50.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T12:04:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000112",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 240,
+   "previous_reading": 10000,
+   "current_reading": 10240,
+   "multiplier": 1,
+   "charges_this_period": 3693.32,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 4173.32,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2448.12
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 274.61
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 223.22
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 287.19
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 284.71
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 92.43
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 80.62
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.4
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 194
+   },
+   {
+    "month": "2025-02",
+    "kwh": 200
+   },
+   {
+    "month": "2025-03",
+    "kwh": 213
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 328
+   },
+   {
+    "month": "2025-06",
+    "kwh": 303
+   },
+   {
+    "month": "2025-07",
+    "kwh": 206
+   },
+   {
+    "month": "2025-08",
+    "kwh": 235
+   },
+   {
+    "month": "2025-09",
+    "kwh": 193
+   },
+   {
+    "month": "2025-10",
+    "kwh": 184
+   },
+   {
+    "month": "2025-11",
+    "kwh": 228
+   },
+   {
+    "month": "2025-12",
+    "kwh": 209
+   },
+   {
+    "month": "2026-01",
+    "kwh": 191
+   },
+   {
+    "month": "2026-02",
+    "kwh": 187
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 259
+   },
+   {
+    "month": "2026-05",
+    "kwh": 352
+   },
+   {
+    "month": "2026-06",
+    "kwh": 326
+   },
+   {
+    "month": "2026-07",
+    "kwh": 280
+   },
+   {
+    "month": "2026-08",
+    "kwh": 234
+   },
+   {
+    "month": "2026-09",
+    "kwh": 218
+   },
+   {
+    "month": "2026-10",
+    "kwh": 240
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 240,
+    "found": 240
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 240,
+    "found": 240
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3693.3199999999997,
+    "found": 3693.32
+   },
+   {
+    "name": "total",
+    "passed": false,
+    "expected": 3693.32,
+    "found": 4173.32
+   }
+  ],
+  "flags": [
+   {
+    "key": "total",
+    "text": "Remaining balance + this period + installment do not add up to \"Total Amount Due\": expected 3693.32, the bill shows 4173.32.",
+    "strength": "strong"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.508600000000115
+  },
+  "usage": {
+   "estimated_last_bill_php": 3287.1072000000004,
+   "unexplained_change_php": -59.329526220200876,
+   "unexplained_kwh": -3.941715966980532,
+   "share_of_last_bill": -0.01804916073932754,
+   "household_flag_limit": 0.2018348623853211
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000112).\nCharges for this billing period: ₱3,693.32. Consumption: 240 kWh (previous reading 10000, current reading 10240).\n\nWhat I noticed:\n- Remaining balance + this period + installment do not add up to \"Total Amount Due\": expected 3693.32, the bill shows 4173.32.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T13:05:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000113",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 242,
+   "previous_reading": 10000,
+   "current_reading": 10242,
+   "multiplier": 1,
+   "charges_this_period": 4030.2,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 4030.2,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2468.52
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 359.98
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 292.6
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 443.57
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 288.6
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.2
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.29
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.42
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 195
+   },
+   {
+    "month": "2025-02",
+    "kwh": 199
+   },
+   {
+    "month": "2025-03",
+    "kwh": 207
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 330
+   },
+   {
+    "month": "2025-06",
+    "kwh": 307
+   },
+   {
+    "month": "2025-07",
+    "kwh": 206
+   },
+   {
+    "month": "2025-08",
+    "kwh": 234
+   },
+   {
+    "month": "2025-09",
+    "kwh": 194
+   },
+   {
+    "month": "2025-10",
+    "kwh": 185
+   },
+   {
+    "month": "2025-11",
+    "kwh": 227
+   },
+   {
+    "month": "2025-12",
+    "kwh": 211
+   },
+   {
+    "month": "2026-01",
+    "kwh": 190
+   },
+   {
+    "month": "2026-02",
+    "kwh": 188
+   },
+   {
+    "month": "2026-03",
+    "kwh": 198
+   },
+   {
+    "month": "2026-04",
+    "kwh": 257
+   },
+   {
+    "month": "2026-05",
+    "kwh": 350
+   },
+   {
+    "month": "2026-06",
+    "kwh": 325
+   },
+   {
+    "month": "2026-07",
+    "kwh": 280
+   },
+   {
+    "month": "2026-08",
+    "kwh": 233
+   },
+   {
+    "month": "2026-09",
+    "kwh": 218
+   },
+   {
+    "month": "2026-10",
+    "kwh": 242
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 4030.2,
+    "found": 4030.2
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 4030.2,
+    "found": 4030.2
+   }
+  ],
+  "flags": [
+   {
+    "key": "rate_mismatch",
+    "text": "Your charges differ from Meralco's published 2026-10 rates by ₱304.63 (7.6%). Local franchise tax explains a little of this; over 3% is worth asking about.",
+    "strength": "strong"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": 304.6297999999996
+  },
+  "usage": {
+   "estimated_last_bill_php": 3287.1072000000004,
+   "unexplained_change_php": -29.759312458301167,
+   "unexplained_kwh": -1.977139622653997,
+   "share_of_last_bill": -0.009053344064440966,
+   "household_flag_limit": 0.22018348623853212
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000113).\nCharges for this billing period: ₱4,030.20. Consumption: 242 kWh (previous reading 10000, current reading 10242).\n\nWhat I noticed:\n- Your charges differ from Meralco's published 2026-10 rates by ₱304.63 (7.6%). Local franchise tax explains a little of this; over 3% is worth asking about.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T14:06:00.000Z",
+  "strength": "medium",
+  "customer_account_number": "5500000114",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 242,
+   "previous_reading": 10000,
+   "current_reading": 10242,
+   "multiplier": 1,
+   "charges_this_period": 3723.86,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3723.86,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2468.52
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 276.89
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 225.08
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 289.38
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 287.06
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.2
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.29
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.42
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 192
+   },
+   {
+    "month": "2025-02",
+    "kwh": 196
+   },
+   {
+    "month": "2025-03",
+    "kwh": 209
+   },
+   {
+    "month": "2025-04",
+    "kwh": 297
+   },
+   {
+    "month": "2025-05",
+    "kwh": 327
+   },
+   {
+    "month": "2025-06",
+    "kwh": 304
+   },
+   {
+    "month": "2025-07",
+    "kwh": 208
+   },
+   {
+    "month": "2025-08",
+    "kwh": 233
+   },
+   {
+    "month": "2025-09",
+    "kwh": 197
+   },
+   {
+    "month": "2025-10",
+    "kwh": 185
+   },
+   {
+    "month": "2025-11",
+    "kwh": 227
+   },
+   {
+    "month": "2025-12",
+    "kwh": 208
+   },
+   {
+    "month": "2026-01",
+    "kwh": 187
+   },
+   {
+    "month": "2026-02",
+    "kwh": 184
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 260
+   },
+   {
+    "month": "2026-05",
+    "kwh": 352
+   },
+   {
+    "month": "2026-06",
+    "kwh": 326
+   },
+   {
+    "month": "2026-07",
+    "kwh": 284
+   },
+   {
+    "month": "2026-08",
+    "kwh": 235
+   },
+   {
+    "month": "2026-09",
+    "kwh": 0
+   },
+   {
+    "month": "2026-10",
+    "kwh": 242
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3723.8599999999997,
+    "found": 3723.86
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3723.86,
+    "found": 3723.86
+   }
+  ],
+  "flags": [
+   {
+    "key": "missed_reading",
+    "text": "Last month (2026-09) shows 0 kWh. This bill may include usage carried over from a missed or estimated reading.",
+    "strength": "medium"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -0.49810000000010746
+  },
+  "usage": {
+   "estimated_last_bill_php": 3541.7740000000003,
+   "unexplained_change_php": -31.79145939210204,
+   "unexplained_kwh": -2.1121507465669684,
+   "share_of_last_bill": -0.008976140033808491,
+   "household_flag_limit": 0.25766871165644173
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000114).\nCharges for this billing period: ₱3,723.86. Consumption: 242 kWh (previous reading 10000, current reading 10242).\n\nWhat I noticed:\n- Last month (2026-09) shows 0 kWh. This bill may include usage carried over from a missed or estimated reading.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T15:07:00.000Z",
+  "strength": "medium",
+  "customer_account_number": "5500000115",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 560,
+   "previous_reading": 10000,
+   "current_reading": 10560,
+   "multiplier": 1,
+   "charges_this_period": 9092.73,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 9092.73,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 5712.28
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 640.75
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 520.86
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 1091.42
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.06
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 718.01
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 215.65
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 188.1
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 5.6
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 193
+   },
+   {
+    "month": "2025-02",
+    "kwh": 198
+   },
+   {
+    "month": "2025-03",
+    "kwh": 214
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 327
+   },
+   {
+    "month": "2025-06",
+    "kwh": 306
+   },
+   {
+    "month": "2025-07",
+    "kwh": 206
+   },
+   {
+    "month": "2025-08",
+    "kwh": 237
+   },
+   {
+    "month": "2025-09",
+    "kwh": 195
+   },
+   {
+    "month": "2025-10",
+    "kwh": 181
+   },
+   {
+    "month": "2025-11",
+    "kwh": 227
+   },
+   {
+    "month": "2025-12",
+    "kwh": 210
+   },
+   {
+    "month": "2026-01",
+    "kwh": 190
+   },
+   {
+    "month": "2026-02",
+    "kwh": 186
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 262
+   },
+   {
+    "month": "2026-05",
+    "kwh": 351
+   },
+   {
+    "month": "2026-06",
+    "kwh": 328
+   },
+   {
+    "month": "2026-07",
+    "kwh": 280
+   },
+   {
+    "month": "2026-08",
+    "kwh": 234
+   },
+   {
+    "month": "2026-09",
+    "kwh": 213
+   },
+   {
+    "month": "2026-10",
+    "kwh": 560
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 560,
+    "found": 560
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 560,
+    "found": 560
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 9092.73,
+    "found": 9092.73
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 9092.73,
+    "found": 9092.73
+   }
+  ],
+  "flags": [
+   {
+    "key": "spike",
+    "text": "560 kWh is 2.5× your usual 227 kWh (median of your last 12 months).",
+    "strength": "weak"
+   },
+   {
+    "key": "unexplained_increase",
+    "text": "₱5,222.94 of the increase (163% of last month's bill) is not explained by weather, billing days or changes at home (you said: nothing changed at home). Your usual month-to-month change is under 15%.",
+    "strength": "medium"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -24.719100000000253
+  },
+  "usage": {
+   "estimated_last_bill_php": 3212.2052,
+   "unexplained_change_php": 5222.9399,
+   "unexplained_kwh": 347,
+   "share_of_last_bill": 1.6259670770721624,
+   "household_flag_limit": 0.2926829268292683
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000115).\nCharges for this billing period: ₱9,092.73. Consumption: 560 kWh (previous reading 10000, current reading 10560).\n\nWhat I noticed:\n- 560 kWh is 2.5× your usual 227 kWh (median of your last 12 months).\n- ₱5,222.94 of the increase (163% of last month's bill) is not explained by weather, billing days or changes at home (you said: nothing changed at home). Your usual month-to-month change is under 15%.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T16:08:00.000Z",
+  "strength": "weak",
+  "customer_account_number": "5500000116",
+  "bill": {
+   "period_start": "2026-09-05",
+   "period_end": "2026-10-14",
+   "days": 40,
+   "kwh": 330,
+   "previous_reading": 10000,
+   "current_reading": 10330,
+   "multiplier": 1,
+   "charges_this_period": 5178.27,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 5178.27,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 3366.17
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 377.59
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 306.93
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 483.52
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.03
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 402.8
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 127.08
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 110.85
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 3.3
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 191
+   },
+   {
+    "month": "2025-02",
+    "kwh": 199
+   },
+   {
+    "month": "2025-03",
+    "kwh": 213
+   },
+   {
+    "month": "2025-04",
+    "kwh": 297
+   },
+   {
+    "month": "2025-05",
+    "kwh": 325
+   },
+   {
+    "month": "2025-06",
+    "kwh": 306
+   },
+   {
+    "month": "2025-07",
+    "kwh": 207
+   },
+   {
+    "month": "2025-08",
+    "kwh": 235
+   },
+   {
+    "month": "2025-09",
+    "kwh": 193
+   },
+   {
+    "month": "2025-10",
+    "kwh": 186
+   },
+   {
+    "month": "2025-11",
+    "kwh": 225
+   },
+   {
+    "month": "2025-12",
+    "kwh": 209
+   },
+   {
+    "month": "2026-01",
+    "kwh": 190
+   },
+   {
+    "month": "2026-02",
+    "kwh": 184
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 261
+   },
+   {
+    "month": "2026-05",
+    "kwh": 351
+   },
+   {
+    "month": "2026-06",
+    "kwh": 325
+   },
+   {
+    "month": "2026-07",
+    "kwh": 279
+   },
+   {
+    "month": "2026-08",
+    "kwh": 236
+   },
+   {
+    "month": "2026-09",
+    "kwh": 218
+   },
+   {
+    "month": "2026-10",
+    "kwh": 330
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 330,
+    "found": 330
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 330,
+    "found": 330
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 5178.27,
+    "found": 5178.27
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 5178.27,
+    "found": 5178.27
+   }
+  ],
+  "flags": [
+   {
+    "key": "long_period",
+    "text": "This billing period is 40 days long; Meralco normally bills about every 30 days.",
+    "strength": "weak"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -7.9395999999997
+  },
+  "usage": {
+   "estimated_last_bill_php": 3287.1072000000004,
+   "unexplained_change_php": 283.617535334443,
+   "unexplained_kwh": 18.84289052628228,
+   "share_of_last_bill": 0.08628180283698779,
+   "household_flag_limit": 0.28307692307692306
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-05 to 2026-10-14 (Customer Account Number 5500000116).\nCharges for this billing period: ₱5,178.27. Consumption: 330 kWh (previous reading 10000, current reading 10330).\n\nWhat I noticed:\n- This billing period is 40 days long; Meralco normally bills about every 30 days.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T17:09:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000118",
+  "bill": {
+   "period_start": "2026-09-05",
+   "period_end": "2026-10-14",
+   "days": 40,
+   "kwh": 560,
+   "previous_reading": 10000,
+   "current_reading": 10900,
+   "multiplier": 1,
+   "charges_this_period": 9092.73,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 9392.73,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 5712.28
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 640.75
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 520.86
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 1091.42
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.06
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 718.01
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 215.65
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 188.1
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 5.6
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 195
+   },
+   {
+    "month": "2025-02",
+    "kwh": 201
+   },
+   {
+    "month": "2025-03",
+    "kwh": 212
+   },
+   {
+    "month": "2025-04",
+    "kwh": 300
+   },
+   {
+    "month": "2025-05",
+    "kwh": 327
+   },
+   {
+    "month": "2025-06",
+    "kwh": 307
+   },
+   {
+    "month": "2025-07",
+    "kwh": 203
+   },
+   {
+    "month": "2025-08",
+    "kwh": 232
+   },
+   {
+    "month": "2025-09",
+    "kwh": 196
+   },
+   {
+    "month": "2025-10",
+    "kwh": 180
+   },
+   {
+    "month": "2025-11",
+    "kwh": 225
+   },
+   {
+    "month": "2025-12",
+    "kwh": 209
+   },
+   {
+    "month": "2026-01",
+    "kwh": 187
+   },
+   {
+    "month": "2026-02",
+    "kwh": 189
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 260
+   },
+   {
+    "month": "2026-05",
+    "kwh": 351
+   },
+   {
+    "month": "2026-06",
+    "kwh": 324
+   },
+   {
+    "month": "2026-07",
+    "kwh": 279
+   },
+   {
+    "month": "2026-08",
+    "kwh": 232
+   },
+   {
+    "month": "2026-09",
+    "kwh": 0
+   },
+   {
+    "month": "2026-10",
+    "kwh": 560
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": false,
+    "expected": 900,
+    "found": 560
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 560,
+    "found": 560
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 9092.73,
+    "found": 9092.73
+   },
+   {
+    "name": "total",
+    "passed": false,
+    "expected": 9092.73,
+    "found": 9392.73
+   }
+  ],
+  "flags": [
+   {
+    "key": "readings",
+    "text": "Meter readings do not match the kWh billed (current − previous reading × multiplier): expected 900.00, the bill shows 560.00.",
+    "strength": "strong"
+   },
+   {
+    "key": "total",
+    "text": "Remaining balance + this period + installment do not add up to \"Total Amount Due\": expected 9092.73, the bill shows 9392.73.",
+    "strength": "strong"
+   },
+   {
+    "key": "missed_reading",
+    "text": "Last month (2026-09) shows 0 kWh. This bill may include usage carried over from a missed or estimated reading.",
+    "strength": "medium"
+   },
+   {
+    "key": "spike",
+    "text": "560 kWh is 2.5× your usual 225 kWh (median of your last 11 months).",
+    "strength": "weak"
+   },
+   {
+    "key": "long_period",
+    "text": "This billing period is 40 days long; Meralco normally bills about every 30 days.",
+    "strength": "weak"
+   },
+   {
+    "key": "unexplained_increase",
+    "text": "₱4,936.96 of the increase (141% of last month's bill) is not explained by weather, billing days or changes at home (you said: nothing changed at home). Your usual month-to-month change is under 14%.",
+    "strength": "medium"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -23.364399999999478
+  },
+  "usage": {
+   "estimated_last_bill_php": 3496.8327999999997,
+   "unexplained_change_php": 4936.9576,
+   "unexplained_kwh": 328,
+   "share_of_last_bill": 1.4118369056707545,
+   "household_flag_limit": 0.2777777777777778
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-05 to 2026-10-14 (Customer Account Number 5500000118).\nCharges for this billing period: ₱9,092.73. Consumption: 560 kWh (previous reading 10000, current reading 10900).\n\nWhat I noticed:\n- Meter readings do not match the kWh billed (current − previous reading × multiplier): expected 900.00, the bill shows 560.00.\n- Remaining balance + this period + installment do not add up to \"Total Amount Due\": expected 9092.73, the bill shows 9392.73.\n- Last month (2026-09) shows 0 kWh. This bill may include usage carried over from a missed or estimated reading.\n- 560 kWh is 2.5× your usual 225 kWh (median of your last 11 months).\n- This billing period is 40 days long; Meralco normally bills about every 30 days.\n- ₱4,936.96 of the increase (141% of last month's bill) is not explained by weather, billing days or changes at home (you said: nothing changed at home). Your usual month-to-month change is under 14%.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T18:10:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000125",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 70,
+   "previous_reading": 10000,
+   "current_reading": 10070,
+   "multiplier": 1,
+   "charges_this_period": 695.01,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 695.01,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 714.04
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 80.09
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 65.11
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 77.16
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 82.37
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 26.96
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 23.51
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": -374.23
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 78
+   },
+   {
+    "month": "2025-02",
+    "kwh": 80
+   },
+   {
+    "month": "2025-03",
+    "kwh": 85
+   },
+   {
+    "month": "2025-04",
+    "kwh": 120
+   },
+   {
+    "month": "2025-05",
+    "kwh": 130
+   },
+   {
+    "month": "2025-06",
+    "kwh": 122
+   },
+   {
+    "month": "2025-07",
+    "kwh": 82
+   },
+   {
+    "month": "2025-08",
+    "kwh": 94
+   },
+   {
+    "month": "2025-09",
+    "kwh": 77
+   },
+   {
+    "month": "2025-10",
+    "kwh": 74
+   },
+   {
+    "month": "2025-11",
+    "kwh": 90
+   },
+   {
+    "month": "2025-12",
+    "kwh": 83
+   },
+   {
+    "month": "2026-01",
+    "kwh": 76
+   },
+   {
+    "month": "2026-02",
+    "kwh": 75
+   },
+   {
+    "month": "2026-03",
+    "kwh": 79
+   },
+   {
+    "month": "2026-04",
+    "kwh": 103
+   },
+   {
+    "month": "2026-05",
+    "kwh": 141
+   },
+   {
+    "month": "2026-06",
+    "kwh": 131
+   },
+   {
+    "month": "2026-07",
+    "kwh": 114
+   },
+   {
+    "month": "2026-08",
+    "kwh": 93
+   },
+   {
+    "month": "2026-09",
+    "kwh": 88
+   },
+   {
+    "month": "2026-10",
+    "kwh": 70
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 70,
+    "found": 70
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 70,
+    "found": 70
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 695.01,
+    "found": 695.01
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 695.01,
+    "found": 695.01
+   }
+  ],
+  "flags": [
+   {
+    "key": "rate_mismatch",
+    "text": "Your charges differ from Meralco's published 2026-10 rates by ₱371.08 (53.4%). Local franchise tax explains a little of this; over 3% is worth asking about.",
+    "strength": "strong"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -371.0796
+  },
+  "usage": {
+   "estimated_last_bill_php": 1310.5008,
+   "unexplained_change_php": -410.63599671658454,
+   "unexplained_kwh": -27.628255368507126,
+   "share_of_last_bill": -0.31334280506855433,
+   "household_flag_limit": 0.2595419847328244
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000125).\nCharges for this billing period: ₱695.01. Consumption: 70 kWh (previous reading 10000, current reading 10070).\n\nWhat I noticed:\n- Your charges differ from Meralco's published 2026-10 rates by ₱371.08 (53.4%). Local franchise tax explains a little of this; over 3% is worth asking about.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T19:11:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000126",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 270,
+   "previous_reading": 99850,
+   "current_reading": 120,
+   "multiplier": 1,
+   "charges_this_period": 4152.28,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 4152.28,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2754.14
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 308.93
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 251.13
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 320.4
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.03
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 320.28
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 103.98
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 90.69
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.7
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 192
+   },
+   {
+    "month": "2025-02",
+    "kwh": 200
+   },
+   {
+    "month": "2025-03",
+    "kwh": 210
+   },
+   {
+    "month": "2025-04",
+    "kwh": 293
+   },
+   {
+    "month": "2025-05",
+    "kwh": 327
+   },
+   {
+    "month": "2025-06",
+    "kwh": 305
+   },
+   {
+    "month": "2025-07",
+    "kwh": 206
+   },
+   {
+    "month": "2025-08",
+    "kwh": 235
+   },
+   {
+    "month": "2025-09",
+    "kwh": 196
+   },
+   {
+    "month": "2025-10",
+    "kwh": 183
+   },
+   {
+    "month": "2025-11",
+    "kwh": 225
+   },
+   {
+    "month": "2025-12",
+    "kwh": 210
+   },
+   {
+    "month": "2026-01",
+    "kwh": 187
+   },
+   {
+    "month": "2026-02",
+    "kwh": 186
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 261
+   },
+   {
+    "month": "2026-05",
+    "kwh": 347
+   },
+   {
+    "month": "2026-06",
+    "kwh": 325
+   },
+   {
+    "month": "2026-07",
+    "kwh": 280
+   },
+   {
+    "month": "2026-08",
+    "kwh": 232
+   },
+   {
+    "month": "2026-09",
+    "kwh": 217
+   },
+   {
+    "month": "2026-10",
+    "kwh": 270
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": false,
+    "expected": -99730,
+    "found": 270
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 270,
+    "found": 270
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 4152.28,
+    "found": 4152.28
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 4152.28,
+    "found": 4152.28
+   }
+  ],
+  "flags": [
+   {
+    "key": "readings",
+    "text": "Meter readings do not match the kWh billed (current − previous reading × multiplier): expected -99730.00, the bill shows 270.00.",
+    "strength": "strong"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -3.7439000000000533
+  },
+  "usage": {
+   "estimated_last_bill_php": 3272.1268,
+   "unexplained_change_php": 362.7492985358306,
+   "unexplained_kwh": 24.100221140192176,
+   "share_of_last_bill": 0.11086040386204794,
+   "household_flag_limit": 0.27692307692307694
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000126).\nCharges for this billing period: ₱4,152.28. Consumption: 270 kWh (previous reading 99850, current reading 120).\n\nWhat I noticed:\n- Meter readings do not match the kWh billed (current − previous reading × multiplier): expected -99730.00, the bill shows 270.00.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T20:12:00.000Z",
+  "strength": "weak",
+  "customer_account_number": "5500000138",
+  "bill": {
+   "period_start": "2026-04-15",
+   "period_end": "2026-05-14",
+   "days": 30,
+   "kwh": 351,
+   "previous_reading": 10000,
+   "current_reading": 10351,
+   "multiplier": 1,
+   "charges_this_period": 5251.21,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 5251.21,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 3086.76
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 494
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 280.59
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 718.64
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.04
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 484.2
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 112.88
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 70.59
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 3.51
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 189
+   },
+   {
+    "month": "2025-02",
+    "kwh": 198
+   },
+   {
+    "month": "2025-03",
+    "kwh": 209
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 328
+   },
+   {
+    "month": "2025-06",
+    "kwh": 308
+   },
+   {
+    "month": "2025-07",
+    "kwh": 204
+   },
+   {
+    "month": "2025-08",
+    "kwh": 235
+   },
+   {
+    "month": "2025-09",
+    "kwh": 196
+   },
+   {
+    "month": "2025-10",
+    "kwh": 183
+   },
+   {
+    "month": "2025-11",
+    "kwh": 227
+   },
+   {
+    "month": "2025-12",
+    "kwh": 207
+   },
+   {
+    "month": "2026-01",
+    "kwh": 188
+   },
+   {
+    "month": "2026-02",
+    "kwh": 190
+   },
+   {
+    "month": "2026-03",
+    "kwh": 200
+   },
+   {
+    "month": "2026-04",
+    "kwh": 263
+   },
+   {
+    "month": "2026-05",
+    "kwh": 351
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 351,
+    "found": 351
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 351,
+    "found": 351
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 5251.210000000001,
+    "found": 5251.21
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 5251.21,
+    "found": 5251.21
+   }
+  ],
+  "flags": [
+   {
+    "key": "spike",
+    "text": "351 kWh is 1.7× your usual 207 kWh (median of your last 12 months).",
+    "strength": "weak"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-05",
+   "last_month": "2026-04",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/03/meralco-doc-03585bf9910a16cd.pdf",
+    "https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/6e/meralco-doc-6e2793d83fb71be4.pdf"
+   ],
+   "bill_minus_published_php": -6.23910000000069
+  },
+  "usage": {
+   "estimated_last_bill_php": 3857.8925000000004,
+   "unexplained_change_php": -65.94005928880824,
+   "unexplained_kwh": -4.498325871749955,
+   "share_of_last_bill": -0.017092249016479395,
+   "household_flag_limit": 0.30392156862745096
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-04-15 to 2026-05-14 (Customer Account Number 5500000138).\nCharges for this billing period: ₱5,251.21. Consumption: 351 kWh (previous reading 10000, current reading 10351).\n\nWhat I noticed:\n- 351 kWh is 1.7× your usual 207 kWh (median of your last 12 months).\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T21:13:00.000Z",
+  "strength": "weak",
+  "customer_account_number": "5500000139",
+  "bill": {
+   "period_start": "2026-05-15",
+   "period_end": "2026-06-14",
+   "days": 31,
+   "kwh": 323,
+   "previous_reading": 10000,
+   "current_reading": 10323,
+   "multiplier": 1,
+   "charges_this_period": 4882.08,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 4882.08,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2929.74
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 405.33
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 268.74
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 663.03
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.03
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 443.14
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 103.88
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 64.96
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 3.23
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 191
+   },
+   {
+    "month": "2025-02",
+    "kwh": 198
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 296
+   },
+   {
+    "month": "2025-05",
+    "kwh": 330
+   },
+   {
+    "month": "2025-06",
+    "kwh": 307
+   },
+   {
+    "month": "2025-07",
+    "kwh": 204
+   },
+   {
+    "month": "2025-08",
+    "kwh": 236
+   },
+   {
+    "month": "2025-09",
+    "kwh": 196
+   },
+   {
+    "month": "2025-10",
+    "kwh": 184
+   },
+   {
+    "month": "2025-11",
+    "kwh": 227
+   },
+   {
+    "month": "2025-12",
+    "kwh": 208
+   },
+   {
+    "month": "2026-01",
+    "kwh": 193
+   },
+   {
+    "month": "2026-02",
+    "kwh": 186
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 261
+   },
+   {
+    "month": "2026-05",
+    "kwh": 352
+   },
+   {
+    "month": "2026-06",
+    "kwh": 323
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 323,
+    "found": 323
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 323,
+    "found": 323
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 4882.079999999999,
+    "found": 4882.08
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 4882.08,
+    "found": 4882.08
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "spike",
+    "text": "323 kWh is 1.6× your usual 208 kWh (median of your last 12 months).",
+    "strength": "weak"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-06",
+   "last_month": "2026-05",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/d4/meralco-doc-d405a608726a2569.pdf",
+    "https://www.meralco.com.ph/uploads/documents/legacy-documents/v2/unclassified/03/meralco-doc-03585bf9910a16cd.pdf"
+   ],
+   "bill_minus_published_php": 1.5859999999998422
+  },
+  "usage": {
+   "estimated_last_bill_php": 5266.0744,
+   "unexplained_change_php": -53.80662211850051,
+   "unexplained_kwh": -3.5983349462657164,
+   "share_of_last_bill": -0.01021759626459142,
+   "household_flag_limit": 0.3137254901960784
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-05-15 to 2026-06-14 (Customer Account Number 5500000139).\nCharges for this billing period: ₱4,882.08. Consumption: 323 kWh (previous reading 10000, current reading 10323).\n\nWhat I noticed:\n- 323 kWh is 1.6× your usual 208 kWh (median of your last 12 months).\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T08:14:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000157",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 244,
+   "previous_reading": 10000,
+   "current_reading": 10244,
+   "multiplier": 1,
+   "charges_this_period": 3754.5,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3754.5,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2488.92
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 279.19
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.94
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 291.62
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 289.45
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.96
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.96
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.44
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 189
+   },
+   {
+    "month": "2025-02",
+    "kwh": 199
+   },
+   {
+    "month": "2025-03",
+    "kwh": 213
+   },
+   {
+    "month": "2025-04",
+    "kwh": 296
+   },
+   {
+    "month": "2025-05",
+    "kwh": 327
+   },
+   {
+    "month": "2025-06",
+    "kwh": 306
+   },
+   {
+    "month": "2025-07",
+    "kwh": 205
+   },
+   {
+    "month": "2025-08",
+    "kwh": 233
+   },
+   {
+    "month": "2025-09",
+    "kwh": 197
+   },
+   {
+    "month": "2025-10",
+    "kwh": 186
+   },
+   {
+    "month": "2025-11",
+    "kwh": 226
+   },
+   {
+    "month": "2025-12",
+    "kwh": 208
+   },
+   {
+    "month": "2026-01",
+    "kwh": 188
+   },
+   {
+    "month": "2026-02",
+    "kwh": 191
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 258
+   },
+   {
+    "month": "2026-05",
+    "kwh": 353
+   },
+   {
+    "month": "2026-06",
+    "kwh": 326
+   },
+   {
+    "month": "2026-07",
+    "kwh": 282
+   },
+   {
+    "month": "2026-08",
+    "kwh": 232
+   },
+   {
+    "month": "2026-09",
+    "kwh": 217
+   },
+   {
+    "month": "2026-10",
+    "kwh": 244
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   },
+   {
+    "name": "line_amounts",
+    "passed": false,
+    "expected": 2488.92,
+    "found": 2498.92
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": false,
+    "expected": 2498.92,
+    "found": 2488.92
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "line_amounts",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (every line with a base and a price: base x price = amount (percent lines: base x price / 100)). Generation Charge (PhP/kWh): 244 x 10.2005: computed 2488.92, the bill shows 2498.92."
+   },
+   {
+    "key": "group_sums",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (the lines of each group add up to the group's amount). Generation: computed 2498.92, the bill shows 2488.92."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.8830999999998994
+  },
+  "usage": {
+   "estimated_last_bill_php": 3272.1268,
+   "unexplained_change_php": 13.092928066422928,
+   "unexplained_kwh": 0.8698637407351281,
+   "share_of_last_bill": 0.0040013510681868834,
+   "household_flag_limit": 0.2488479262672811
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000157).\nCharges for this billing period: ₱3,754.50. Consumption: 244 kWh (previous reading 10000, current reading 10244).\n\nWhat I noticed:\n- The bill's own computation does not add up (every line with a base and a price: base x price = amount (percent lines: base x price / 100)). Generation Charge (PhP/kWh): 244 x 10.2005: computed 2488.92, the bill shows 2498.92.\n- The bill's own computation does not add up (the lines of each group add up to the group's amount). Generation: computed 2498.92, the bill shows 2488.92.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T09:15:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000158",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 243,
+   "previous_reading": 10000,
+   "current_reading": 10243,
+   "multiplier": 1,
+   "charges_this_period": 3739.19,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3739.19,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2478.72
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 278.04
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.01
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 290.5
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 288.27
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.58
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.62
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.43
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 190
+   },
+   {
+    "month": "2025-02",
+    "kwh": 200
+   },
+   {
+    "month": "2025-03",
+    "kwh": 212
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 329
+   },
+   {
+    "month": "2025-06",
+    "kwh": 307
+   },
+   {
+    "month": "2025-07",
+    "kwh": 207
+   },
+   {
+    "month": "2025-08",
+    "kwh": 233
+   },
+   {
+    "month": "2025-09",
+    "kwh": 195
+   },
+   {
+    "month": "2025-10",
+    "kwh": 181
+   },
+   {
+    "month": "2025-11",
+    "kwh": 227
+   },
+   {
+    "month": "2025-12",
+    "kwh": 210
+   },
+   {
+    "month": "2026-01",
+    "kwh": 191
+   },
+   {
+    "month": "2026-02",
+    "kwh": 188
+   },
+   {
+    "month": "2026-03",
+    "kwh": 200
+   },
+   {
+    "month": "2026-04",
+    "kwh": 260
+   },
+   {
+    "month": "2026-05",
+    "kwh": 350
+   },
+   {
+    "month": "2026-06",
+    "kwh": 328
+   },
+   {
+    "month": "2026-07",
+    "kwh": 281
+   },
+   {
+    "month": "2026-08",
+    "kwh": 232
+   },
+   {
+    "month": "2026-09",
+    "kwh": 216
+   },
+   {
+    "month": "2026-10",
+    "kwh": 243
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 243,
+    "found": 243
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 243,
+    "found": 243
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3739.189999999999,
+    "found": 3739.19
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3739.19,
+    "found": 3739.19
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": false,
+    "expected": 243,
+    "found": 267
+   },
+   {
+    "name": "percent_bases",
+    "passed": false,
+    "expected": 248.34,
+    "found": 226.01
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": false,
+    "expected": 248.34,
+    "found": 226.01
+   },
+   {
+    "name": "group_percents",
+    "passed": false,
+    "expected": 6.64,
+    "found": 6.04
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": false,
+    "expected": 3295.62,
+    "found": 3273.29
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": false,
+    "expected": 3761.52,
+    "found": 3739.19
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "kwh_bases",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (every per-kWh line is billed on the same kWh as Actual Consumption). System Loss Charge (PhP/kWh) kWh: computed 243.00, the bill shows 267.00."
+   },
+   {
+    "key": "percent_bases",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (each VAT line is charged on the amount of the group or line it taxes). VALUE ADDED TAX: System Loss Charge base: computed 248.34, the bill shows 226.01."
+   },
+   {
+    "key": "summary_matches_detail",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (each group's amount on page 1 = its amount on page 2). System Loss: computed 248.34, the bill shows 226.01."
+   },
+   {
+    "key": "group_percents",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (group amount / Total Energy Amount = the printed percent). System Loss %: computed 6.64, the bill shows 6.04."
+   },
+   {
+    "key": "vat_sales_base",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (Generation + Transmission + System Loss + Distribution + Senior Citizen = VAT Sales base). VAT Sales base: computed 3295.62, the bill shows 3273.29."
+   },
+   {
+    "key": "total_energy_amount",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (VAT Sales base + VAT + VAT Zero Rated + Non-VAT = Total Energy Amount = sum of the groups). sum of the groups: computed 3761.52, the bill shows 3739.19."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.893600000000788
+  },
+  "usage": {
+   "estimated_last_bill_php": 3257.146400000001,
+   "unexplained_change_php": 10.598724749741848,
+   "unexplained_kwh": 0.7041546635756657,
+   "share_of_last_bill": 0.003253990901281516,
+   "household_flag_limit": 0.25
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000158).\nCharges for this billing period: ₱3,739.19. Consumption: 243 kWh (previous reading 10000, current reading 10243).\n\nWhat I noticed:\n- The bill's own computation does not add up (every per-kWh line is billed on the same kWh as Actual Consumption). System Loss Charge (PhP/kWh) kWh: computed 243.00, the bill shows 267.00.\n- The bill's own computation does not add up (each VAT line is charged on the amount of the group or line it taxes). VALUE ADDED TAX: System Loss Charge base: computed 248.34, the bill shows 226.01.\n- The bill's own computation does not add up (each group's amount on page 1 = its amount on page 2). System Loss: computed 248.34, the bill shows 226.01.\n- The bill's own computation does not add up (group amount / Total Energy Amount = the printed percent). System Loss %: computed 6.64, the bill shows 6.04.\n- The bill's own computation does not add up (Generation + Transmission + System Loss + Distribution + Senior Citizen = VAT Sales base). VAT Sales base: computed 3295.62, the bill shows 3273.29.\n- The bill's own computation does not add up (VAT Sales base + VAT + VAT Zero Rated + Non-VAT = Total Energy Amount = sum of the groups). sum of the groups: computed 3761.52, the bill shows 3739.19.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T10:16:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000159",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 242,
+   "previous_reading": 10000,
+   "current_reading": 10242,
+   "multiplier": 1,
+   "charges_this_period": 3723.86,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3723.86,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2468.52
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 276.89
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 225.08
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 289.38
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 287.06
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.2
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.29
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.42
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 191
+   },
+   {
+    "month": "2025-02",
+    "kwh": 200
+   },
+   {
+    "month": "2025-03",
+    "kwh": 212
+   },
+   {
+    "month": "2025-04",
+    "kwh": 297
+   },
+   {
+    "month": "2025-05",
+    "kwh": 331
+   },
+   {
+    "month": "2025-06",
+    "kwh": 303
+   },
+   {
+    "month": "2025-07",
+    "kwh": 209
+   },
+   {
+    "month": "2025-08",
+    "kwh": 235
+   },
+   {
+    "month": "2025-09",
+    "kwh": 196
+   },
+   {
+    "month": "2025-10",
+    "kwh": 185
+   },
+   {
+    "month": "2025-11",
+    "kwh": 226
+   },
+   {
+    "month": "2025-12",
+    "kwh": 208
+   },
+   {
+    "month": "2026-01",
+    "kwh": 189
+   },
+   {
+    "month": "2026-02",
+    "kwh": 187
+   },
+   {
+    "month": "2026-03",
+    "kwh": 200
+   },
+   {
+    "month": "2026-04",
+    "kwh": 256
+   },
+   {
+    "month": "2026-05",
+    "kwh": 349
+   },
+   {
+    "month": "2026-06",
+    "kwh": 323
+   },
+   {
+    "month": "2026-07",
+    "kwh": 280
+   },
+   {
+    "month": "2026-08",
+    "kwh": 236
+   },
+   {
+    "month": "2026-09",
+    "kwh": 219
+   },
+   {
+    "month": "2026-10",
+    "kwh": 242
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3723.8599999999997,
+    "found": 3723.86
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3723.86,
+    "found": 3723.86
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": false,
+    "expected": 289.38,
+    "found": 349.38
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": false,
+    "expected": 292.01,
+    "found": 287.06
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": false,
+    "expected": 273.77,
+    "found": 268.82
+   },
+   {
+    "name": "non_vat",
+    "passed": false,
+    "expected": 190.2,
+    "found": 195.15
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "percent_bases",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (each VAT line is charged on the amount of the group or line it taxes). VALUE ADDED TAX: Distribution Charge base: computed 289.38, the bill shows 349.38."
+   },
+   {
+    "key": "group_sums",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (the lines of each group add up to the group's amount). Government Taxes: computed 292.01, the bill shows 287.06."
+   },
+   {
+    "key": "vat_total",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (the VALUE ADDED TAX lines add up to VAT Sales VAT). VAT: computed 273.77, the bill shows 268.82."
+   },
+   {
+    "key": "non_vat",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (other taxes + Universal + FiT-All + GEA-All + Lifeline = Non-VAT). Non-VAT: computed 190.20, the bill shows 195.15."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.6388999999995804
+  },
+  "usage": {
+   "estimated_last_bill_php": 3302.0876,
+   "unexplained_change_php": -40.525685035054096,
+   "unexplained_kwh": -2.692432418600829,
+   "share_of_last_bill": -0.012272746802675405,
+   "household_flag_limit": 0.2100456621004566
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000159).\nCharges for this billing period: ₱3,723.86. Consumption: 242 kWh (previous reading 10000, current reading 10242).\n\nWhat I noticed:\n- The bill's own computation does not add up (each VAT line is charged on the amount of the group or line it taxes). VALUE ADDED TAX: Distribution Charge base: computed 289.38, the bill shows 349.38.\n- The bill's own computation does not add up (the lines of each group add up to the group's amount). Government Taxes: computed 292.01, the bill shows 287.06.\n- The bill's own computation does not add up (the VALUE ADDED TAX lines add up to VAT Sales VAT). VAT: computed 273.77, the bill shows 268.82.\n- The bill's own computation does not add up (other taxes + Universal + FiT-All + GEA-All + Lifeline = Non-VAT). Non-VAT: computed 190.20, the bill shows 195.15.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T11:17:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000160",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 243,
+   "previous_reading": 10000,
+   "current_reading": 10243,
+   "multiplier": 1,
+   "charges_this_period": 3739.19,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3739.19,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2478.72
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 278.04
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.01
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 290.5
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 288.27
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.58
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.62
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.43
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 192
+   },
+   {
+    "month": "2025-02",
+    "kwh": 197
+   },
+   {
+    "month": "2025-03",
+    "kwh": 212
+   },
+   {
+    "month": "2025-04",
+    "kwh": 297
+   },
+   {
+    "month": "2025-05",
+    "kwh": 323
+   },
+   {
+    "month": "2025-06",
+    "kwh": 308
+   },
+   {
+    "month": "2025-07",
+    "kwh": 203
+   },
+   {
+    "month": "2025-08",
+    "kwh": 233
+   },
+   {
+    "month": "2025-09",
+    "kwh": 194
+   },
+   {
+    "month": "2025-10",
+    "kwh": 186
+   },
+   {
+    "month": "2025-11",
+    "kwh": 226
+   },
+   {
+    "month": "2025-12",
+    "kwh": 209
+   },
+   {
+    "month": "2026-01",
+    "kwh": 191
+   },
+   {
+    "month": "2026-02",
+    "kwh": 191
+   },
+   {
+    "month": "2026-03",
+    "kwh": 198
+   },
+   {
+    "month": "2026-04",
+    "kwh": 259
+   },
+   {
+    "month": "2026-05",
+    "kwh": 350
+   },
+   {
+    "month": "2026-06",
+    "kwh": 324
+   },
+   {
+    "month": "2026-07",
+    "kwh": 279
+   },
+   {
+    "month": "2026-08",
+    "kwh": 236
+   },
+   {
+    "month": "2026-09",
+    "kwh": 215
+   },
+   {
+    "month": "2026-10",
+    "kwh": 243
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 243,
+    "found": 243
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 243,
+    "found": 243
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3739.189999999999,
+    "found": 3739.19
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3739.19,
+    "found": 3739.19
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": false,
+    "expected": 3275.28,
+    "found": 3355.28
+   },
+   {
+    "name": "group_sums",
+    "passed": false,
+    "expected": 288.67,
+    "found": 288.27
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "lft_base",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (LFT base = VAT Sales base + RPT + RPT Adj.). LFT base: computed 3275.28, the bill shows 3355.28."
+   },
+   {
+    "key": "group_sums",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (the lines of each group add up to the group's amount). Government Taxes: computed 288.67, the bill shows 288.27."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.9649000000005685
+  },
+  "usage": {
+   "estimated_last_bill_php": 3242.1660000000006,
+   "unexplained_change_php": 35.44330215793474,
+   "unexplained_kwh": 2.3547707008467307,
+   "share_of_last_bill": 0.010931982556702751,
+   "household_flag_limit": 0.26046511627906976
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000160).\nCharges for this billing period: ₱3,739.19. Consumption: 243 kWh (previous reading 10000, current reading 10243).\n\nWhat I noticed:\n- The bill's own computation does not add up (LFT base = VAT Sales base + RPT + RPT Adj.). LFT base: computed 3275.28, the bill shows 3355.28.\n- The bill's own computation does not add up (the lines of each group add up to the group's amount). Government Taxes: computed 288.67, the bill shows 288.27.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T12:18:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000161",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 780,
+   "previous_reading": 10000,
+   "current_reading": 10780,
+   "multiplier": 1,
+   "charges_this_period": 12668.68,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 12668.68,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 7956.39
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 892.48
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 725.48
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 1511.81
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.08
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 1012.26
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 300.38
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 262
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 7.8
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 610
+   },
+   {
+    "month": "2025-02",
+    "kwh": 632
+   },
+   {
+    "month": "2025-03",
+    "kwh": 680
+   },
+   {
+    "month": "2025-04",
+    "kwh": 955
+   },
+   {
+    "month": "2025-05",
+    "kwh": 1045
+   },
+   {
+    "month": "2025-06",
+    "kwh": 970
+   },
+   {
+    "month": "2025-07",
+    "kwh": 660
+   },
+   {
+    "month": "2025-08",
+    "kwh": 744
+   },
+   {
+    "month": "2025-09",
+    "kwh": 623
+   },
+   {
+    "month": "2025-10",
+    "kwh": 584
+   },
+   {
+    "month": "2025-11",
+    "kwh": 728
+   },
+   {
+    "month": "2025-12",
+    "kwh": 658
+   },
+   {
+    "month": "2026-01",
+    "kwh": 605
+   },
+   {
+    "month": "2026-02",
+    "kwh": 597
+   },
+   {
+    "month": "2026-03",
+    "kwh": 644
+   },
+   {
+    "month": "2026-04",
+    "kwh": 830
+   },
+   {
+    "month": "2026-05",
+    "kwh": 1127
+   },
+   {
+    "month": "2026-06",
+    "kwh": 1053
+   },
+   {
+    "month": "2026-07",
+    "kwh": 902
+   },
+   {
+    "month": "2026-08",
+    "kwh": 749
+   },
+   {
+    "month": "2026-09",
+    "kwh": 692
+   },
+   {
+    "month": "2026-10",
+    "kwh": 780
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 780,
+    "found": 780
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 780,
+    "found": 780
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 12668.679999999998,
+    "found": 12668.68
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 12668.68,
+    "found": 12668.68
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "energy_tax_base",
+    "passed": false,
+    "expected": 130,
+    "found": 780
+   },
+   {
+    "name": "group_sums",
+    "passed": false,
+    "expected": 1077.26,
+    "found": 1012.26
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "energy_tax_base",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (energy tax is charged on kWh above 650). energy tax kWh: computed 130.00, the bill shows 780.00."
+   },
+   {
+    "key": "group_sums",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (the lines of each group add up to the group's amount). Government Taxes: computed 1077.26, the bill shows 1012.26."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -4.254000000001042
+  },
+  "usage": {
+   "estimated_last_bill_php": 11014.561200000002,
+   "unexplained_change_php": 54.05133971190253,
+   "unexplained_kwh": 3.3959099124123573,
+   "share_of_last_bill": 0.004907262189609743,
+   "household_flag_limit": 0.2543352601156069
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000161).\nCharges for this billing period: ₱12,668.68. Consumption: 780 kWh (previous reading 10000, current reading 10780).\n\nWhat I noticed:\n- The bill's own computation does not add up (energy tax is charged on kWh above 650). energy tax kWh: computed 130.00, the bill shows 780.00.\n- The bill's own computation does not add up (the lines of each group add up to the group's amount). Government Taxes: computed 1077.26, the bill shows 1012.26.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T13:19:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000162",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 244,
+   "previous_reading": 10000,
+   "current_reading": 10244,
+   "multiplier": 1,
+   "charges_this_period": 3789.5,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3789.5,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2488.92
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 279.19
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.94
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 326.62
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 289.45
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.96
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.96
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.44
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 194
+   },
+   {
+    "month": "2025-02",
+    "kwh": 200
+   },
+   {
+    "month": "2025-03",
+    "kwh": 210
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 325
+   },
+   {
+    "month": "2025-06",
+    "kwh": 307
+   },
+   {
+    "month": "2025-07",
+    "kwh": 206
+   },
+   {
+    "month": "2025-08",
+    "kwh": 234
+   },
+   {
+    "month": "2025-09",
+    "kwh": 195
+   },
+   {
+    "month": "2025-10",
+    "kwh": 185
+   },
+   {
+    "month": "2025-11",
+    "kwh": 228
+   },
+   {
+    "month": "2025-12",
+    "kwh": 207
+   },
+   {
+    "month": "2026-01",
+    "kwh": 188
+   },
+   {
+    "month": "2026-02",
+    "kwh": 189
+   },
+   {
+    "month": "2026-03",
+    "kwh": 200
+   },
+   {
+    "month": "2026-04",
+    "kwh": 261
+   },
+   {
+    "month": "2026-05",
+    "kwh": 350
+   },
+   {
+    "month": "2026-06",
+    "kwh": 325
+   },
+   {
+    "month": "2026-07",
+    "kwh": 278
+   },
+   {
+    "month": "2026-08",
+    "kwh": 233
+   },
+   {
+    "month": "2026-09",
+    "kwh": 216
+   },
+   {
+    "month": "2026-10",
+    "kwh": 244
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3789.5,
+    "found": 3789.5
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3789.5,
+    "found": 3789.5
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": false,
+    "expected": 291.62,
+    "found": 326.62
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": false,
+    "expected": 3754.5,
+    "found": 3789.5
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "summary_matches_detail",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (each group's amount on page 1 = its amount on page 2). Distribution (Meralco): computed 291.62, the bill shows 326.62."
+   },
+   {
+    "key": "charges_total",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (Total Energy Amount + Applied Credits = Charges for this billing period). Charges for this billing period: computed 3754.50, the bill shows 3789.50."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": 33.04559999999901
+  },
+  "usage": {
+   "estimated_last_bill_php": 3257.146400000001,
+   "unexplained_change_php": 33.966385710394945,
+   "unexplained_kwh": 2.2566478012712814,
+   "share_of_last_bill": 0.01042826497156988,
+   "household_flag_limit": 0.25925925925925924
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000162).\nCharges for this billing period: ₱3,789.50. Consumption: 244 kWh (previous reading 10000, current reading 10244).\n\nWhat I noticed:\n- The bill's own computation does not add up (each group's amount on page 1 = its amount on page 2). Distribution (Meralco): computed 291.62, the bill shows 326.62.\n- The bill's own computation does not add up (Total Energy Amount + Applied Credits = Charges for this billing period). Charges for this billing period: computed 3754.50, the bill shows 3789.50.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T14:20:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000163",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 245,
+   "previous_reading": 10000,
+   "current_reading": 10245,
+   "multiplier": 1,
+   "charges_this_period": 3769.81,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3769.81,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2499.12
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 280.33
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 227.87
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 292.74
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 290.63
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 94.35
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 82.3
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.45
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 193
+   },
+   {
+    "month": "2025-02",
+    "kwh": 199
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 297
+   },
+   {
+    "month": "2025-05",
+    "kwh": 328
+   },
+   {
+    "month": "2025-06",
+    "kwh": 307
+   },
+   {
+    "month": "2025-07",
+    "kwh": 206
+   },
+   {
+    "month": "2025-08",
+    "kwh": 235
+   },
+   {
+    "month": "2025-09",
+    "kwh": 192
+   },
+   {
+    "month": "2025-10",
+    "kwh": 182
+   },
+   {
+    "month": "2025-11",
+    "kwh": 222
+   },
+   {
+    "month": "2025-12",
+    "kwh": 207
+   },
+   {
+    "month": "2026-01",
+    "kwh": 187
+   },
+   {
+    "month": "2026-02",
+    "kwh": 189
+   },
+   {
+    "month": "2026-03",
+    "kwh": 200
+   },
+   {
+    "month": "2026-04",
+    "kwh": 259
+   },
+   {
+    "month": "2026-05",
+    "kwh": 347
+   },
+   {
+    "month": "2026-06",
+    "kwh": 326
+   },
+   {
+    "month": "2026-07",
+    "kwh": 281
+   },
+   {
+    "month": "2026-08",
+    "kwh": 234
+   },
+   {
+    "month": "2026-09",
+    "kwh": 218
+   },
+   {
+    "month": "2026-10",
+    "kwh": 245
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 245,
+    "found": 245
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 245,
+    "found": 245
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3769.8099999999995,
+    "found": 3769.81
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3769.81,
+    "found": 3769.81
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": false,
+    "expected": 66.29,
+    "found": 63.29
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "group_percents",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (group amount / Total Energy Amount = the printed percent). Generation %: computed 66.29, the bill shows 63.29."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.8726000000003182
+  },
+  "usage": {
+   "estimated_last_bill_php": 3287.1072000000004,
+   "unexplained_change_php": 13.798796861781511,
+   "unexplained_kwh": 0.916760024567425,
+   "share_of_last_bill": 0.004197854229330126,
+   "household_flag_limit": 0.24770642201834864
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000163).\nCharges for this billing period: ₱3,769.81. Consumption: 245 kWh (previous reading 10000, current reading 10245).\n\nWhat I noticed:\n- The bill's own computation does not add up (group amount / Total Energy Amount = the printed percent). Generation %: computed 66.29, the bill shows 63.29.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T15:21:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000164",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 245,
+   "previous_reading": 10000,
+   "current_reading": 10245,
+   "multiplier": 1,
+   "charges_this_period": 3769.81,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3769.81,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2499.12
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 280.33
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 227.87
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 292.74
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 290.63
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 94.35
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 82.3
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.45
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 191
+   },
+   {
+    "month": "2025-02",
+    "kwh": 197
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 329
+   },
+   {
+    "month": "2025-06",
+    "kwh": 306
+   },
+   {
+    "month": "2025-07",
+    "kwh": 209
+   },
+   {
+    "month": "2025-08",
+    "kwh": 234
+   },
+   {
+    "month": "2025-09",
+    "kwh": 197
+   },
+   {
+    "month": "2025-10",
+    "kwh": 183
+   },
+   {
+    "month": "2025-11",
+    "kwh": 226
+   },
+   {
+    "month": "2025-12",
+    "kwh": 211
+   },
+   {
+    "month": "2026-01",
+    "kwh": 188
+   },
+   {
+    "month": "2026-02",
+    "kwh": 188
+   },
+   {
+    "month": "2026-03",
+    "kwh": 201
+   },
+   {
+    "month": "2026-04",
+    "kwh": 256
+   },
+   {
+    "month": "2026-05",
+    "kwh": 352
+   },
+   {
+    "month": "2026-06",
+    "kwh": 330
+   },
+   {
+    "month": "2026-07",
+    "kwh": 279
+   },
+   {
+    "month": "2026-08",
+    "kwh": 235
+   },
+   {
+    "month": "2026-09",
+    "kwh": 216
+   },
+   {
+    "month": "2026-10",
+    "kwh": 245
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 245,
+    "found": 245
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 245,
+    "found": 245
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3769.8099999999995,
+    "found": 3769.81
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3769.81,
+    "found": 3769.81
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": false,
+    "expected": 65,
+    "found": 66.29
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": false,
+    "expected": 3769.81,
+    "found": 3844.81
+   },
+   {
+    "name": "charges_total",
+    "passed": false,
+    "expected": 3844.81,
+    "found": 3769.81
+   },
+   {
+    "name": "rate_this_month",
+    "passed": false,
+    "expected": 15.693102040816326,
+    "found": 15.39
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": false,
+    "expected": 128.16033333333334,
+    "found": 125.66
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "group_percents",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (group amount / Total Energy Amount = the printed percent). Generation %: computed 65.00, the bill shows 66.29."
+   },
+   {
+    "key": "total_energy_amount",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (VAT Sales base + VAT + VAT Zero Rated + Non-VAT = Total Energy Amount = sum of the groups). Total Energy Amount: computed 3769.81, the bill shows 3844.81."
+   },
+   {
+    "key": "charges_total",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (Total Energy Amount + Applied Credits = Charges for this billing period). Charges for this billing period: computed 3844.81, the bill shows 3769.81."
+   },
+   {
+    "key": "rate_this_month",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (Total Energy Amount / kWh = Your rate this month). PhP per kWh: computed 15.69, the bill shows 15.39."
+   },
+   {
+    "key": "avg_daily",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (kWh / days = average daily consumption; Total Energy Amount / days = average daily cost). PhP a day: computed 128.16, the bill shows 125.66."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -2.0152000000008456
+  },
+  "usage": {
+   "estimated_last_bill_php": 3257.146400000001,
+   "unexplained_change_php": 39.78892739425339,
+   "unexplained_kwh": 2.6434839515970547,
+   "share_of_last_bill": 0.012215885473939207,
+   "household_flag_limit": 0.26851851851851855
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000164).\nCharges for this billing period: ₱3,769.81. Consumption: 245 kWh (previous reading 10000, current reading 10245).\n\nWhat I noticed:\n- The bill's own computation does not add up (group amount / Total Energy Amount = the printed percent). Generation %: computed 65.00, the bill shows 66.29.\n- The bill's own computation does not add up (VAT Sales base + VAT + VAT Zero Rated + Non-VAT = Total Energy Amount = sum of the groups). Total Energy Amount: computed 3769.81, the bill shows 3844.81.\n- The bill's own computation does not add up (Total Energy Amount + Applied Credits = Charges for this billing period). Charges for this billing period: computed 3844.81, the bill shows 3769.81.\n- The bill's own computation does not add up (Total Energy Amount / kWh = Your rate this month). PhP per kWh: computed 15.69, the bill shows 15.39.\n- The bill's own computation does not add up (kWh / days = average daily consumption; Total Energy Amount / days = average daily cost). PhP a day: computed 128.16, the bill shows 125.66.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T16:22:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000165",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 244,
+   "previous_reading": 10000,
+   "current_reading": 10244,
+   "multiplier": 1,
+   "charges_this_period": 3754.5,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3754.5,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2488.92
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 279.19
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.94
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 291.62
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 289.45
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.96
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.96
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.44
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 192
+   },
+   {
+    "month": "2025-02",
+    "kwh": 200
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 297
+   },
+   {
+    "month": "2025-05",
+    "kwh": 327
+   },
+   {
+    "month": "2025-06",
+    "kwh": 305
+   },
+   {
+    "month": "2025-07",
+    "kwh": 206
+   },
+   {
+    "month": "2025-08",
+    "kwh": 235
+   },
+   {
+    "month": "2025-09",
+    "kwh": 193
+   },
+   {
+    "month": "2025-10",
+    "kwh": 184
+   },
+   {
+    "month": "2025-11",
+    "kwh": 225
+   },
+   {
+    "month": "2025-12",
+    "kwh": 209
+   },
+   {
+    "month": "2026-01",
+    "kwh": 189
+   },
+   {
+    "month": "2026-02",
+    "kwh": 188
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 258
+   },
+   {
+    "month": "2026-05",
+    "kwh": 352
+   },
+   {
+    "month": "2026-06",
+    "kwh": 326
+   },
+   {
+    "month": "2026-07",
+    "kwh": 284
+   },
+   {
+    "month": "2026-08",
+    "kwh": 234
+   },
+   {
+    "month": "2026-09",
+    "kwh": 218
+   },
+   {
+    "month": "2026-10",
+    "kwh": 244
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": false,
+    "expected": 271.06,
+    "found": 291.06
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": false,
+    "expected": 3774.5,
+    "found": 3754.5
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "vat_total",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (the VALUE ADDED TAX lines add up to VAT Sales VAT). VAT: computed 271.06, the bill shows 291.06."
+   },
+   {
+    "key": "total_energy_amount",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (VAT Sales base + VAT + VAT Zero Rated + Non-VAT = Total Energy Amount = sum of the groups). Total Energy Amount: computed 3774.50, the bill shows 3754.50."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.8118000000002894
+  },
+  "usage": {
+   "estimated_last_bill_php": 3287.1072000000004,
+   "unexplained_change_php": -2.74154821053952,
+   "unexplained_kwh": -0.18214209760621855,
+   "share_of_last_bill": -0.0008340306670070023,
+   "household_flag_limit": 0.23853211009174313
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000165).\nCharges for this billing period: ₱3,754.50. Consumption: 244 kWh (previous reading 10000, current reading 10244).\n\nWhat I noticed:\n- The bill's own computation does not add up (the VALUE ADDED TAX lines add up to VAT Sales VAT). VAT: computed 271.06, the bill shows 291.06.\n- The bill's own computation does not add up (VAT Sales base + VAT + VAT Zero Rated + Non-VAT = Total Energy Amount = sum of the groups). Total Energy Amount: computed 3774.50, the bill shows 3754.50.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T17:23:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000166",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 242,
+   "previous_reading": 10000,
+   "current_reading": 10242,
+   "multiplier": 1,
+   "charges_this_period": 3723.86,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3723.86,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2468.52
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 276.89
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 225.08
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 289.38
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 287.06
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.2
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.29
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.42
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 190
+   },
+   {
+    "month": "2025-02",
+    "kwh": 200
+   },
+   {
+    "month": "2025-03",
+    "kwh": 210
+   },
+   {
+    "month": "2025-04",
+    "kwh": 299
+   },
+   {
+    "month": "2025-05",
+    "kwh": 328
+   },
+   {
+    "month": "2025-06",
+    "kwh": 307
+   },
+   {
+    "month": "2025-07",
+    "kwh": 205
+   },
+   {
+    "month": "2025-08",
+    "kwh": 236
+   },
+   {
+    "month": "2025-09",
+    "kwh": 196
+   },
+   {
+    "month": "2025-10",
+    "kwh": 188
+   },
+   {
+    "month": "2025-11",
+    "kwh": 226
+   },
+   {
+    "month": "2025-12",
+    "kwh": 209
+   },
+   {
+    "month": "2026-01",
+    "kwh": 192
+   },
+   {
+    "month": "2026-02",
+    "kwh": 189
+   },
+   {
+    "month": "2026-03",
+    "kwh": 198
+   },
+   {
+    "month": "2026-04",
+    "kwh": 257
+   },
+   {
+    "month": "2026-05",
+    "kwh": 349
+   },
+   {
+    "month": "2026-06",
+    "kwh": 324
+   },
+   {
+    "month": "2026-07",
+    "kwh": 280
+   },
+   {
+    "month": "2026-08",
+    "kwh": 234
+   },
+   {
+    "month": "2026-09",
+    "kwh": 219
+   },
+   {
+    "month": "2026-10",
+    "kwh": 242
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3723.8599999999997,
+    "found": 3723.86
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3723.86,
+    "found": 3723.86
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": false,
+    "expected": 15.387851239669422,
+    "found": 15.79
+   },
+   {
+    "name": "vs_previous",
+    "passed": false,
+    "expected": 23,
+    "found": 53
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": false,
+    "expected": 29,
+    "found": 44
+   },
+   {
+    "name": "avg_daily",
+    "passed": false,
+    "expected": 8.066666666666666,
+    "found": 10.07
+   },
+   {
+    "name": "ghg",
+    "passed": false,
+    "expected": 0.167827,
+    "found": 0.1778
+   }
+  ],
+  "flags": [
+   {
+    "key": "rate_this_month",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (Total Energy Amount / kWh = Your rate this month). PhP per kWh: computed 15.39, the bill shows 15.79."
+   },
+   {
+    "key": "vs_previous",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (kWh - last month's kWh = the printed change vs previous billing period). kWh vs previous period: computed 23.00, the bill shows 53.00."
+   },
+   {
+    "key": "vs_last_year_pct",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (change vs last year / last year's kWh = the printed percent). % vs same period last year: computed 29.00, the bill shows 44.00."
+   },
+   {
+    "key": "avg_daily",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (kWh / days = average daily consumption; Total Energy Amount / days = average daily cost). kWh a day over 30 days: computed 8.07, the bill shows 10.07."
+   },
+   {
+    "key": "ghg",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (kWh x 0.0006935 = Equiv. GHG Emissions). tCO2: computed 0.17, the bill shows 0.18."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.6388999999995804
+  },
+  "usage": {
+   "estimated_last_bill_php": 3302.0876,
+   "unexplained_change_php": -40.057406552362636,
+   "unexplained_kwh": -2.6613210834897476,
+   "share_of_last_bill": -0.012130933943836813,
+   "household_flag_limit": 0.2100456621004566
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000166).\nCharges for this billing period: ₱3,723.86. Consumption: 242 kWh (previous reading 10000, current reading 10242).\n\nWhat I noticed:\n- The bill's own computation does not add up (Total Energy Amount / kWh = Your rate this month). PhP per kWh: computed 15.39, the bill shows 15.79.\n- The bill's own computation does not add up (kWh - last month's kWh = the printed change vs previous billing period). kWh vs previous period: computed 23.00, the bill shows 53.00.\n- The bill's own computation does not add up (change vs last year / last year's kWh = the printed percent). % vs same period last year: computed 29.00, the bill shows 44.00.\n- The bill's own computation does not add up (kWh / days = average daily consumption; Total Energy Amount / days = average daily cost). kWh a day over 30 days: computed 8.07, the bill shows 10.07.\n- The bill's own computation does not add up (kWh x 0.0006935 = Equiv. GHG Emissions). tCO2: computed 0.17, the bill shows 0.18.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T18:24:00.000Z",
+  "strength": "strong",
+  "customer_account_number": "5500000167",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 242,
+   "previous_reading": 10000,
+   "current_reading": 10242,
+   "multiplier": 1,
+   "charges_this_period": 3573.36,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3573.36,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2468.52
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 276.89
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 225.08
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 289.38
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 287.06
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.2
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.29
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.42
+   },
+   {
+    "label": "Applied Credits",
+    "amount_php": -150.5
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 192
+   },
+   {
+    "month": "2025-02",
+    "kwh": 197
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 300
+   },
+   {
+    "month": "2025-05",
+    "kwh": 329
+   },
+   {
+    "month": "2025-06",
+    "kwh": 305
+   },
+   {
+    "month": "2025-07",
+    "kwh": 204
+   },
+   {
+    "month": "2025-08",
+    "kwh": 233
+   },
+   {
+    "month": "2025-09",
+    "kwh": 192
+   },
+   {
+    "month": "2025-10",
+    "kwh": 180
+   },
+   {
+    "month": "2025-11",
+    "kwh": 228
+   },
+   {
+    "month": "2025-12",
+    "kwh": 205
+   },
+   {
+    "month": "2026-01",
+    "kwh": 189
+   },
+   {
+    "month": "2026-02",
+    "kwh": 189
+   },
+   {
+    "month": "2026-03",
+    "kwh": 201
+   },
+   {
+    "month": "2026-04",
+    "kwh": 261
+   },
+   {
+    "month": "2026-05",
+    "kwh": 349
+   },
+   {
+    "month": "2026-06",
+    "kwh": 323
+   },
+   {
+    "month": "2026-07",
+    "kwh": 279
+   },
+   {
+    "month": "2026-08",
+    "kwh": 236
+   },
+   {
+    "month": "2026-09",
+    "kwh": 218
+   },
+   {
+    "month": "2026-10",
+    "kwh": 242
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 242,
+    "found": 242
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3573.3599999999997,
+    "found": 3573.36
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3573.36,
+    "found": 3573.36
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "credits",
+    "passed": false,
+    "expected": -165.5,
+    "found": -150.5
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [
+   {
+    "key": "credits",
+    "strength": "strong",
+    "text": "The bill's own computation does not add up (the credit lines add up to Applied Credits). Applied Credits: computed -165.50, the bill shows -150.50."
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -1.7102000000000999
+  },
+  "usage": {
+   "estimated_last_bill_php": 3287.1072000000004,
+   "unexplained_change_php": -32.91082369814421,
+   "unexplained_kwh": -2.186518712048753,
+   "share_of_last_bill": -0.01001209321623104,
+   "household_flag_limit": 0.22018348623853212
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000167).\nCharges for this billing period: ₱3,573.36. Consumption: 242 kWh (previous reading 10000, current reading 10242).\n\nWhat I noticed:\n- The bill's own computation does not add up (the credit lines add up to Applied Credits). Applied Credits: computed -165.50, the bill shows -150.50.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T19:25:00.000Z",
+  "strength": "medium",
+  "customer_account_number": "5500000119",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 330,
+   "previous_reading": 10000,
+   "current_reading": 10330,
+   "multiplier": 1,
+   "charges_this_period": 5178.27,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 5178.27,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 3366.17
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 377.59
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 306.93
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 483.52
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.03
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 402.8
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 127.08
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 110.85
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 3.3
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 194
+   },
+   {
+    "month": "2025-02",
+    "kwh": 198
+   },
+   {
+    "month": "2025-03",
+    "kwh": 210
+   },
+   {
+    "month": "2025-04",
+    "kwh": 297
+   },
+   {
+    "month": "2025-05",
+    "kwh": 329
+   },
+   {
+    "month": "2025-06",
+    "kwh": 305
+   },
+   {
+    "month": "2025-07",
+    "kwh": 208
+   },
+   {
+    "month": "2025-08",
+    "kwh": 232
+   },
+   {
+    "month": "2025-09",
+    "kwh": 190
+   },
+   {
+    "month": "2025-10",
+    "kwh": 183
+   },
+   {
+    "month": "2025-11",
+    "kwh": 225
+   },
+   {
+    "month": "2025-12",
+    "kwh": 208
+   },
+   {
+    "month": "2026-01",
+    "kwh": 188
+   },
+   {
+    "month": "2026-02",
+    "kwh": 189
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 260
+   },
+   {
+    "month": "2026-05",
+    "kwh": 353
+   },
+   {
+    "month": "2026-06",
+    "kwh": 327
+   },
+   {
+    "month": "2026-07",
+    "kwh": 280
+   },
+   {
+    "month": "2026-08",
+    "kwh": 233
+   },
+   {
+    "month": "2026-09",
+    "kwh": 217
+   },
+   {
+    "month": "2026-10",
+    "kwh": 330
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 330,
+    "found": 330
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 330,
+    "found": 330
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 5178.27,
+    "found": 5178.27
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 5178.27,
+    "found": 5178.27
+   }
+  ],
+  "flags": [
+   {
+    "key": "unexplained_increase",
+    "text": "₱1,218.00 of the increase (37% of last month's bill) is not explained by weather, billing days or changes at home (you said: nothing changed at home). Your usual month-to-month change is under 14%.",
+    "strength": "medium"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -8.010899999999538
+  },
+  "usage": {
+   "estimated_last_bill_php": 3272.1268,
+   "unexplained_change_php": 1217.9989062828035,
+   "unexplained_kwh": 80.92101930564677,
+   "share_of_last_bill": 0.37223462925788925,
+   "household_flag_limit": 0.2874617737003058
+  },
+  "household_answers": {
+   "changes": [
+    "Nothing changed at home"
+   ],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000119).\nCharges for this billing period: ₱5,178.27. Consumption: 330 kWh (previous reading 10000, current reading 10330).\n\nWhat I noticed:\n- ₱1,218.00 of the increase (37% of last month's bill) is not explained by weather, billing days or changes at home (you said: nothing changed at home). Your usual month-to-month change is under 14%.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T21:27:00.000Z",
+  "strength": "weak",
+  "customer_account_number": "5500000100",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 244,
+   "previous_reading": 10000,
+   "current_reading": 10244,
+   "multiplier": 1,
+   "charges_this_period": 3754.5,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3754.5,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2488.92
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 279.19
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.94
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 291.62
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 289.45
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.96
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.96
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.44
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 191
+   },
+   {
+    "month": "2025-02",
+    "kwh": 196
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 328
+   },
+   {
+    "month": "2025-06",
+    "kwh": 303
+   },
+   {
+    "month": "2025-07",
+    "kwh": 207
+   },
+   {
+    "month": "2025-08",
+    "kwh": 232
+   },
+   {
+    "month": "2025-09",
+    "kwh": 197
+   },
+   {
+    "month": "2025-10",
+    "kwh": 186
+   },
+   {
+    "month": "2025-11",
+    "kwh": 225
+   },
+   {
+    "month": "2025-12",
+    "kwh": 207
+   },
+   {
+    "month": "2026-01",
+    "kwh": 192
+   },
+   {
+    "month": "2026-02",
+    "kwh": 190
+   },
+   {
+    "month": "2026-03",
+    "kwh": 201
+   },
+   {
+    "month": "2026-04",
+    "kwh": 261
+   },
+   {
+    "month": "2026-05",
+    "kwh": 352
+   },
+   {
+    "month": "2026-06",
+    "kwh": 328
+   },
+   {
+    "month": "2026-07",
+    "kwh": 282
+   },
+   {
+    "month": "2026-08",
+    "kwh": 235
+   },
+   {
+    "month": "2026-09",
+    "kwh": 215
+   },
+   {
+    "month": "2026-10",
+    "kwh": 244
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -2.025700000000711
+  },
+  "usage": {
+   "estimated_last_bill_php": 3242.1660000000006,
+   "unexplained_change_php": 43.628677868715954,
+   "unexplained_kwh": 2.898588057742046,
+   "share_of_last_bill": 0.013456645300924119,
+   "household_flag_limit": 0.26976744186046514
+  },
+  "household_answers": {
+   "changes": [],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [
+   "paano magbayad sa GCash?"
+  ],
+  "message": "Good day, Meralco.\n\nI would like help with questions about my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000100).\nCharges for this billing period: ₱3,754.50. Consumption: 244 kWh (previous reading 10000, current reading 10244).\n\nMy questions (the TANAW app could not answer them from my bill or your advisory):\n- paano magbayad sa GCash?\n\nPlease answer my questions. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T20:26:00.000Z",
+  "strength": "weak",
+  "customer_account_number": "5500009000",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 330,
+   "previous_reading": 10000,
+   "current_reading": 10330,
+   "multiplier": 1,
+   "charges_this_period": 5178.27,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 5178.27,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 3366.17
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 377.59
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 306.93
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 483.52
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.03
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 402.8
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 127.08
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 110.85
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 3.3
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 194
+   },
+   {
+    "month": "2025-02",
+    "kwh": 198
+   },
+   {
+    "month": "2025-03",
+    "kwh": 210
+   },
+   {
+    "month": "2025-04",
+    "kwh": 297
+   },
+   {
+    "month": "2025-05",
+    "kwh": 329
+   },
+   {
+    "month": "2025-06",
+    "kwh": 305
+   },
+   {
+    "month": "2025-07",
+    "kwh": 208
+   },
+   {
+    "month": "2025-08",
+    "kwh": 232
+   },
+   {
+    "month": "2025-09",
+    "kwh": 190
+   },
+   {
+    "month": "2025-10",
+    "kwh": 183
+   },
+   {
+    "month": "2025-11",
+    "kwh": 225
+   },
+   {
+    "month": "2025-12",
+    "kwh": 208
+   },
+   {
+    "month": "2026-01",
+    "kwh": 188
+   },
+   {
+    "month": "2026-02",
+    "kwh": 189
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 260
+   },
+   {
+    "month": "2026-05",
+    "kwh": 353
+   },
+   {
+    "month": "2026-06",
+    "kwh": 327
+   },
+   {
+    "month": "2026-07",
+    "kwh": 280
+   },
+   {
+    "month": "2026-08",
+    "kwh": 233
+   },
+   {
+    "month": "2026-09",
+    "kwh": 217
+   },
+   {
+    "month": "2026-10",
+    "kwh": 330
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 330,
+    "found": 330
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 330,
+    "found": 330
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 5178.27,
+    "found": 5178.27
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 5178.27,
+    "found": 5178.27
+   }
+  ],
+  "flags": [],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -8.010899999999538
+  },
+  "usage": {
+   "estimated_last_bill_php": 3272.1268,
+   "unexplained_change_php": 1217.9989062828035,
+   "unexplained_kwh": 80.92101930564677,
+   "share_of_last_bill": 0.37223462925788925,
+   "household_flag_limit": 0.2874617737003058
+  },
+  "household_answers": {
+   "changes": [
+    "New or extra appliance (aircon, ref, freezer, etc.)",
+    "Used the aircon or fans more"
+   ],
+   "note": "Bought a 2 hp inverter aircon in September.",
+   "gadgets": [
+    {
+     "name": "aircon",
+     "count": 1,
+     "watts": 1500,
+     "hours": 8,
+     "new": true,
+     "kwh": 360
+    }
+   ],
+   "added_kwh": 360,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000119).\nCharges for this billing period: ₱5,178.27. Consumption: 330 kWh (previous reading 10000, current reading 10330).\n\nChanges at home this period (my answers):\n- New or extra appliance (aircon, ref, freezer, etc.)\n- Used the aircon or fans more\n- New: aircon, 8 h/day, about 360 kWh\n- Bought a 2 hp inverter aircon in September.\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T08:28:00.000Z",
+  "strength": "weak",
+  "customer_account_number": "5500009001",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 244,
+   "previous_reading": 10000,
+   "current_reading": 10244,
+   "multiplier": 1,
+   "charges_this_period": 3754.5,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 3754.5,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 2488.92
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 279.19
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 226.94
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 291.62
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.02
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 289.45
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 93.96
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.96
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 2.44
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 191
+   },
+   {
+    "month": "2025-02",
+    "kwh": 196
+   },
+   {
+    "month": "2025-03",
+    "kwh": 211
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 328
+   },
+   {
+    "month": "2025-06",
+    "kwh": 303
+   },
+   {
+    "month": "2025-07",
+    "kwh": 207
+   },
+   {
+    "month": "2025-08",
+    "kwh": 232
+   },
+   {
+    "month": "2025-09",
+    "kwh": 197
+   },
+   {
+    "month": "2025-10",
+    "kwh": 186
+   },
+   {
+    "month": "2025-11",
+    "kwh": 225
+   },
+   {
+    "month": "2025-12",
+    "kwh": 207
+   },
+   {
+    "month": "2026-01",
+    "kwh": 192
+   },
+   {
+    "month": "2026-02",
+    "kwh": 190
+   },
+   {
+    "month": "2026-03",
+    "kwh": 201
+   },
+   {
+    "month": "2026-04",
+    "kwh": 261
+   },
+   {
+    "month": "2026-05",
+    "kwh": 352
+   },
+   {
+    "month": "2026-06",
+    "kwh": 328
+   },
+   {
+    "month": "2026-07",
+    "kwh": 282
+   },
+   {
+    "month": "2026-08",
+    "kwh": 235
+   },
+   {
+    "month": "2026-09",
+    "kwh": 215
+   },
+   {
+    "month": "2026-10",
+    "kwh": 244
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 244,
+    "found": 244
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 3754.5,
+    "found": 3754.5
+   },
+   {
+    "name": "line_amounts",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "kwh_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "percent_bases",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "lft_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_sums",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "summary_matches_detail",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "group_percents",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_sales_base",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vat_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "non_vat",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "total_energy_amount",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "charges_total",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "rate_this_month",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_previous",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "vs_last_year_pct",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "avg_daily",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   },
+   {
+    "name": "ghg",
+    "passed": true,
+    "expected": 0,
+    "found": 0
+   }
+  ],
+  "flags": [],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -2.025700000000711
+  },
+  "usage": {
+   "estimated_last_bill_php": 3242.1660000000006,
+   "unexplained_change_php": 43.628677868715954,
+   "unexplained_kwh": 2.898588057742046,
+   "share_of_last_bill": 0.013456645300924119,
+   "household_flag_limit": 0.26976744186046514
+  },
+  "household_answers": {
+   "changes": [],
+   "note": null,
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000100).\nCharges for this billing period: ₱3,754.50. Consumption: 244 kWh (previous reading 10000, current reading 10244).\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you.",
+  "status": "resolved",
+  "reply": "Thank you. The chatbot answer was correct; no meter check needed."
+ },
+ {
+  "format": "tanaw-dispute/1",
+  "created": "2026-11-02T09:29:00.000Z",
+  "strength": "weak",
+  "customer_account_number": "5500009002",
+  "bill": {
+   "period_start": "2026-09-15",
+   "period_end": "2026-10-14",
+   "days": 30,
+   "kwh": 560,
+   "previous_reading": 10000,
+   "current_reading": 10560,
+   "multiplier": 1,
+   "charges_this_period": 9092.73,
+   "remaining_balance": 0,
+   "installment_due": 0,
+   "total_amount_due": 9092.73,
+   "source": "synthetic"
+  },
+  "charges": [
+   {
+    "label": "Generation",
+    "amount_php": 5712.28
+   },
+   {
+    "label": "Transmission",
+    "amount_php": 640.75
+   },
+   {
+    "label": "System Loss",
+    "amount_php": 520.86
+   },
+   {
+    "label": "Distribution (Meralco)",
+    "amount_php": 1091.42
+   },
+   {
+    "label": "Senior Citizen",
+    "amount_php": 0.06
+   },
+   {
+    "label": "Government Taxes",
+    "amount_php": 718.01
+   },
+   {
+    "label": "Universal Charges",
+    "amount_php": 215.65
+   },
+   {
+    "label": "FiT-All (Renewable)",
+    "amount_php": 188.1
+   },
+   {
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
+   },
+   {
+    "label": "Lifeline",
+    "amount_php": 5.6
+   }
+  ],
+  "tracker": [
+   {
+    "month": "2025-01",
+    "kwh": 193
+   },
+   {
+    "month": "2025-02",
+    "kwh": 198
+   },
+   {
+    "month": "2025-03",
+    "kwh": 214
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 327
+   },
+   {
+    "month": "2025-06",
+    "kwh": 306
+   },
+   {
+    "month": "2025-07",
+    "kwh": 206
+   },
+   {
+    "month": "2025-08",
+    "kwh": 237
+   },
+   {
+    "month": "2025-09",
+    "kwh": 195
+   },
+   {
+    "month": "2025-10",
+    "kwh": 181
+   },
+   {
+    "month": "2025-11",
+    "kwh": 227
+   },
+   {
+    "month": "2025-12",
+    "kwh": 210
+   },
+   {
+    "month": "2026-01",
+    "kwh": 190
+   },
+   {
+    "month": "2026-02",
+    "kwh": 186
+   },
+   {
+    "month": "2026-03",
+    "kwh": 199
+   },
+   {
+    "month": "2026-04",
+    "kwh": 262
+   },
+   {
+    "month": "2026-05",
+    "kwh": 351
+   },
+   {
+    "month": "2026-06",
+    "kwh": 328
+   },
+   {
+    "month": "2026-07",
+    "kwh": 280
+   },
+   {
+    "month": "2026-08",
+    "kwh": 234
+   },
+   {
+    "month": "2026-09",
+    "kwh": 213
+   },
+   {
+    "month": "2026-10",
+    "kwh": 560
+   }
+  ],
+  "checks": [
+   {
+    "name": "readings",
+    "passed": true,
+    "expected": 560,
+    "found": 560
+   },
+   {
+    "name": "tracker_latest",
+    "passed": true,
+    "expected": 560,
+    "found": 560
+   },
+   {
+    "name": "line_sum",
+    "passed": true,
+    "expected": 9092.73,
+    "found": 9092.73
+   },
+   {
+    "name": "total",
+    "passed": true,
+    "expected": 9092.73,
+    "found": 9092.73
+   }
+  ],
+  "flags": [
+   {
+    "key": "spike",
+    "text": "560 kWh is 2.5× your usual 227 kWh (median of your last 12 months).",
+    "strength": "weak"
+   }
+  ],
+  "rates": {
+   "this_month": "2026-10",
+   "last_month": "2026-09",
+   "sources": [
+    "https://www.meralco.com.ph/uploads/documents/source-delta/2026-10-25/5afca4c86acee54e324a937c7481894500ae62aa0a92140d65f6a0e6ea943f79.pdf",
+    "https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf"
+   ],
+   "bill_minus_published_php": -24.719100000000253
+  },
+  "usage": {
+   "estimated_last_bill_php": 3212.2052,
+   "unexplained_change_php": 5222.9399,
+   "unexplained_kwh": 347,
+   "share_of_last_bill": 1.6259670770721624,
+   "household_flag_limit": 0.2926829268292683
+  },
+  "household_answers": {
+   "changes": [
+    "More people at home (guests, new member, work or school from home)"
+   ],
+   "note": "Relatives stayed for two weeks.",
+   "gadgets": [],
+   "added_kwh": null,
+   "parser": "rules"
+  },
+  "meralco_advisory": null,
+  "unanswered_questions": [],
+  "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 5500000115).\nCharges for this billing period: ₱9,092.73. Consumption: 560 kWh (previous reading 10000, current reading 10560).\n\nWhat I noticed:\n- 560 kWh is 2.5× your usual 227 kWh (median of your last 12 months).\n\nChanges at home this period (my answers):\n- More people at home (guests, new member, work or school from home)\n- Relatives stayed for two weeks.\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you.",
+  "route_override": "meralco"
+ }
+]

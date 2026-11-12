@@ -23,7 +23,11 @@ const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/ja
 const CASES = 'data/private/cases.json'; // gitignored: cases carry account numbers
 // qwen2.5:3b (Q4_K_M, ~1.9 GB) fits a 4 GB laptop GPU with room for context; 7B models spill to CPU and get several times slower.
 const OLLAMA = process.env.OLLAMA_URL ?? 'http://127.0.0.1:11434', MODEL = process.env.OLLAMA_MODEL ?? 'qwen2.5:3b';
-const loadCases = () => readFile(CASES, 'utf8').then(JSON.parse, () => []);
+const isObj = x => x !== null && typeof x === 'object' && !Array.isArray(x);
+const loadCases = () => readFile(CASES, 'utf8').then(JSON.parse).then(l => (Array.isArray(l) ? l.filter(c => isObj(c?.bill)) : []), () => []);
+// Every change to cases.json runs one after another: two disputes arriving together must not overwrite each other's write.
+let caseQueue = Promise.resolve();
+const locked = fn => (caseQueue = caseQueue.catch(() => {}).then(fn));
 const send = (res, code, v) => res.writeHead(code, { 'content-type': 'application/json' }).end(JSON.stringify(v));
 async function readJson(req, max) {
   let body = '';
@@ -36,33 +40,43 @@ async function cases(req, res) {
   if (req.method === 'GET') return send(res, 200, await loadCases());
   if (req.method !== 'POST') return send(res, 405, { error: 'GET or POST only' });
   const p = await readJson(req, 1e6);
-  if (p?.format !== 'tanaw-dispute/1' || !p.bill || !Array.isArray(p.flags)) return send(res, 400, { error: 'not a TANAW dispute file' });
-  // One case per bill: sending again (e.g. an edited message) replaces the old file and reopens the case.
-  const all = await loadCases(), old = all.find(c => caseKey(c) === caseKey(p)), list = all.filter(c => c !== old);
-  // route_override is staff-only: never taken from the customer's file, kept from the old case on a resend.
-  const { route_override, ...q } = p, asked = Array.isArray(p.unanswered_questions) ? p.unanswered_questions.slice(0, 20).map(s => String(s).slice(0, 500)) : [];
-  list.push({ ...q, unanswered_questions: asked, received: new Date().toISOString(), first_received: old?.first_received ?? old?.received ?? new Date().toISOString(),
-    status: 'open', reply: old?.reply ?? '', ...(old?.route_override ? { route_override: old.route_override } : {}) });
-  await saveCases(list);
-  send(res, 201, { ok: true, cases: list.length });
+  // Every flag and check must be an object: the dashboard and route() read their fields, so one null would break the whole queue.
+  if (p?.format !== 'tanaw-dispute/1' || !isObj(p.bill) || !Array.isArray(p.flags) || !p.flags.every(isObj)
+    || (p.checks !== undefined && !(Array.isArray(p.checks) && p.checks.every(isObj)))) return send(res, 400, { error: 'not a TANAW dispute file' });
+  const count = await locked(async () => {
+    // One case per bill: sending again (e.g. an edited message) replaces the old file and reopens the case.
+    const all = await loadCases(), old = all.find(c => caseKey(c) === caseKey(p)), list = all.filter(c => c !== old);
+    // route_override is staff-only: never taken from the customer's file, kept from the old case on a resend.
+    const { route_override, ...q } = p, asked = Array.isArray(p.unanswered_questions) ? p.unanswered_questions.slice(0, 20).map(s => String(s).slice(0, 500)) : [];
+    list.push({ ...q, unanswered_questions: asked, received: new Date().toISOString(), first_received: old?.first_received ?? old?.received ?? new Date().toISOString(),
+      status: 'open', reply: old?.reply ?? '', ...(old?.route_override ? { route_override: old.route_override } : {}) });
+    await saveCases(list);
+    return list.length;
+  });
+  send(res, 201, { ok: true, cases: count });
 }
 
 // Staff reply / status for one case. GET ?key= is what the customer's app polls: it returns only that case's status, never the list.
 // shortcut: anyone on the network can set a status; a real inbox needs staff login.
 const STATUSES = ['open', 'replied', 'resolved'];
 async function caseStatus(req, res) {
-  const list = await loadCases();
   if (req.method === 'GET') {
-    const c = list.find(c => caseKey(c) === new URL(req.url, 'http://x').searchParams.get('key'));
+    const c = (await loadCases()).find(c => caseKey(c) === new URL(req.url, 'http://x').searchParams.get('key'));
     return c ? send(res, 200, { status: c.status ?? 'open', reply: c.reply ?? '' }) : send(res, 404, { error: 'no such case' });
   }
   if (req.method !== 'POST') return send(res, 405, { error: 'GET or POST only' });
-  const { key, status, reply, route } = (await readJson(req, 1e4)) ?? {}, c = list.find(c => caseKey(c) === key);
-  if (!c || !STATUSES.includes(status)) return send(res, 400, { error: 'unknown case or status' });
-  if (route !== undefined && !ROUTES[route]) return send(res, 400, { error: 'unknown route' });
-  Object.assign(c, { status, reply: String(reply ?? c.reply ?? '').slice(0, 2000), updated: new Date().toISOString() }, route ? { route_override: route } : {});
-  await saveCases(list);
-  send(res, 200, { ok: true });
+  const { key, status, reply, route } = (await readJson(req, 1e4)) ?? {};
+  if (!STATUSES.includes(status)) return send(res, 400, { error: 'unknown case or status' });
+  if (route !== undefined && !Object.hasOwn(ROUTES, route)) return send(res, 400, { error: 'unknown route' });
+  if (reply != null && typeof reply !== 'string') return send(res, 400, { error: 'reply must be text' });
+  const found = await locked(async () => {
+    const list = await loadCases(), c = list.find(c => caseKey(c) === key);
+    if (!c) return false;
+    Object.assign(c, { status, reply: String(reply ?? c.reply ?? '').slice(0, 2000), updated: new Date().toISOString() }, route ? { route_override: route } : {});
+    await saveCases(list);
+    return true;
+  });
+  found ? send(res, 200, { ok: true }) : send(res, 400, { error: 'unknown case or status' });
 }
 
 // ---------- PaddleOCR (scripts/ocr.py): one Python process kept alive, because loading the models takes several seconds ----------
@@ -159,7 +173,8 @@ const API = { '/api/cases': cases, '/api/cases/status': caseStatus, '/api/unders
 createServer(async (req, res) => {
   const route = API[req.url.split('?')[0]];
   if (route) return route(req, res).catch(e => send(res, e.code ?? 500, { error: e.message }));
-  let p = decodeURIComponent(req.url.split('?')[0]);
+  let p;
+  try { p = decodeURIComponent(req.url.split('?')[0]); } catch { return res.writeHead(400).end('bad request'); } // malformed %-escape
   if (p.endsWith('/')) p += 'index.html';
   const file = resolve(ROOT, '.' + p);
   if (!file.startsWith(ROOT + sep)) return res.writeHead(403).end();

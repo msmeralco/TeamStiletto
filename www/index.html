@@ -53,6 +53,11 @@
         <span>Your PDF is read on this device, with no login. Nothing is sent anywhere unless you choose to send a dispute.</span></p>
       <p class="hint" style="font-weight:600;margin-bottom:8px">No bill yet? Try a SYNTHETIC one:</p>
       <div class="samples"><button id="sample">Try sample bill</button><button id="weak">Weak-fit sample</button></div>
+      <details id="scenarios" class="hint" style="margin:10px 0" hidden>
+        <summary>More SYNTHETIC test bills (one per situation the app handles)</summary>
+        <div class="samples" style="grid-template-columns:1fr auto;margin-top:8px"><select id="scenario" aria-label="Test bill"></select><button id="scenariogo">Load</button></div>
+        <p id="scenariocovers" class="hint"></p>
+      </details>
       <div id="mine" hidden>
         <h2>My disputes</h2>
         <p class="hint">Saved only on this phone.</p>

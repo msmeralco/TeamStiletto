@@ -1,7 +1,7 @@
 import * as pdfjs from './vendor/pdf.min.mjs';
 import { pdfLines } from './lib/extract.js';
 import { parseBill } from './lib/parse.js';
-import { runChecks } from './lib/checks.js';
+import { runChecks, billProblems } from './lib/checks.js';
 import { temps, trackerPeriods, fit, cdd, project, heatSplit } from './lib/model.js';
 import { explain, validateRates } from './lib/explain.js';
 import { ocrLines } from './lib/ocr.js';
@@ -43,7 +43,10 @@ markSynthetic();
 async function scan() {
   msg();
   try {
-    bill = parseBill(await pdfLines(pdfjs, bytes.slice(), $('#pw').value || undefined), billSpec);
+    const b = parseBill(await pdfLines(pdfjs, bytes.slice(), $('#pw').value || undefined), billSpec);
+    // Same test as the photo path: a PDF with text but no billing period or charges is some other document.
+    if (!b.period_end || b.charges_this_period == null) throw new Error('this does not look like a Meralco bill. Use the PDF statement from the My Meralco app or your e-bill email.');
+    bill = b;
     ocr = null;
     $('#pwbox').hidden = true;
     $('#pw').value = '';
@@ -55,11 +58,27 @@ async function scan() {
     else msg(`Couldn't read this PDF: ${e.message}`);
   }
 }
-$('#file').onchange = async e => { bytes = new Uint8Array(await e.target.files[0].arrayBuffer()); e.target.value = ''; scan(); };
+$('#file').onchange = async e => {
+  const f = e.target.files[0];
+  if (!f) return; // the file picker was cancelled
+  bytes = new Uint8Array(await f.arrayBuffer());
+  e.target.value = '';
+  scan();
+};
 $('#pwgo').onclick = scan;
 const loadSample = name => async () => { bytes = new Uint8Array(await (await fetch(`data/fixtures/${name}.pdf`)).arrayBuffer()); scan(); };
 $('#sample').onclick = loadSample('SYNTHETIC_bill');
 $('#weak').onclick = loadSample('SYNTHETIC_weak_bill');
+// SYNTHETIC scenario bills (scripts/make_scenarios.mjs): one per situation, grouped, each with what it is meant to show.
+fetch('data/fixtures/SYNTHETIC_scenarios.json').then(r => r.json()).then(({ scenarios }) => {
+  const groups = [...new Set(scenarios.map(s => s.group))];
+  $('#scenario').innerHTML = groups.map(g => `<optgroup label="${esc(g)}">${scenarios.filter(s => s.group === g).map(s => `<option value="${esc(s.id)}">${esc(s.id)}</option>`).join('')}</optgroup>`).join('');
+  const covers = () => { $('#scenariocovers').textContent = scenarios.find(s => s.id === $('#scenario').value)?.covers ?? ''; };
+  $('#scenario').onchange = covers;
+  $('#scenariogo').onclick = () => loadSample(`scenarios/${$('#scenario').value}`)();
+  covers();
+  $('#scenarios').hidden = false;
+}).catch(() => {}); // the list is optional: no manifest, no picker
 
 // Photo of a paper bill: read by PaddleOCR on the TANAW laptop (npm start + scripts/ocr.py). The button shows only if that is running.
 // shortcut: the photo leaves the phone for the laptop; on-device OCR (ONNX in the browser) is the upgrade for a public release.
@@ -142,6 +161,9 @@ $('#fields').oninput = e => {
 // ---------- 3. results ----------
 $('#go').onclick = () => {
   msg();
+  // An empty or mistyped field stops here with a plain message, instead of reaching the result as "₱NaN".
+  const problems = billProblems(bill);
+  if (problems.length) { $('#editbox').open = true; return msg(problems.join(' ')); }
   try {
     const per = trackerPeriods(bill.tracker, bill.period_end);
     const f = fit(per, T);

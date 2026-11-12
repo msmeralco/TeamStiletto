@@ -36,6 +36,7 @@ export const validateRates = rates => months(rates).flatMap(m => ['non_lifeline'
 export function detectRateMonth(rates, bill) {
   const g = bill.charges.find(c => c.key === 'generation');
   if (!g) throw new Error('No generation charge found on the bill, so the rate month cannot be detected.');
+  if (!(bill.kwh > 0) || !isFinite(g.amount_php)) throw new Error('The kWh used and the generation charge must be numbers above 0 to find the rate month.');
   const perKwh = g.amount_php / bill.kwh, gap = m => Math.abs(lookup(rates, m, bill.kwh).generation - perKwh);
   const month = months(rates).sort((a, b) => gap(a) - gap(b))[0];
   if (gap(month) > 0.01) throw new Error(`No Meralco rate table matches this bill (generation ₱${perKwh.toFixed(4)}/kWh). ` +

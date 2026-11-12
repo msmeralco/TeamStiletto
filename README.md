@@ -43,6 +43,7 @@ npm run weather      # Open-Meteo daily temps (Metro Manila) -> www/data/weather
 npm run advisories   # Meralco monthly rate advisories (meralco.com.ph/media/advisories, 2025 on) -> www/data/reasons.json  (needs internet)
 npm run faqs         # Meralco Help FAQs (meralco.com.ph/help/faqs/*) -> www/data/faqs.json  (needs internet)
 npm run synthetic    # SYNTHETIC sample bills and dispute files, priced at the real rates
+npm run scenarios    # 71 SYNTHETIC scenario bills (one per situation) + their dispute files, with expected results; picked from "More SYNTHETIC test bills" in the app
 node scripts/validate_bill.mjs <bill.pdf> [more.pdf]   # read real bills as the app does and check their own arithmetic (add --json to see what was read)
 npm test             # all tests (+ the real golden bill if data/private/golden_bill.pdf exists)
 npm start            # refreshes Meralco rates and FAQs first (skipped with a note if offline), then http://localhost:8000  (case dashboard: /dashboard.html; PORT=8001 npm start for another port)

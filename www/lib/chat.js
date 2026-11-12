@@ -29,36 +29,60 @@ const CHARGING = ['e-bike charging', 'electric car charging'];
 const NEW = /\b(bago|bagong|bumili|binili|nabili|bili|new|bought|got|nagpakabit|nagpalagay|kinabit|install(ed)?|dagdag|added|another|extra|pang)\b/i;
 const NUM = { isa: 1, isang: 1, dalawa: 2, dalawang: 2, tatlo: 3, tatlong: 3, apat: 4, lima: 5, limang: 5, one: 1, two: 2, three: 3, four: 4, five: 5 };
 const RULES = [ // [key, pattern]
-  ['away', /\b(probinsya|province|out of town|vacation|nagbakasyon kami|travel|abroad kami|wala (kami|ako|kaming|tao)|walang tao|away|ospital|hospital|umalis kami)\b/i],
+  // "wala kami sa bahay" is away; "wala kaming bagong aircon" is not, so "wala kami/ako" needs a place or time word after it.
+  ['away', /\b(probinsya|province|out of town|vacation|nagbakasyon kami|travel|abroad kami|wala (kami|ako) (sa|dito|noon|nun|ng)|wala kaming tao|wala tao|walang tao|away|ospital|hospital|umalis kami)\b/i],
   ['people', /\b(bisita|guests?|visitors?|nakitira|lumipat|dumating|balikbayan|wfh|work ?from ?home|online class|baby|sanggol|dumami|more people|kamag-anak|relatives|nanay|tatay|lola|lolo)\b/i],
   ['business', /\b(negosyo|business|tindahan|sari-sari|piso ?wifi|laundry shop|salon|carinderia|online selling|bake|baking)\b/i],
   ['aircon', /\b(init|mainit|hot|heat|summer|tag-init)\b/i], // used the aircon or fans more because of the heat
 ];
 const NO = /^(wala|wala na|wala naman|wala po|none|nothing|no|nope|hindi|hindi po|tapos|done|ok na|okay na|yun lang|that's all|walang nagbago|same|pareho( lang)?|ganun pa rin|ganon pa rin|normal)\b/i;
-const UNSURE = /\b(hindi ko alam|di ko alam|ewan|not sure|don'?t know|dunno|idk)\b/i;
+const UNSURE = /\b(hindi ko alam|di ko alam|ewan|not sure|don'?t know|dunno|idk|no idea|no clue|walang idea|(hindi|di) (ko |ako )?(sigurado|sure)|not certain)\b/i;
 const QUESTION = /\?|^(bakit|why|paano|how|ano|what|saan|magkano|totoo)\b/i;
 const HOURS = /(\d+(?:\.\d+)?)\s*(?:hours?|hrs?|oras|h)\b/i;
+// "hindi kami bumili ng aircon", "we did not buy an aircon", "0 aircon": a gadget named after one of these, in the same clause,
+// is NOT a change at home. The answers become dispute evidence, so a denied gadget must never be recorded as one.
+const NEG = /\b(hindi|hinde|di|wala|walang|not|no|never|didn'?t|don'?t|haven'?t|hasn'?t|0)\b/i;
+const CLAUSE = /[,.;!?]|\b(?:pero|but|kaso|except|maliban)\b/i;
+const MAX_COUNT = 10; // same clamp as fromModel
+// Hours a day as words, for the "how many hours?" question when no local model is running (always, in the phone apps).
+const HOUR_WORDS = { ...NUM, apat: 4, anim: 6, pito: 7, pitong: 7, walo: 8, walong: 8, siyam: 9, sampu: 10, sampung: 10, 'labing-isa': 11, labingisa: 11, labindalawa: 12, labindalawang: 12,
+  six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12,
+  uno: 1, dos: 2, tres: 3, kwatro: 4, singko: 5, sais: 6, siyete: 7, otso: 8, nuwebe: 9, diyes: 10, onse: 11, dose: 12 };
+// Hours a day in a reply to "how many hours?": "8", "8.5", "8:30", "walong oras", "buong araw". null if it gives none. Capped at 24.
+export function hoursIn(text) {
+  const t = text.toLowerCase(), m = t.match(/(\d+(?:\.\d+)?)(?::([0-5]\d))?/);
+  if (m) return Math.min(+m[1] + (m[2] ? +m[2] / 60 : 0), 24);
+  if (/buong araw|maghapon|all day|whole day/.test(t)) return 24;
+  if (/kalahating oras|half an hour|half hour/.test(t)) return 0.5;
+  return (t.match(/[a-z-]+/g) ?? []).map(w => HOUR_WORDS[w]).find(v => v != null) ?? null;
+}
 
 // One message -> what it says. Pure, so it is tested without a browser.
 export function understand(text) {
   const t = ` ${text.toLowerCase()} `, keys = new Set(), gadgets = [];
   for (const [k, re] of RULES) if (re.test(t)) keys.add(k);
-  let unquantified = keys.has('people') || keys.has('business') || keys.has('aircon');
+  let unquantified = keys.has('people') || keys.has('business') || keys.has('aircon'), negated = false;
   for (const [name, re, watts, hours] of GADGETS) {
     const m = t.match(re);
     if (!m) continue;
+    const words = t.slice(0, m.index).split(CLAUSE).at(-1).trim().split(/\s+/).slice(-6);
+    if (NEG.test(words.join(' '))) { negated = true; continue; }
     const isNew = CHARGING.includes(name) || NEW.test(t);
-    const before = t.slice(0, m.index).trim().split(/\s+/).slice(-2); // "2 aircon", "dalawang bagong aircon"
-    const count = before.map(w => (/^\d+$/.test(w) ? +w : NUM[w])).find(Boolean) ?? 1;
+    // "2 aircon", "dalawang bagong aircon"; the 2 of "2 hp aircon" is the size, not how many.
+    const before = t.slice(0, m.index).trim().split(/\s+/).slice(-2);
+    const count = Math.min(before.map((w, i) => (before[i + 1] === 'hp' ? null : /^\d+$/.test(w) ? +w : NUM[w])).find(Boolean) ?? 1, MAX_COUNT);
     const hp = name === 'aircon' && +t.match(/(\d+(?:\.\d+)?)\s*hp\b/)?.[1];
     const w = (hp ? watts * hp : watts) * (name === 'aircon' && /inverter/.test(t) ? 0.6 : 1);
     const h = t.match(HOURS)?.[1];
-    gadgets.push({ name, count, watts: w, hours: h ? +h : /buong araw|maghapon|24\/7|all day|whole day/.test(t) ? 24 : null, typical_hours: hours, new: isNew });
+    gadgets.push({ name, count, watts: w, hours: h ? Math.min(+h, 24) : /buong araw|maghapon|24\/7|all day|whole day/.test(t) ? 24 : null, typical_hours: hours, new: isNew });
     keys.add(keyFor(name, isNew));
     if (!isNew) unquantified = true; // "used the TV more": no extra hours to price
   }
-  if (!keys.size && (NO.test(text.trim()) || /walang nagbago|nothing changed/i.test(t))) keys.add('nothing');
-  return { keys: [...keys], gadgets, unquantified };
+  // "hindi ko alam" / "no idea" start like a "no" but are not "nothing changed": the customer is unsure, and saying so for
+  // them would put a false "nothing changed at home" into the dispute.
+  if (!keys.size && !negated && !UNSURE.test(t) && (NO.test(text.trim()) || /walang nagbago|nothing changed/i.test(t))) keys.add('nothing');
+  // negated: the message only denied a gadget ("hindi kami bumili ng aircon"); nothing is recorded and the model is not asked.
+  return { keys: [...keys], gadgets, unquantified, negated: negated && !keys.size };
 }
 
 const keyFor = (name, isNew) => (CHARGING.includes(name) ? 'business' : isNew ? 'appliance' : name === 'aircon' || name === 'electric fan' ? 'aircon' : 'appliance');
@@ -258,7 +282,9 @@ export function fromModelFaq(id, candidates) {
 
 // A question (not an answer about home)? Same test step() uses, so the app knows when to ask the model for a paragraph.
 export function isQuestion(state, text, model = null) {
-  if (state.ask === 'hours' || state.ask === 'done' || !text.trim()) return false;
+  if (state.ask === 'done' || !text.trim()) return false;
+  // While we wait for hours, a message with no hours in it that reads as a question is answered, then the hours are asked again.
+  if (state.ask === 'hours') return hoursIn(text) == null && !UNSURE.test(text) && QUESTION.test(text.trim());
   const u = understand(text), keys = u.keys.length || u.gadgets.length ? u.keys : model?.keys ?? [];
   return !keys.length && (QUESTION.test(text.trim()) || model?.question === true);
 }
@@ -266,9 +292,9 @@ export function isQuestion(state, text, model = null) {
 // Should this message go to the model? Only when the rules got nothing out of it.
 export function needsModel(state, text) {
   if (state.ask === 'done' || !text.trim()) return false;
-  if (state.ask === 'hours') return !/\d/.test(text) && !UNSURE.test(text);
+  if (state.ask === 'hours') return hoursIn(text) == null && !UNSURE.test(text) && !QUESTION.test(text.trim());
   const u = understand(text);
-  return !u.keys.length && !u.gadgets.length;
+  return !u.keys.length && !u.gadgets.length && !u.negated && !UNSURE.test(text);
 }
 
 export const gadgetKwh = (g, days) => g.count * g.watts * (g.hours ?? g.typical_hours) * days / 1000;
@@ -328,13 +354,17 @@ export function step(state, text, ctx, model = null) {
   text = text.trim();
   if (!text || s.ask === 'done') return { state: s, reply: s.ask === 'done' ? 'Tapos na tayo. Tingnan sa ibaba ang resulta. (Results are below.)' : '' };
   if (s.ask === 'hours') {
-    const g = s.gadgets[s.pending], h = text.match(/(\d+(?:\.\d+)?)/)?.[1];
-    if (h) g.hours = Math.min(+h, 24);
+    const g = s.gadgets[s.pending], h = hoursIn(text);
+    if (h != null) g.hours = h;
     else if (model?.hours) { g.hours = model.hours; s.model = model.model; } // "mga walong oras"
-    else if (!UNSURE.test(text)) return { state: s, reply: `Ilang oras kada araw ang ${g.name}? Number lang, hal. "8". O "di ko alam".` };
+    else if (isQuestion(state, text, model)) { // a question in the middle: answer it, then ask the hours again
+      const a = answer(text, ctx);
+      if (!a.found) s.unanswered.push(text);
+      return { state: s, reply: `${a.text}\n\nBalik tayo: ilang oras kada araw ang ${g.name}? Number lang, hal. "8". O "di ko alam".` };
+    } else if (!UNSURE.test(text)) return { state: s, reply: `Ilang oras kada araw ang ${g.name}? Number lang, hal. "8". O "di ko alam".` };
   } else {
     let u = understand(text);
-    if (!u.keys.length && !u.gadgets.length && model && (model.keys.length || model.gadgets.length)) {
+    if (!u.keys.length && !u.gadgets.length && !u.negated && !UNSURE.test(text) && model && (model.keys.length || model.gadgets.length)) {
       u = model;
       s.model = model.model;
     }
@@ -353,6 +383,9 @@ export function step(state, text, ctx, model = null) {
     }
     s.unquantified ||= u.unquantified;
     if (!u.keys.length && !u.gadgets.length) {
+      const again = s.ask === 'open' ? 'May iba bang nagbago sa bahay? Kung wala, type "wala".' : MORE;
+      if (u.negated) return { state: s, reply: `Sige, hindi ko isasama iyon. (Okay, I won't count that.) ${again}` };
+      if (UNSURE.test(text)) return { state: s, reply: `Okay lang kung hindi ka sigurado. (That's fine if you're not sure.) ${again}` };
       return { state: s, reply: 'Pasensya, hindi ko masyadong nakuha. Isusulat ko pa rin ito sa note mo. Halimbawa: "bumili kami ng aircon", "may bisita kami", "umuwi kami ng probinsya", o "wala".' };
     }
     if (saidNo) s.ask = 'done';

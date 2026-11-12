@@ -1,0 +1,3406 @@
+{
+ "note": "SYNTHETIC scenario bills: invented households, real Meralco rates and weather. `observed` is what the app does with the PDF (see scripts/scenario_lib.mjs).",
+ "scenarios": [
+  {
+   "id": "a01_clean_tier_a",
+   "group": "Model tiers and history",
+   "covers": "Weather explains usage: tier A (3-parameter change-point), no flags, clean bill.",
+   "file": "scenarios/a01_clean_tier_a.pdf",
+   "expect": {
+    "tier": "A_3pc",
+    "flags": [],
+    "route": "chatbot"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000100",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3754.5,
+     "total_due": 3754.5,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 512.33,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3029,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "a02_short_history_tier_b",
+   "group": "Model tiers and history",
+   "covers": "New customer, 10 months printed: tier B (fixed 24 C base).",
+   "file": "scenarios/a02_short_history_tier_b.pdf",
+   "expect": {
+    "tier": "B_fixed24",
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000101",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 243,
+     "charges": 3739.19,
+     "total_due": 3739.19,
+     "tracker_months": 10,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "B_fixed24",
+    "n_periods": 10,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 497.02,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3151,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "a03_noisy_tier_c",
+   "group": "Model tiers and history",
+   "covers": "Usage does not track temperature: tier C, model refuses, usage-only explanation.",
+   "file": "scenarios/a03_noisy_tier_c.pdf",
+   "expect": {
+    "tier": "C_refused",
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000102",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 303,
+     "charges": 4756.36,
+     "total_due": 4756.36,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "C_refused",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 1034.82,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [
+     "unexplained_increase:medium"
+    ],
+    "route": "chatbot",
+    "next_bill": 3835,
+    "solar_payback_years": [
+     2.8,
+     3.6,
+     2.9
+    ]
+   }
+  },
+  {
+   "id": "a04_short_and_noisy_c",
+   "group": "Model tiers and history",
+   "covers": "Tier C with fewer than 15 months: next bill cannot be projected.",
+   "file": "scenarios/a04_short_and_noisy_c.pdf",
+   "expect": {
+    "tier": "C_refused"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000103",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 255,
+     "charges": 3922.79,
+     "total_due": 3922.79,
+     "tracker_months": 8,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "C_refused",
+    "n_periods": 8,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": -278.12,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": "Not enough months printed on the bill for a projection without the weather model.",
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "a05_two_months_only",
+   "group": "Model tiers and history",
+   "covers": "Only two tracker months printed (smallest bill the explainer accepts).",
+   "file": "scenarios/a05_two_months_only.pdf",
+   "expect": {
+    "stage": "result"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000104",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 245,
+     "charges": 3769.81,
+     "total_due": 3769.81,
+     "tracker_months": 2,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "C_refused",
+    "n_periods": 2,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 497.68,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": "Not enough months printed on the bill for a projection without the weather model.",
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "a06_one_month_only",
+   "group": "Model tiers and history",
+   "covers": "One tracker month: the explainer must stop with a plain error.",
+   "file": "scenarios/a06_one_month_only.pdf",
+   "expect": {
+    "stage": "analysis",
+    "error": {
+     "regex": "at least two tracker months"
+    }
+   },
+   "observed": {
+    "read": {
+     "can": "5500000105",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3754.5,
+     "total_due": 3754.5,
+     "tracker_months": 1,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "analysis",
+    "error": "The bill needs at least two tracker months."
+   }
+  },
+  {
+   "id": "a07_old_zero_month",
+   "group": "Model tiers and history",
+   "covers": "A 0 kWh month long ago (missed reading) is left out of the fit and raises no flag.",
+   "file": "scenarios/a07_old_zero_month.pdf",
+   "expect": {
+    "tier": "A_3pc",
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000106",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 242,
+     "charges": 3723.86,
+     "total_due": 3723.86,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 21,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 451.73,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3022,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "a08_tracker_gap",
+   "group": "Model tiers and history",
+   "covers": "Last month shows \"-\" (no reading at all): missed-reading flag, medium.",
+   "file": "scenarios/a08_tracker_gap.pdf",
+   "expect": {
+    "flags": [
+     "missed_reading:medium"
+    ],
+    "route": "meralco"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000107",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 243,
+     "charges": 3739.19,
+     "total_due": 3739.19,
+     "tracker_months": 21,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 21,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 197.42,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "missed_reading:medium"
+    ],
+    "flags_if_nothing_changed": [
+     "missed_reading:medium"
+    ],
+    "route": "meralco",
+    "next_bill": 3025,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "a09_hot_household",
+   "group": "Model tiers and history",
+   "covers": "Heavy aircon household (about 3x usage): tier A, large peso swings, bracket 700+.",
+   "file": "scenarios/a09_hot_household.pdf",
+   "expect": {
+    "tier": "A_3pc",
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000108",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 724,
+     "charges": 11755.98,
+     "total_due": 11755.98,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 22,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 1249.77,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 9518,
+    "solar_payback_years": [
+     2.7,
+     3.4,
+     2.7
+    ]
+   }
+  },
+  {
+   "id": "b01_readings_mismatch",
+   "group": "Flags: the bill does not add up",
+   "covers": "Meter readings differ from the kWh billed: strong flag, goes to a Meralco ticket.",
+   "file": "scenarios/b01_readings_mismatch.pdf",
+   "expect": {
+    "checks_has": [
+     "readings"
+    ],
+    "flags": [
+     "readings:strong"
+    ],
+    "route": "meralco"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000109",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3754.5,
+     "total_due": 3754.5,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": [
+      "readings"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 452.41,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "readings:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "readings:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3023,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "b02_tracker_mismatch",
+   "group": "Flags: the bill does not add up",
+   "covers": "This month's tracker bar differs from the kWh billed.",
+   "file": "scenarios/b02_tracker_mismatch.pdf",
+   "expect": {
+    "checks_has": [
+     "tracker_latest"
+    ],
+    "flags": [
+     "tracker_latest:strong"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000110",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 245,
+     "charges": 3769.81,
+     "total_due": 3769.81,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": [
+      "tracker_latest"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 512.66,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "tracker_latest:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "tracker_latest:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3096,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "b03_charges_dont_sum",
+   "group": "Flags: the bill does not add up",
+   "covers": "Page-1 charge lines do not add up to \"Charges for this billing period\".",
+   "file": "scenarios/b03_charges_dont_sum.pdf",
+   "expect": {
+    "checks_has": [
+     "line_sum"
+    ],
+    "flags": [
+     "line_sum:strong"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000111",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3754.5,
+     "total_due": 3754.5,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": [
+      "line_sum"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 467.39,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "line_sum:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "line_sum:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3029,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "b04_total_wrong",
+   "group": "Flags: the bill does not add up",
+   "covers": "Total Amount Due is P480 above balance + charges + installment.",
+   "file": "scenarios/b04_total_wrong.pdf",
+   "expect": {
+    "checks_has": [
+     "total"
+    ],
+    "flags": [
+     "total:strong"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000112",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 240,
+     "charges": 3693.32,
+     "total_due": 4173.32,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": [
+      "total"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 406.21,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "total:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "total:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3029,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "b05_rate_mismatch",
+   "group": "Flags: the bill does not add up",
+   "covers": "Bill adds up but is about 8% above Meralco's published rates for the month: rate_mismatch, strong.",
+   "file": "scenarios/b05_rate_mismatch.pdf",
+   "expect": {
+    "warn_residual": true,
+    "flags": [
+     "rate_mismatch:strong"
+    ],
+    "route": "meralco"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000113",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 242,
+     "charges": 4030.2,
+     "total_due": 4030.2,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 743.09,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": true,
+    "flags": [
+     "rate_mismatch:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "rate_mismatch:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3027,
+    "solar_payback_years": [
+     2.7,
+     3.5,
+     2.8
+    ]
+   }
+  },
+  {
+   "id": "b06_missed_reading_zero",
+   "group": "Flags: usage pattern",
+   "covers": "Last month printed as 0 kWh (missed reading): this bill may carry both months.",
+   "file": "scenarios/b06_missed_reading_zero.pdf",
+   "expect": {
+    "flags": [
+     "missed_reading:medium"
+    ],
+    "route": "meralco"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000114",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 242,
+     "charges": 3723.86,
+     "total_due": 3723.86,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 21,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 182.09,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "missed_reading:medium"
+    ],
+    "flags_if_nothing_changed": [
+     "missed_reading:medium"
+    ],
+    "route": "meralco",
+    "next_bill": 3017,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3.1
+    ]
+   }
+  },
+  {
+   "id": "b07_spike",
+   "group": "Flags: usage pattern",
+   "covers": "Usage jumps to 2.3x the household's median, everything adds up: spike (weak), chatbot handles it.",
+   "file": "scenarios/b07_spike.pdf",
+   "expect": {
+    "flags": [
+     "spike:weak"
+    ],
+    "route": "chatbot"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000115",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 560,
+     "charges": 9092.73,
+     "total_due": 9092.73,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "C_refused",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 5880.52,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "spike:weak"
+    ],
+    "flags_if_nothing_changed": [
+     "spike:weak",
+     "unexplained_increase:medium"
+    ],
+    "route": "chatbot",
+    "next_bill": 5622,
+    "solar_payback_years": [
+     2.7,
+     3.5,
+     2.8
+    ]
+   }
+  },
+  {
+   "id": "b08_long_period",
+   "group": "Flags: usage pattern",
+   "covers": "A 40-day billing period: long_period (weak).",
+   "file": "scenarios/b08_long_period.pdf",
+   "expect": {
+    "flags": [
+     "long_period:weak"
+    ],
+    "route": "chatbot"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000116",
+     "period": "2026-09-05..2026-10-14",
+     "days": 40,
+     "kwh": 330,
+     "charges": 5178.27,
+     "total_due": 5178.27,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 1891.16,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "long_period:weak"
+    ],
+    "flags_if_nothing_changed": [
+     "long_period:weak"
+    ],
+    "route": "chatbot",
+    "next_bill": 3227,
+    "solar_payback_years": [
+     2.8,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "b09_short_period",
+   "group": "Flags: usage pattern",
+   "covers": "A 25-day period is fine: no flag, billing-days effect shown in the explanation.",
+   "file": "scenarios/b09_short_period.pdf",
+   "expect": {
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000117",
+     "period": "2026-09-20..2026-10-14",
+     "days": 25,
+     "kwh": 242,
+     "charges": 3723.86,
+     "total_due": 3723.86,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 436.75,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3026,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "b10_everything_wrong",
+   "group": "Flags: usage pattern",
+   "covers": "Worst case: readings, tracker, total, missed reading, spike and long period together.",
+   "file": "scenarios/b10_everything_wrong.pdf",
+   "expect": {
+    "flags": [
+     "readings:strong",
+     "total:strong",
+     "missed_reading:medium",
+     "spike:weak",
+     "long_period:weak"
+    ],
+    "route": "meralco"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000118",
+     "period": "2026-09-05..2026-10-14",
+     "days": 40,
+     "kwh": 560,
+     "charges": 9092.73,
+     "total_due": 9392.73,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": [
+      "readings",
+      "total"
+     ]
+    },
+    "stage": "result",
+    "tier": "C_refused",
+    "n_periods": 21,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 5595.9,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "readings:strong",
+     "total:strong",
+     "missed_reading:medium",
+     "spike:weak",
+     "long_period:weak"
+    ],
+    "flags_if_nothing_changed": [
+     "readings:strong",
+     "total:strong",
+     "missed_reading:medium",
+     "spike:weak",
+     "long_period:weak",
+     "unexplained_increase:medium"
+    ],
+    "route": "meralco",
+    "next_bill": 6221,
+    "solar_payback_years": [
+     2.7,
+     3.5,
+     2.9
+    ]
+   }
+  },
+  {
+   "id": "b11_big_unexplained_rise",
+   "group": "Flags: usage pattern",
+   "covers": "Usage rises far beyond what weather explains. No flag until the household says \"nothing changed\" in the chat (then unexplained_increase, medium).",
+   "file": "scenarios/b11_big_unexplained_rise.pdf",
+   "expect": {
+    "nothing_has": [
+     "unexplained_increase:medium"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000119",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 330,
+     "charges": 5178.27,
+     "total_due": 5178.27,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 1906.14,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [
+     "unexplained_increase:medium"
+    ],
+    "route": "chatbot",
+    "next_bill": 3217,
+    "solar_payback_years": [
+     2.8,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "c01_unpaid_and_installment",
+   "group": "Billing fields",
+   "covers": "Remaining balance and an installment on top of this period's charges.",
+   "file": "scenarios/c01_unpaid_and_installment.pdf",
+   "expect": {
+    "flags": [],
+    "checks_failed": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000120",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 243,
+     "charges": 3739.19,
+     "total_due": 5479.74,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 512,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3005,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "c02_multiplier",
+   "group": "Billing fields",
+   "covers": "Meter multiplier of 20 (CT-metered): (current - previous) x multiplier = kWh.",
+   "file": "scenarios/c02_multiplier.pdf",
+   "expect": {
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000121",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 240,
+     "charges": 3693.32,
+     "total_due": 3693.32,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 436.17,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3020,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "c03_deposit_refund_credit",
+   "group": "Billing fields",
+   "covers": "Applied Credits (bill deposit refund) on page 1: energy is compared without the credit.",
+   "file": "scenarios/c03_deposit_refund_credit.pdf",
+   "expect": {
+    "flags": [],
+    "checks_failed": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000122",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 247,
+     "charges": 3550.37,
+     "total_due": 3550.37,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 528.24,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3018,
+    "solar_payback_years": [
+     3.1,
+     3.7,
+     3.2
+    ]
+   }
+  },
+  {
+   "id": "c04_senior_citizen",
+   "group": "Billing fields",
+   "covers": "Senior citizen discount line (about -P65).",
+   "file": "scenarios/c04_senior_citizen.pdf",
+   "expect": {
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000123",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3689.16,
+     "total_due": 3689.16,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 417.03,
+    "rates_verdict": "About the same",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3037,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3.1
+    ]
+   }
+  },
+  {
+   "id": "c05_refund_and_other_charges",
+   "group": "Billing fields",
+   "covers": "Page-1 \"Refund\" and \"Other Charges\" lines that rates.json cannot price (small, so under the 3% line).",
+   "file": "scenarios/c05_refund_and_other_charges.pdf",
+   "expect": {
+    "checks_failed": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000124",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 241,
+     "charges": 3693.58,
+     "total_due": 3693.58,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 436.43,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3017,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "c06_lifeline_household",
+   "group": "Billing fields",
+   "covers": "KNOWN GAP: lifeline (<=100 kWh, registered) rates are not used by the explainer; a correct lifeline bill is flagged as off the published rates.",
+   "file": "scenarios/c06_lifeline_household.pdf",
+   "expect": {
+    "warn_residual": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000125",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 70,
+     "charges": 695.01,
+     "total_due": 695.01,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": -615.49,
+    "rates_verdict": "Lower",
+    "prev_exact": false,
+    "warn_residual": true,
+    "flags": [
+     "rate_mismatch:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "rate_mismatch:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 1189,
+    "solar_payback_years": [
+     4.7,
+     4.6,
+     5.3
+    ]
+   }
+  },
+  {
+   "id": "c07_meter_rollover",
+   "group": "Billing fields",
+   "covers": "KNOWN GAP: the meter wraps past 99,999 (99,850 to 120 = 270 kWh). The readings check cannot know, so it raises a false strong flag.",
+   "file": "scenarios/c07_meter_rollover.pdf",
+   "expect": {
+    "checks_has": [
+     "readings"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000126",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 270,
+     "charges": 4152.28,
+     "total_due": 4152.28,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": [
+      "readings"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 880.15,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "readings:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "readings:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3086,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "c08_four_digit_numbers",
+   "group": "Billing fields",
+   "covers": "Thousand separators everywhere (1,450 kWh, P22,000+), energy tax above 650 kWh.",
+   "file": "scenarios/c08_four_digit_numbers.pdf",
+   "expect": {
+    "flags": [],
+    "checks_failed": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000127",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 1450,
+     "charges": 23540.84,
+     "total_due": 23540.84,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 22,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 4406.96,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 17838,
+    "solar_payback_years": [
+     2.7,
+     3.4,
+     2.7
+    ]
+   }
+  },
+  {
+   "id": "d01_bracket_0045_kwh",
+   "group": "Rate brackets",
+   "covers": "45 kWh: priced at its distribution bracket.",
+   "file": "scenarios/d01_bracket_0045_kwh.pdf",
+   "expect": {
+    "stage": "result"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000128",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 45,
+     "charges": 696.17,
+     "total_due": 696.17,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 87.76,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 582,
+    "solar_payback_years": [
+     3.3,
+     4.2,
+     4.1
+    ]
+   }
+  },
+  {
+   "id": "d01_bracket_0195_kwh",
+   "group": "Rate brackets",
+   "covers": "195 kWh: priced at its distribution bracket.",
+   "file": "scenarios/d01_bracket_0195_kwh.pdf",
+   "expect": {
+    "stage": "result"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000129",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 195,
+     "charges": 2937.55,
+     "total_due": 2937.55,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 384.23,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 2384,
+    "solar_payback_years": [
+     3,
+     3.7,
+     3.2
+    ]
+   }
+  },
+  {
+   "id": "d01_bracket_0295_kwh",
+   "group": "Rate brackets",
+   "covers": "295 kWh: priced at its distribution bracket.",
+   "file": "scenarios/d01_bracket_0295_kwh.pdf",
+   "expect": {
+    "stage": "result"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000130",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 295,
+     "charges": 4534.77,
+     "total_due": 4534.77,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 603.51,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3655,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "d01_bracket_0395_kwh",
+   "group": "Rate brackets",
+   "covers": "395 kWh: priced at its distribution bracket.",
+   "file": "scenarios/d01_bracket_0395_kwh.pdf",
+   "expect": {
+    "stage": "result"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000131",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 395,
+     "charges": 6193.99,
+     "total_due": 6193.99,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 814.91,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 5001,
+    "solar_payback_years": [
+     2.8,
+     3.5,
+     2.9
+    ]
+   }
+  },
+  {
+   "id": "d01_bracket_0695_kwh",
+   "group": "Rate brackets",
+   "covers": "695 kWh: priced at its distribution bracket (energy tax applies).",
+   "file": "scenarios/d01_bracket_0695_kwh.pdf",
+   "expect": {
+    "stage": "result"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000132",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 695,
+     "charges": 11283.65,
+     "total_due": 11283.65,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 1460.55,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 9102,
+    "solar_payback_years": [
+     2.7,
+     3.4,
+     2.7
+    ]
+   }
+  },
+  {
+   "id": "d01_bracket_1450_kwh",
+   "group": "Rate brackets",
+   "covers": "1450 kWh: priced at its distribution bracket (energy tax applies); the rates table is flat above 1,000 kWh in energy tax.",
+   "file": "scenarios/d01_bracket_1450_kwh.pdf",
+   "expect": {
+    "stage": "result"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000133",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 1450,
+     "charges": 23540.84,
+     "total_due": 23540.84,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 2698.49,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 19030,
+    "solar_payback_years": [
+     2.7,
+     3.4,
+     2.7
+    ]
+   }
+  },
+  {
+   "id": "d01_bracket_3200_kwh",
+   "group": "Rate brackets",
+   "covers": "3200 kWh: priced at its distribution bracket (energy tax applies); the rates table is flat above 1,000 kWh in energy tax.",
+   "file": "scenarios/d01_bracket_3200_kwh.pdf",
+   "expect": {
+    "stage": "result"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000134",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 3200,
+     "charges": 51880.4,
+     "total_due": 51880.4,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 5969.04,
+    "rates_verdict": "About the same",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 42435,
+    "solar_payback_years": [
+     2.6,
+     3.4,
+     2.7
+    ]
+   }
+  },
+  {
+   "id": "d02_rate_month_2026_02",
+   "group": "Rate months",
+   "covers": "Priced at the 02/2026 published table (verdict vs the month before; regular month).",
+   "file": "scenarios/d02_rate_month_2026_02.pdf",
+   "expect": {
+    "stage": "result",
+    "rate_month": "2026-02",
+    "rate_month_matches_dates": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000135",
+     "period": "2026-01-15..2026-02-14",
+     "days": 31,
+     "kwh": 189,
+     "charges": 2490.96,
+     "total_due": 2490.96,
+     "tracker_months": 14,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 14,
+    "rate_month": "2026-02",
+    "rate_month_matches_dates": true,
+    "change_php": 42.08,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 2717,
+    "solar_payback_years": [
+     3.4,
+     4.5,
+     3.6
+    ]
+   }
+  },
+  {
+   "id": "d02_rate_month_2026_03",
+   "group": "Rate months",
+   "covers": "Priced at the 03/2026 published table (verdict vs the month before; regular month).",
+   "file": "scenarios/d02_rate_month_2026_03.pdf",
+   "expect": {
+    "stage": "result",
+    "rate_month": "2026-03",
+    "rate_month_matches_dates": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000136",
+     "period": "2026-02-15..2026-03-14",
+     "days": 28,
+     "kwh": 200,
+     "charges": 2763.2,
+     "total_due": 2763.2,
+     "tracker_months": 15,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 15,
+    "rate_month": "2026-03",
+    "rate_month_matches_dates": true,
+    "change_php": 324.52,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3376,
+    "solar_payback_years": [
+     3.2,
+     4.3,
+     3.4
+    ]
+   }
+  },
+  {
+   "id": "d02_rate_month_2026_04",
+   "group": "Rate months",
+   "covers": "Priced at the 04/2026 published table (verdict vs the month before; regular month).",
+   "file": "scenarios/d02_rate_month_2026_04.pdf",
+   "expect": {
+    "stage": "result",
+    "rate_month": "2026-04",
+    "rate_month_matches_dates": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000137",
+     "period": "2026-03-15..2026-04-14",
+     "days": 31,
+     "kwh": 261,
+     "charges": 3828.74,
+     "total_due": 3828.74,
+     "tracker_months": 16,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 16,
+    "rate_month": "2026-04",
+    "rate_month_matches_dates": true,
+    "change_php": 1065.52,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 4503,
+    "solar_payback_years": [
+     3,
+     4.1,
+     3.2
+    ]
+   }
+  },
+  {
+   "id": "d02_rate_month_2026_05",
+   "group": "Rate months",
+   "covers": "Priced at the 05/2026 published table (verdict vs the month before; regular month).",
+   "file": "scenarios/d02_rate_month_2026_05.pdf",
+   "expect": {
+    "stage": "result",
+    "rate_month": "2026-05",
+    "rate_month_matches_dates": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000138",
+     "period": "2026-04-15..2026-05-14",
+     "days": 30,
+     "kwh": 351,
+     "charges": 5251.21,
+     "total_due": 5251.21,
+     "tracker_months": 17,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 17,
+    "rate_month": "2026-05",
+    "rate_month_matches_dates": true,
+    "change_php": 1393.32,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "spike:weak"
+    ],
+    "flags_if_nothing_changed": [
+     "spike:weak"
+    ],
+    "route": "chatbot",
+    "next_bill": 3980,
+    "solar_payback_years": [
+     3,
+     3.9,
+     3.1
+    ]
+   }
+  },
+  {
+   "id": "d02_rate_month_2026_06",
+   "group": "Rate months",
+   "covers": "Priced at the 06/2026 published table (verdict vs the month before; regular month).",
+   "file": "scenarios/d02_rate_month_2026_06.pdf",
+   "expect": {
+    "stage": "result",
+    "rate_month": "2026-06",
+    "rate_month_matches_dates": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000139",
+     "period": "2026-05-15..2026-06-14",
+     "days": 31,
+     "kwh": 323,
+     "charges": 4882.08,
+     "total_due": 4882.08,
+     "tracker_months": 18,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 18,
+    "rate_month": "2026-06",
+    "rate_month_matches_dates": true,
+    "change_php": -383.99,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "spike:weak"
+    ],
+    "flags_if_nothing_changed": [
+     "spike:weak"
+    ],
+    "route": "chatbot",
+    "next_bill": 3350,
+    "solar_payback_years": [
+     2.9,
+     3.9,
+     3.1
+    ]
+   }
+  },
+  {
+   "id": "d02_rate_month_2026_07",
+   "group": "Rate months",
+   "covers": "Priced at the 07/2026 published table (verdict vs the month before; regular month).",
+   "file": "scenarios/d02_rate_month_2026_07.pdf",
+   "expect": {
+    "stage": "result",
+    "rate_month": "2026-07",
+    "rate_month_matches_dates": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000140",
+     "period": "2026-06-15..2026-07-14",
+     "days": 30,
+     "kwh": 281,
+     "charges": 4254.38,
+     "total_due": 4254.38,
+     "tracker_months": 19,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 19,
+    "rate_month": "2026-07",
+    "rate_month_matches_dates": true,
+    "change_php": -657.76,
+    "rates_verdict": "About the same",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3098,
+    "solar_payback_years": [
+     2.9,
+     3.8,
+     3.1
+    ]
+   }
+  },
+  {
+   "id": "d02_rate_month_2026_08",
+   "group": "Rate months",
+   "covers": "Priced at the 08/2026 published table (verdict vs the month before; first month with AWAT 2 and ancillary).",
+   "file": "scenarios/d02_rate_month_2026_08.pdf",
+   "expect": {
+    "stage": "result",
+    "rate_month": "2026-08",
+    "rate_month_matches_dates": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000141",
+     "period": "2026-07-15..2026-08-14",
+     "days": 31,
+     "kwh": 233,
+     "charges": 3521.36,
+     "total_due": 3521.36,
+     "tracker_months": 20,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 20,
+    "rate_month": "2026-08",
+    "rate_month_matches_dates": true,
+    "change_php": -717.97,
+    "rates_verdict": "About the same",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3001,
+    "solar_payback_years": [
+     2.9,
+     3.8,
+     3.1
+    ]
+   }
+  },
+  {
+   "id": "d02_rate_month_2026_09",
+   "group": "Rate months",
+   "covers": "Priced at the 09/2026 published table (verdict vs the month before; ancillary charge split from transmission).",
+   "file": "scenarios/d02_rate_month_2026_09.pdf",
+   "expect": {
+    "stage": "result",
+    "rate_month": "2026-09",
+    "rate_month_matches_dates": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000142",
+     "period": "2026-08-15..2026-09-14",
+     "days": 31,
+     "kwh": 217,
+     "charges": 3272.15,
+     "total_due": 3272.15,
+     "tracker_months": 21,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 21,
+    "rate_month": "2026-09",
+    "rate_month_matches_dates": true,
+    "change_php": -249.17,
+    "rates_verdict": "About the same",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 2919,
+    "solar_payback_years": [
+     2.9,
+     3.7,
+     3.1
+    ]
+   }
+  },
+  {
+   "id": "d02_rate_month_2026_10",
+   "group": "Rate months",
+   "covers": "Priced at the 10/2026 published table (verdict vs the month before; regular month).",
+   "file": "scenarios/d02_rate_month_2026_10.pdf",
+   "expect": {
+    "stage": "result",
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true
+   },
+   "observed": {
+    "read": {
+     "can": "5500000143",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 242,
+     "charges": 3723.86,
+     "total_due": 3723.86,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 421.77,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3016,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "d03_first_table_month",
+   "group": "Rate months",
+   "covers": "January 2026 is the first table: there is no month before it to compare with, so the explainer stops with a plain error.",
+   "file": "scenarios/d03_first_table_month.pdf",
+   "expect": {
+    "stage": "analysis",
+    "error": {
+     "regex": "no month before 2026-01"
+    }
+   },
+   "observed": {
+    "read": {
+     "can": "5500000144",
+     "period": "2025-12-15..2026-01-14",
+     "days": 31,
+     "kwh": 190,
+     "charges": 2472.35,
+     "total_due": 2472.35,
+     "tracker_months": 13,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "analysis",
+    "error": "rates.json has no month before 2026-01. Add last month's Meralco rate PDF."
+   }
+  },
+  {
+   "id": "d04_rates_lag_dates",
+   "group": "Rate months",
+   "covers": "Dated Oct 2026 but priced with the September table: the app notes the rate month differs from the billing dates.",
+   "file": "scenarios/d04_rates_lag_dates.pdf",
+   "expect": {
+    "rate_month": "2026-09",
+    "rate_month_matches_dates": false
+   },
+   "observed": {
+    "read": {
+     "can": "5500000145",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3676.63,
+     "total_due": 3676.63,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-09",
+    "rate_month_matches_dates": false,
+    "change_php": 380.63,
+    "rates_verdict": "About the same",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 2960,
+    "solar_payback_years": [
+     2.9,
+     3.7,
+     3.1
+    ]
+   }
+  },
+  {
+   "id": "d05_unknown_rates",
+   "group": "Rate months",
+   "covers": "Generation price matches no published table: \"No Meralco rate table matches\".",
+   "file": "scenarios/d05_unknown_rates.pdf",
+   "expect": {
+    "stage": "analysis",
+    "error": {
+     "regex": "No Meralco rate table matches"
+    }
+   },
+   "observed": {
+    "read": {
+     "can": "5500000146",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 243,
+     "charges": 4984.75,
+     "total_due": 4984.75,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "analysis",
+    "error": "No Meralco rate table matches this bill (generation ₱15.3008/kWh). rates.json has 2026-01 to 2026-10; add this month's \"Residential Bills at Typical Consumption Levels\" PDF."
+   }
+  },
+  {
+   "id": "d06_no_weather_for_dates",
+   "group": "Rate months",
+   "covers": "Billing dates beyond the saved weather: plain error naming the range.",
+   "file": "scenarios/d06_no_weather_for_dates.pdf",
+   "expect": {
+    "stage": "analysis",
+    "error": {
+     "regex": "No temperature data"
+    }
+   },
+   "observed": {
+    "read": {
+     "can": "5500000147",
+     "period": "2026-11-15..2026-12-14",
+     "days": 30,
+     "kwh": 240,
+     "charges": 3693.32,
+     "total_due": 3693.32,
+     "tracker_months": 24,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 4,
+     "failed": []
+    },
+    "stage": "analysis",
+    "error": "No temperature data for 2026-11-13: the saved weather covers 2016-01-01 to 2026-11-12. Check the billing dates, or refresh it with \"npm run weather\"."
+   }
+  },
+  {
+   "id": "e01_detail_two_columns",
+   "group": "Page 2 (how your bill was computed)",
+   "covers": "Full page 2 across two printed columns (VAT lines continue in the right column), last month paid in full: exact previous bill.",
+   "file": "scenarios/e01_detail_two_columns.pdf",
+   "expect": {
+    "prev_exact": true,
+    "flags": [],
+    "checks_failed": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000148",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 241,
+     "charges": 3708.58,
+     "total_due": 3708.58,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 1,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 466.41,
+    "rates_verdict": "Higher",
+    "prev_exact": true,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3024,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "e02_detail_one_column",
+   "group": "Page 2 (how your bill was computed)",
+   "covers": "Page 2 entirely in the left column; Energy Bill Amount in the right.",
+   "file": "scenarios/e02_detail_one_column.pdf",
+   "expect": {
+    "flags": [],
+    "checks_failed": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000149",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 242,
+     "charges": 3723.86,
+     "total_due": 3723.86,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 436.75,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3024,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "e03_detail_credits",
+   "group": "Page 2 (how your bill was computed)",
+   "covers": "Applied Credits with two deposit-refund lines after Total Energy Amount.",
+   "file": "scenarios/e03_detail_credits.pdf",
+   "expect": {
+    "flags": [],
+    "checks_failed": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000150",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3604,
+     "total_due": 3604,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 22,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 497.35,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3012,
+    "solar_payback_years": [
+     3,
+     3.7,
+     3.2
+    ]
+   }
+  },
+  {
+   "id": "e04_detail_energy_tax",
+   "group": "Page 2 (how your bill was computed)",
+   "covers": "Energy tax on kWh above 650 (780 kWh) and a printed VAT Zero Rated row.",
+   "file": "scenarios/e04_detail_energy_tax.pdf",
+   "expect": {
+    "flags": [],
+    "checks_failed": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000151",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 780,
+     "charges": 12668.68,
+     "total_due": 12668.68,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 22,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 1654.12,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 10185,
+    "solar_payback_years": [
+     2.7,
+     3.4,
+     2.7
+    ]
+   }
+  },
+  {
+   "id": "e05_detail_gea_and_april",
+   "group": "Page 2 (how your bill was computed)",
+   "covers": "April 2026: GEA-All is non-zero (a printed group header) and there is no ancillary or AWAT 2 column yet.",
+   "file": "scenarios/e05_detail_gea_and_april.pdf",
+   "expect": {
+    "flags": [],
+    "checks_failed": [],
+    "rate_month": "2026-04"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000152",
+     "period": "2026-03-15..2026-04-14",
+     "days": 31,
+     "kwh": 261,
+     "charges": 3828.74,
+     "total_due": 3828.74,
+     "tracker_months": 16,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 16,
+    "rate_month": "2026-04",
+    "rate_month_matches_dates": true,
+    "change_php": 1079.23,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 4505,
+    "solar_payback_years": [
+     3,
+     4.1,
+     3.2
+    ]
+   }
+  },
+  {
+   "id": "e06_detail_values_offset",
+   "group": "Page 2 (how your bill was computed)",
+   "covers": "Numbers printed 4 points below their labels, as on some real statements: the parser joins them.",
+   "file": "scenarios/e06_detail_values_offset.pdf",
+   "expect": {
+    "flags": [],
+    "checks_failed": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000153",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 243,
+     "charges": 3739.19,
+     "total_due": 3739.19,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 452.08,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3029,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "e07_part_payment",
+   "group": "Page 2 (how your bill was computed)",
+   "covers": "Last month only part-paid: the \"what you've paid\" amount is not taken as last month's bill (estimated from rates instead).",
+   "file": "scenarios/e07_part_payment.pdf",
+   "expect": {
+    "prev_exact": false,
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000154",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 241,
+     "charges": 3708.58,
+     "total_due": 3708.58,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 1,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 466.41,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3019,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "e08_last_year_cell_wrong",
+   "group": "Page 2 (how your bill was computed)",
+   "covers": "The tracker's last-year cell for this month holds this year's value (seen on real bills): corrected from the printed % vs last year.",
+   "file": "scenarios/e08_last_year_cell_wrong.pdf",
+   "expect": {
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000155",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3754.5,
+     "total_due": 3754.5,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 467.39,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3027,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "e09_senior_zero_group",
+   "group": "Page 2 (how your bill was computed)",
+   "covers": "Senior Citizen group nets to 0.00 and is printed without its header.",
+   "file": "scenarios/e09_senior_zero_group.pdf",
+   "expect": {
+    "flags": []
+   },
+   "observed": {
+    "read": {
+     "can": "5500000156",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 243,
+     "charges": 3739.17,
+     "total_due": 3739.17,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": []
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 511.98,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [],
+    "flags_if_nothing_changed": [],
+    "route": "chatbot",
+    "next_bill": 3022,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f01_line_amount_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "Generation Charge amount is P10 off base x price (line_amounts, group_sums).",
+   "file": "scenarios/f01_line_amount_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "line_amounts",
+     "group_sums"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000157",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3754.5,
+     "total_due": 3754.5,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": [
+      "line_amounts",
+      "group_sums"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 482.37,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "line_amounts:strong",
+     "group_sums:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "line_amounts:strong",
+     "group_sums:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3024,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f02_kwh_base_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "System Loss is billed on 10% more kWh than Actual Consumption (kwh_bases).",
+   "file": "scenarios/f02_kwh_base_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "kwh_bases"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000158",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 243,
+     "charges": 3739.19,
+     "total_due": 3739.19,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": [
+      "kwh_bases",
+      "percent_bases",
+      "summary_matches_detail",
+      "group_percents",
+      "vat_sales_base",
+      "total_energy_amount"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 482.04,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "kwh_bases:strong",
+     "percent_bases:strong",
+     "summary_matches_detail:strong",
+     "group_percents:strong",
+     "vat_sales_base:strong",
+     "total_energy_amount:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "kwh_bases:strong",
+     "percent_bases:strong",
+     "summary_matches_detail:strong",
+     "group_percents:strong",
+     "vat_sales_base:strong",
+     "total_energy_amount:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3023,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f03_vat_base_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "VAT on Distribution is charged on a base P60 above the Distribution group (percent_bases).",
+   "file": "scenarios/f03_vat_base_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "percent_bases"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000159",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 242,
+     "charges": 3723.86,
+     "total_due": 3723.86,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": [
+      "percent_bases",
+      "group_sums",
+      "vat_total",
+      "non_vat"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 421.77,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "percent_bases:strong",
+     "group_sums:strong",
+     "vat_total:strong",
+     "non_vat:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "percent_bases:strong",
+     "group_sums:strong",
+     "vat_total:strong",
+     "non_vat:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3032,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f04_lft_base_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "Local franchise tax base differs from VAT Sales + RPT (lft_base).",
+   "file": "scenarios/f04_lft_base_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "lft_base"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000160",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 243,
+     "charges": 3739.19,
+     "total_due": 3739.19,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": [
+      "lft_base",
+      "group_sums"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 497.02,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "lft_base:strong",
+     "group_sums:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "lft_base:strong",
+     "group_sums:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3028,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f05_energy_tax_base_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "Energy tax charged on all kWh above 0 instead of above 650 (energy_tax_base).",
+   "file": "scenarios/f05_energy_tax_base_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "energy_tax_base"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000161",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 780,
+     "charges": 12668.68,
+     "total_due": 12668.68,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 22,
+     "failed": [
+      "energy_tax_base",
+      "group_sums"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 1654.12,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "energy_tax_base:strong",
+     "group_sums:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "energy_tax_base:strong",
+     "group_sums:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 10149,
+    "solar_payback_years": [
+     2.7,
+     3.4,
+     2.7
+    ]
+   }
+  },
+  {
+   "id": "f06_summary_vs_detail",
+   "group": "Page 2: wrong numbers",
+   "covers": "Page 1 shows a different Distribution amount than page 2 (summary_matches_detail).",
+   "file": "scenarios/f06_summary_vs_detail.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "summary_matches_detail"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000162",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3789.5,
+     "total_due": 3789.5,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": [
+      "summary_matches_detail",
+      "charges_total"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 532.35,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "summary_matches_detail:strong",
+     "charges_total:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "summary_matches_detail:strong",
+     "charges_total:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3030,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f07_percent_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "A group's printed percent of the energy amount is wrong (group_percents).",
+   "file": "scenarios/f07_percent_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "group_percents"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000163",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 245,
+     "charges": 3769.81,
+     "total_due": 3769.81,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": [
+      "group_percents"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 482.7,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "group_percents:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "group_percents:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3019,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f08_total_energy_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "Total Energy Amount and the charges line are both P75 too high, page 1 agrees with itself (total_energy_amount, charges_total).",
+   "file": "scenarios/f08_total_energy_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "total_energy_amount",
+     "rate_this_month",
+     "charges_total"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000164",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 245,
+     "charges": 3769.81,
+     "total_due": 3769.81,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": [
+      "group_percents",
+      "total_energy_amount",
+      "charges_total",
+      "rate_this_month",
+      "avg_daily"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 512.66,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "group_percents:strong",
+     "total_energy_amount:strong",
+     "charges_total:strong",
+     "rate_this_month:strong",
+     "avg_daily:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "group_percents:strong",
+     "total_energy_amount:strong",
+     "charges_total:strong",
+     "rate_this_month:strong",
+     "avg_daily:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3025,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f09_vat_total_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "The VAT lines add up to P20 less than the printed VAT Sales VAT (vat_total).",
+   "file": "scenarios/f09_vat_total_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "vat_total"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000165",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 244,
+     "charges": 3754.5,
+     "total_due": 3754.5,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": [
+      "vat_total",
+      "total_energy_amount"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 467.39,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "vat_total:strong",
+     "total_energy_amount:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "vat_total:strong",
+     "total_energy_amount:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3024,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f10_stats_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "Printed kWh vs previous period, % vs last year, daily average, rate and CO2 are all off (vs_previous, vs_last_year_pct, avg_daily, rate_this_month, ghg).",
+   "file": "scenarios/f10_stats_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "rate_this_month",
+     "vs_previous",
+     "vs_last_year_pct",
+     "avg_daily",
+     "ghg"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000166",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 242,
+     "charges": 3723.86,
+     "total_due": 3723.86,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 21,
+     "failed": [
+      "rate_this_month",
+      "vs_previous",
+      "vs_last_year_pct",
+      "avg_daily",
+      "ghg"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 421.77,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "rate_this_month:strong",
+     "vs_previous:strong",
+     "vs_last_year_pct:strong",
+     "avg_daily:strong",
+     "ghg:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "rate_this_month:strong",
+     "vs_previous:strong",
+     "vs_last_year_pct:strong",
+     "avg_daily:strong",
+     "ghg:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3035,
+    "solar_payback_years": [
+     2.9,
+     3.6,
+     3
+    ]
+   }
+  },
+  {
+   "id": "f11_credit_lines_wrong",
+   "group": "Page 2: wrong numbers",
+   "covers": "The credit lines add up to P15 more than the printed Applied Credits (credits).",
+   "file": "scenarios/f11_credit_lines_wrong.pdf",
+   "expect": {
+    "route": "meralco",
+    "checks_has": [
+     "credits"
+    ]
+   },
+   "observed": {
+    "read": {
+     "can": "5500000167",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": 242,
+     "charges": 3573.36,
+     "total_due": 3573.36,
+     "tracker_months": 22,
+     "page2": true,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "checks": {
+     "run": 22,
+     "failed": [
+      "credits"
+     ]
+    },
+    "stage": "result",
+    "tier": "A_3pc",
+    "n_periods": 22,
+    "rate_month": "2026-10",
+    "rate_month_matches_dates": true,
+    "change_php": 436.75,
+    "rates_verdict": "Higher",
+    "prev_exact": false,
+    "warn_residual": false,
+    "flags": [
+     "credits:strong"
+    ],
+    "flags_if_nothing_changed": [
+     "credits:strong"
+    ],
+    "route": "meralco",
+    "next_bill": 3016,
+    "solar_payback_years": [
+     3,
+     3.7,
+     3.2
+    ]
+   }
+  },
+  {
+   "id": "g01_scanned_no_text",
+   "group": "Bad inputs",
+   "covers": "A PDF with no selectable text (scanned image): \"Use Scan a paper bill instead\".",
+   "file": "scenarios/g01_scanned_no_text.pdf",
+   "expect": {
+    "stage": "pdf",
+    "error": {
+     "regex": "no selectable text"
+    }
+   },
+   "observed": {
+    "stage": "pdf",
+    "error": "This PDF has no selectable text (scanned image). Use \"Scan a paper bill\" with a photo of it instead."
+   }
+  },
+  {
+   "id": "g02_not_a_bill",
+   "group": "Bad inputs",
+   "covers": "A PDF with text that is not a Meralco bill.",
+   "file": "scenarios/g02_not_a_bill.pdf",
+   "expect": {
+    "stage": "not_a_bill"
+   },
+   "observed": {
+    "stage": "not_a_bill",
+    "error": "does not look like a Meralco bill"
+   }
+  },
+  {
+   "id": "g03_missing_kwh",
+   "group": "Bad inputs",
+   "covers": "No readings and no Actual Consumption: the confirm screen asks for the kWh instead of analysing.",
+   "file": "scenarios/g03_missing_kwh.pdf",
+   "expect": {
+    "stage": "confirm"
+   },
+   "observed": {
+    "read": {
+     "can": "5500000170",
+     "period": "2026-09-15..2026-10-14",
+     "days": 30,
+     "kwh": null,
+     "charges": 3739.19,
+     "total_due": 3739.19,
+     "tracker_months": 22,
+     "page2": false,
+     "payments": 0,
+     "source": "synthetic"
+    },
+    "stage": "confirm",
+    "problems": [
+     "Enter the kWh used (more than 0)."
+    ]
+   }
+  }
+ ]
+}

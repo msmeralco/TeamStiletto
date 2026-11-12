@@ -11,6 +11,7 @@
     "advisories": "node scripts/fetch_advisories.mjs",
     "faqs": "node scripts/fetch_faqs.mjs",
     "synthetic": "node scripts/make_synthetic.mjs",
+    "scenarios": "node scripts/make_scenarios.mjs",
     "test": "node tests/selfcheck.mjs",
     "prestart": "node scripts/refresh.mjs",
     "start": "node scripts/serve.mjs",

@@ -148,7 +148,7 @@ export function parseBill(lines, spec = null) {
   const ps = d && iso(d[1], d[2], d[3]), pe = d && iso(d[4], d[5], d[6]);
   const prev = field(/previous reading/i), cur = field(/current reading/i), mult = field(/^multi(plier)?\b/i) ?? 1;
   const from = texts.findIndex(t => /charges for this billing period/i.test(t)), to = texts.findIndex(t => /total amount due/i.test(t));
-  const kwh = field(/actual consumption|kwh used/i) ?? (cur - prev) * mult;
+  const kwh = field(/actual consumption|kwh used/i) ?? (cur != null && prev != null ? (cur - prev) * mult : null); // never 0 for "not read"
 
   // "This bill is 71% higher (+355kWh) vs" + "previous billing period" / "same period last year" on a line just below.
   const vs = {};

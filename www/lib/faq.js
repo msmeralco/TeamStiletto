@@ -32,7 +32,9 @@ const otherMonth = (q, month) => {
 
 // Build once per faqs.json: each FAQ's question terms and answer terms, and how rare each term is.
 export function faqIndex(data) {
-  const docs = (data?.faqs ?? []).map(f => ({ f, q: new Set(terms(f.q)), a: new Set(terms(`${f.category ?? ''} ${f.answer.join(' ')}`)) }));
+  // faqs.json is scraped: an entry without a question or answer paragraphs is skipped, so one bad row cannot stop the app loading.
+  const ok = f => f && typeof f.q === 'string' && Array.isArray(f.answer) && f.answer.every(p => typeof p === 'string');
+  const docs = (Array.isArray(data?.faqs) ? data.faqs : []).filter(ok).map(f => ({ f, q: new Set(terms(f.q)), a: new Set(terms(`${f.category ?? ''} ${f.answer.join(' ')}`)) }));
   const df = new Map();
   for (const d of docs) for (const t of new Set([...d.q, ...d.a])) df.set(t, (df.get(t) ?? 0) + 1);
   return { docs, idf: t => Math.log(1 + docs.length / (df.get(t) ?? 0.5)) };
