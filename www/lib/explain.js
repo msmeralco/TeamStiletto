@@ -10,12 +10,13 @@ const LABEL = {
   power_act_reduction: 'the Power Act reduction',
 };
 
+// Meralco prices all of a month's kWh at its bracket's rate (distribution steps at 200/300/400 kWh) and the table has a row at
+// each bracket's top, so take the first row at or above the kWh; never interpolate across a bracket. VAT, LFT and energy tax
+// per kWh in that row are computed at the row's kWh; the small difference lands in "local tax and rounding".
+// shortcut: lifeline rows (<=100 kWh, registered households only) are not used; add them when a lifeline bill is in the corpus.
 export function lookup(rates, month, kwh) {
-  // shortcut: ignores lifeline rows and clamps outside the table; add lifeline (<=100 kWh) once the real rates.json is built.
   const rows = rates[month].non_lifeline, ks = Object.keys(rows).map(Number).sort((a, b) => a - b);
-  const q = Math.min(Math.max(kwh, ks[0]), ks.at(-1));
-  const lo = ks.findLast(k => k <= q), hi = ks.find(k => k >= q), t = hi === lo ? 0 : (q - lo) / (hi - lo);
-  return Object.fromEntries(Object.keys(rows[lo]).map(k => [k, rows[lo][k] + t * (rows[hi][k] - rows[lo][k])]));
+  return { ...rows[ks.find(k => k >= kwh) ?? ks.at(-1)] };
 }
 
 // Every row: per-kWh components + fixed ₱/month spread over its kWh = printed total.
@@ -33,6 +34,10 @@ export function detectRateMonth(rates, bill) {
   if (gap(month) > 0.01) throw new Error(`No Meralco rate table matches this bill (generation ₱${perKwh.toFixed(4)}/kWh). ` +
     `rates.json has ${months(rates)[0]} to ${months(rates).at(-1)}; add this month's "Residential Bills at Typical Consumption Levels" PDF.`);
   return { month, matchesDates: month === bill.period_end?.slice(0, 7) };
+}
+
+export function usableReason(x) {
+  try { return x?.text && x.date && /(^|\.)meralco\.com\.ph$/.test(new URL(x.url).hostname) ? x : null; } catch { return null; }
 }
 
 const fixedSum = (rates, m) => Object.values(rates[m].fixed ?? {}).reduce((a, v) => a + v, 0);
@@ -75,12 +80,12 @@ export function explain(bill, per, f, T, cdd, rates, reasons = {}) {
   const rest = change - top.reduce((s, i) => s + i.php, 0);
   let sentence = `Your bill ${change >= 0 ? 'rose' : 'fell'} ${peso(Math.abs(change))}. ` +
     top.map(i => `${peso(i.php)} was ${i.label}`).join(', ') + `, and ${peso(rest)} was everything else.`;
-  const reason = reasons[m1] ?? null;
-  if (reason && top.some(i => i.key === 'generation')) sentence += ` Meralco (${reason.date}): ${reason.text}`;
+  // Spec 4.5 gate: quote Meralco only with text, date and a meralco.com.ph link. Shown beside the sentence, not inside it.
+  const reason = usableReason(reasons[m1]);
 
   return {
     bill_change_php: change, est_prev_bill: estPrev, breakdown: items, sentence, reason,
     rate_month: m1, prev_rate_month: m0, rate_month_matches_dates: matchesDates,
-    R1: r1.total, F1, warn_residual: Math.abs(residual) > 0.03 * bill.charges_this_period,
+    R0, R1: r1.total, F1, warn_residual: Math.abs(residual) > 0.03 * bill.charges_this_period,
   };
 }

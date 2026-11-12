@@ -15,10 +15,23 @@ h1 small { display: block; font-size: 14px; font-weight: normal; color: var(--mu
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 td, th { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; }
 td.n { text-align: right; white-space: nowrap; }
-input { font: inherit; width: 100%; padding: 4px; }
+input, textarea { font: inherit; width: 100%; padding: 4px; }
+input[type=checkbox] { width: auto; }
+fieldset { border: 1px solid var(--line); border-radius: 8px; }
+fieldset label, details label { display: block; padding: 4px 0; }
+details { margin: 12px 0; }
+#minelist li { margin-bottom: 12px; }
 input.bad { outline: 2px solid var(--bad); }
 #checks li.ok::marker { content: "✓ "; color: var(--ok); }
 #checks li.fail::marker { content: "✗ "; color: var(--bad); }
 .bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; margin: 12px 0; }
 .bar div { min-width: 2px; }
+#sources, pre { overflow-wrap: anywhere; } /* long Meralco URLs must not widen the page on a phone */
 svg { width: 100%; max-width: 420px; height: auto; }
+#reason { margin: 8px 0; border-left: 4px solid var(--line); padding: 4px 12px; font-size: 14px; }
+#chatlog { max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; }
+#chatlog p { margin: 0; padding: 8px 12px; border-radius: 12px; max-width: 85%; white-space: pre-wrap; font-size: 15px; }
+#chatlog .bot { align-self: flex-start; background: var(--line); }
+#chatlog .me { align-self: flex-end; background: var(--accent); color: #fff; }
+#chatform { display: flex; gap: 6px; margin-top: 6px; }
+#chatform button { flex: none; padding: 4px 16px; }

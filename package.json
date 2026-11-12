@@ -7,14 +7,19 @@
     "postinstall": "node -e \"const fs=require('fs');fs.mkdirSync('www/vendor',{recursive:true});for(const f of ['pdf.min.mjs','pdf.worker.min.mjs'])fs.copyFileSync('node_modules/pdfjs-dist/legacy/build/'+f,'www/vendor/'+f)\"",
     "rates": "node scripts/build_rates.mjs",
     "weather": "node scripts/fetch_weather.mjs",
+    "advisories": "node scripts/fetch_advisories.mjs",
     "synthetic": "node scripts/make_synthetic.mjs",
     "test": "node tests/selfcheck.mjs",
     "start": "node scripts/serve.mjs",
-    "ios": "cap sync ios && cap open ios"
+    "ios": "cap sync ios && cap open ios",
+    "android": "cap sync android && cap open android"
   },
   "dependencies": {
+    "@capacitor/android": "6.2.0",
     "@capacitor/core": "6.2.0",
+    "@capacitor/filesystem": "6.0.0",
     "@capacitor/ios": "6.2.0",
+    "@capacitor/share": "6.0.0",
     "pdfjs-dist": "4.10.38"
   },
   "devDependencies": {

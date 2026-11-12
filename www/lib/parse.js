@@ -38,17 +38,17 @@ function parseTracker(lines, periodEnd) {
 
 export function parseBill(lines) {
   const texts = lines.map(l => l.items.map(i => i.str).join('  '));
-  const field = re => {
+  const field = (re, as = toNum) => {
     for (let i = 0; i < lines.length; i++) {
       const m = texts[i].match(re);
       if (!m) continue;
       const n = texts[i].slice(m.index + m[0].length).match(NUM);
-      if (n) return toNum(n[0]);
+      if (n) return as(n[0]);
       // The statement prints many values on the line(s) under their label, in the same column.
       const x = lines[i].items.find(it => re.test(it.str))?.x;
       for (const l of x == null ? [] : lines.slice(i + 1, i + 4)) {
         const it = l.items.find(it => Math.abs(it.x - x) < 15 && NUM.test(it.str));
-        if (it) return toNum(it.str.match(NUM)[0]);
+        if (it) return as(it.str.match(NUM)[0]);
       }
     }
     return null;
@@ -59,6 +59,7 @@ export function parseBill(lines) {
   const prev = field(/previous reading/i), cur = field(/current reading/i), mult = field(/^multi(plier)?\b/i) ?? 1;
   const from = texts.findIndex(t => /charges for this billing period/i.test(t)), to = texts.findIndex(t => /total amount due/i.test(t));
   return {
+    can: field(/customer account number/i, s => s), // kept as text: an account number, not a quantity
     period_start: ps,
     period_end: pe,
     days: ps && pe ? (Date.parse(pe) - Date.parse(ps)) / 864e5 + 1 : null,

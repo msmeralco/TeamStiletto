@@ -3,3 +3,26 @@ ios/
 www/vendor/
 data/private/
 data/rates_pdfs/
+android/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+.claude/
+
+# secrets
+.env
+.env.*
+*.keystore
+*.jks
+
+# logs / build artifacts
+*.log
+dist/
+build/
+*.apk
+*.aab
+*.ipa

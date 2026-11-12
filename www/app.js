@@ -5,8 +5,13 @@ import { runChecks } from './lib/checks.js';
 import { temps, trackerPeriods, fit, cdd, project } from './lib/model.js';
 import { explain, validateRates } from './lib/explain.js';
 import { solar, SOLAR } from './lib/solar.js';
+import { billingFlags, disputeMessage, disputePacket, unexplainedIncrease, householdExplains, STRENGTH_TEXT } from './lib/flags.js';
+import { startChat, step, answersOf } from './lib/chat.js';
+import { daysSince, ercMessage, ercPacket, CHANNELS, FOLLOW_UP_DAYS } from './lib/disputes.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
+// Offline web app; the native iOS/Android apps already bundle every file.
+if ('serviceWorker' in navigator && !window.Capacitor?.isNativePlatform?.()) navigator.serviceWorker.register('sw.js').catch(() => {});
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`); // PDF text is untrusted
 const peso = v => `${v < 0 ? '−' : ''}₱${Math.abs(v).toLocaleString('en-PH', { maximumFractionDigits: 0 })}`;
@@ -99,6 +104,13 @@ function renderResults() {
     `<tr><th>Change vs last month (est. ${peso(r.est_prev_bill)})</th><th class="n">${peso(r.bill_change_php)}</th></tr>` +
     (r.warn_residual ? `<tr><td colspan="2" class="note">Local tax and rounding is over 3% of the bill: the rate table and the bill disagree.</td></tr>` : '');
 
+  const why = r.reason;
+  $('#reason').hidden = !why;
+  if (why) $('#reason').innerHTML = `<b>Meralco's advisory for this rate month (${esc(why.date)}):</b> “${esc(why.text)}”
+    <a href="${esc(why.url)}" target="_blank" rel="noopener">${esc(why.title ?? 'Source')}</a>`;
+  startChatUI();
+  renderFlags();
+
   // fit chart: kWh/day vs CDD/day
   const { x, y } = f.points, W = 320, H = 200, mx = Math.max(...x, 0.1) * 1.1, my = Math.max(...y) * 1.1;
   const X = v => 30 + v / mx * (W - 40), Y = v => H - 20 - v / my * (H - 30);
@@ -129,6 +141,164 @@ function renderResults() {
     `Solar yield ${SOLAR.Y} kWh/kWp/yr (Philippine DOE, Global Solar Atlas, Metro Manila); cost ₱${SOLAR.C.toLocaleString()}/kWp (Ember, May 2026); fees ₱${SOLAR.fees.toLocaleString()} (ERC certificate + meter difference).`,
     'Export credit = the generation charge per kWh on your bill. Home-use share is your own estimate.',
   ].map(s => `<li>${esc(s)}</li>`).join('');
+}
+
+// ---------- "what changed at home?" chat (lib/chat.js) ----------
+let chat;
+const say = (who, t) => { $('#chatlog').insertAdjacentHTML('beforeend', `<p class="${who}">${esc(t)}</p>`); $('#chatlog').scrollTop = 1e9; };
+const chatCtx = () => ({ sentence: analysis.r.sentence, reason: analysis.r.reason, days: bill.days, unexplained_kwh: unexplainedIncrease(bill, analysis.r).kwh });
+function startChatUI() {
+  chat = startChat();
+  $('#chatlog').innerHTML = '';
+  const { php, kwh } = unexplainedIncrease(bill, analysis.r);
+  say('bot', `Hi! ${analysis.r.bill_change_php >= 0 ? 'Tumaas' : 'Bumaba'} ng ${peso(Math.abs(analysis.r.bill_change_php))} ang bill mo.` +
+    (php > 0 ? ` Mga ${Math.round(kwh)} kWh (${peso(php)}) dito ang hindi maipaliwanag ng init ng panahon o haba ng billing period.` : '') +
+    '\nMay nagbago ba sa bahay? Halimbawa: "bumili kami ng aircon", "nag-WFH ako", "umuwi kami ng probinsya", o "wala".' +
+    '\nPuwede ka ring magtanong, hal. "bakit tumaas ang generation charge?"');
+}
+$('#chatform').onsubmit = e => {
+  e.preventDefault();
+  const t = $('#chatin').value;
+  if (!t.trim() || !analysis) return;
+  $('#chatin').value = '';
+  say('me', t);
+  const r = step(chat, t, chatCtx());
+  chat = r.state;
+  if (r.reply) say('bot', r.reply);
+  renderFlags();
+};
+const answers = () => answersOf(chat, bill.days);
+
+// Demo case inbox on the dev server (npm start), read by dashboard.html. Only on the user's tap, after a confirm.
+async function postCase(packet, button) {
+  if (!confirm('Send this evidence file (account number, meter readings, charges and your answers) to the TANAW case dashboard for ERC review?')) return;
+  try {
+    const res = await fetch('api/cases', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(packet) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    button.textContent = 'Sent to the case dashboard';
+    button.disabled = true;
+  } catch (e) { msg(`Couldn't reach the case dashboard (${e.message}). Use "Send dispute" to send the file yourself.`); }
+}
+
+function renderFlags() {
+  const a = answers(), checks = runChecks(bill), flags = billingFlags(bill, checks, analysis.r, a);
+  const u = unexplainedIncrease(bill, analysis.r);
+  const packet = flags.length && disputePacket({ bill, checks, flags, answers: a, r: analysis.r, rates });
+  const explained = u.php > 0 && householdExplains(u, a)
+    ? `<p class="note">Your answers may explain the ${peso(u.php)} rise in usage, so a dispute is less likely to help.</p>` : '';
+  $('#flags').innerHTML = explained + (!flags.length ? '<p>No signs of a billing error in the numbers we can check.</p>'
+    : `<p><b>Evidence strength: ${esc(STRENGTH_TEXT[packet.strength])}</b></p>
+       <ul>${flags.map(f => `<li>${esc(f.text)}</li>`).join('')}</ul>
+       <p>This is worth asking Meralco to recheck. Review the message below, then send it yourself through the My Meralco app or
+       Meralco's Facebook Messenger, or call 16211. If it is not resolved, contact the ERC: consumer@erc.ph, 8687-5577.</p>
+       <textarea id="dispute" rows="14" aria-label="Message to Meralco">${esc(disputeMessage(bill, flags, a))}</textarea>
+       <button id="send" class="primary">Send dispute</button> <button id="escalate">Escalate to the case dashboard (ERC)</button>
+       <p class="hint">Sends this message and an evidence file (your account number, readings, charges and answers) through the app you pick:
+       the My Meralco app, Messenger or email. Nothing is sent until you choose. <button id="copy" class="link">Copy the message only</button></p>
+       <details id="track"><summary>How you sent it, and Meralco's reference number</summary>
+         <label>How did you send it? <select id="channel">${CHANNELS.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>
+         <label>Date sent <input id="sent" type="date" value="${new Date().toLocaleDateString('en-CA')}"></label>
+         <label>Meralco reference number, if they gave one <input id="ref" type="text" autocomplete="off"></label>
+         <button id="trackbtn">Save in My disputes</button>
+       </details>
+       <p id="tracked" class="hint"></p>`);
+  if (!packet) return;
+  const edited = () => ({ ...packet, message: $('#dispute').value }); // keep the user's edits to the message
+  const track = () => {
+    if (!$('#sent').value) return msg('Enter the date you sent it.');
+    const same = x => x.packet.customer_account_number === packet.customer_account_number && x.packet.bill.period_end === packet.bill.period_end;
+    const list = loadDisputes().filter(x => !same(x)); // one record per bill
+    list.unshift({ id: Date.now().toString(36), sent: $('#sent').value, channel: $('#channel').value, ref: $('#ref').value.trim(), status: 'waiting', packet: edited() });
+    if (!saveDisputes(list)) return msg("Couldn't save on this phone. Keep the evidence file instead.");
+    $('#tracked').textContent = 'Saved in "My disputes" on the start screen.';
+    renderMine();
+  };
+  $('#copy').onclick = () => copyText($('#dispute'), $('#copy'));
+  $('#send').onclick = async () => { if (await sendDispute(`tanaw-dispute-${bill.period_end}.json`, edited(), $('#dispute').value)) track(); };
+  $('#trackbtn').onclick = track;
+  $('#escalate').onclick = e => postCase(edited(), e.target);
+}
+
+async function copyText(area, button) {
+  try { await navigator.clipboard.writeText(area.value); button.textContent = 'Copied'; }
+  catch { area.select(); } // clipboard blocked: leave it selected for a manual copy
+}
+
+// ---------- my disputes (this device only) ----------
+const STORE = 'tanaw.disputes';
+const loadDisputes = () => { try { return JSON.parse(localStorage.getItem(STORE)) ?? []; } catch { return []; } };
+const saveDisputes = list => { try { localStorage.setItem(STORE, JSON.stringify(list)); return true; } catch { return false; } };
+
+function renderMine() {
+  const list = loadDisputes();
+  $('#mine').hidden = !list.length;
+  $('#minelist').innerHTML = list.map(x => {
+    const n = daysSince(x.sent), b = x.packet.bill;
+    const status = x.status === 'resolved' ? 'Resolved.'
+      : `Waiting ${n} day${n === 1 ? '' : 's'}.${n >= FOLLOW_UP_DAYS ? ' Time to follow up, or escalate to the ERC.' : ''}`;
+    return `<li data-id="${esc(x.id)}"><b>Bill ${esc(b.period_start)} to ${esc(b.period_end)}</b>, ${esc(x.packet.strength)} evidence.<br>
+      Sent ${esc(x.sent)} via ${esc(x.channel)}${x.ref ? `, reference ${esc(x.ref)}` : ''}. ${status}<br>
+      <button data-act="send">Send dispute</button>
+      ${x.status === 'resolved' ? '' : '<button data-act="erc">Escalate to ERC</button> <button data-act="resolve">Mark resolved</button>'}
+      <button data-act="delete">Delete</button><div class="erc"></div></li>`;
+  }).join('');
+}
+
+$('#minelist').onclick = e => {
+  const act = e.target.dataset.act, li = e.target.closest('li');
+  if (!act || !li) return;
+  const list = loadDisputes(), x = list.find(y => y.id === li.dataset.id);
+  if (act === 'send') return sendDispute(`tanaw-dispute-${x.packet.bill.period_end}.json`, x.packet, x.packet.message);
+  if (act === 'erc') {
+    const box = li.querySelector('.erc');
+    box.innerHTML = `<p>Send this to the ERC at consumer@erc.ph (or call 8687-5577) with the evidence file.</p>
+      <textarea rows="12" aria-label="Message to the ERC">${esc(ercMessage(x))}</textarea>
+      <button data-erc="send">Send to ERC</button> <button data-erc="post">Send to the case dashboard</button> <button data-erc="copy">Copy message only</button>`;
+    box.querySelector('[data-erc=copy]').onclick = ev => copyText(box.querySelector('textarea'), ev.target);
+    box.querySelector('[data-erc=post]').onclick = ev => postCase({ ...ercPacket(x), message: box.querySelector('textarea').value }, ev.target);
+    box.querySelector('[data-erc=send]').onclick = () =>
+      sendDispute(`tanaw-erc-${x.packet.bill.period_end}.json`, ercPacket(x), box.querySelector('textarea').value);
+    return;
+  }
+  if (act === 'delete' && !confirm('Delete this dispute record from this phone?')) return;
+  if (act === 'delete') list.splice(list.indexOf(x), 1);
+  if (act === 'resolve') x.status = 'resolved';
+  if (!saveDisputes(list)) msg("Couldn't save on this phone.");
+  renderMine();
+};
+renderMine();
+
+// Share sheet with the message and the evidence file (Messenger, Mail, Files...), else download the file and copy the message.
+// Returns false only if the user cancelled.
+async function sendDispute(name, packet, text) {
+  const json = JSON.stringify(packet, null, 2);
+  // In the iOS/Android app the WebView has no web share sheet or downloads, so use Capacitor's native Share + Filesystem.
+  // shortcut: native path untested on devices; check it on one iPhone and one Android phone before the demo.
+  if (window.Capacitor?.isNativePlatform?.()) {
+    const { Filesystem, Share } = window.Capacitor.Plugins;
+    try {
+      const { uri } = await Filesystem.writeFile({ path: name, data: json, directory: 'CACHE', encoding: 'utf8' });
+      await Share.share({ title: 'Bill dispute', text, files: [uri], dialogTitle: 'Send dispute' });
+      return true;
+    } catch (e) {
+      if (/cancel/i.test(e?.message)) return false;
+      try { await navigator.clipboard.writeText(text); } catch { /* still show the message below */ }
+      msg(`Couldn't open sharing (${e?.message ?? e}). The message may be on your clipboard; you can also send it from "My disputes".`);
+      return false;
+    }
+  }
+  const file = new File([json], name, { type: 'application/json' });
+  const data = { files: [file], text, title: 'Bill dispute' };
+  if (navigator.canShare?.(data)) {
+    try { await navigator.share(data); return true; } catch (e) { if (e.name === 'AbortError') return false; }
+  }
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(file), download: name });
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  let copied = true;
+  try { await navigator.clipboard.writeText(text); } catch { copied = false; }
+  msg(`Evidence file saved${copied ? ' and message copied' : ''}. Paste the message into the My Meralco app or Meralco's Facebook Messenger, and attach the file.`);
+  return true;
 }
 
 function renderSolar() {

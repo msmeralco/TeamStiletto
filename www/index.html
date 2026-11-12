@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>TANAW</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="theme-color" content="#e65c00">
 </head>
 <body>
   <div id="synthetic" class="banner" hidden>SYNTHETIC sample bill: an invented household, priced at real Meralco rates with real weather.</div>
@@ -22,6 +26,11 @@
         <button id="pwgo">Open</button>
       </div>
       <p class="hint">No bill yet? <button id="sample" class="link">Try the SYNTHETIC sample</button> or <button id="weak" class="link">the weak-fit sample</button></p>
+      <div id="mine" hidden>
+        <h2>My disputes</h2>
+        <p class="hint">Saved only on this phone.</p>
+        <ul id="minelist"></ul>
+      </div>
     </section>
 
     <section id="confirm" hidden>
@@ -34,8 +43,16 @@
     <section id="results" hidden>
       <p id="tierc" class="note" hidden>We can't reliably separate weather for this household. Here's what we can say.</p>
       <p id="sentence" class="big"></p>
+      <blockquote id="reason" hidden></blockquote>
       <div id="bar" class="bar" aria-hidden="true"></div>
       <table id="items"></table>
+      <h2>Possible billing error?</h2>
+      <div id="chat">
+        <p class="hint">Tell us what changed at home, in English or Taglish. Your answers help check whether the bill, not your usage, is the problem.</p>
+        <div id="chatlog" aria-live="polite"></div>
+        <form id="chatform"><input id="chatin" type="text" autocomplete="off" aria-label="Your answer" placeholder="hal. bumili kami ng aircon"><button>Send</button></form>
+      </div>
+      <div id="flags"></div>
       <h2>Your usage vs heat</h2>
       <div id="chart"></div>
       <p id="fitinfo" class="hint"></p>

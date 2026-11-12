@@ -1,10 +1,13 @@
 // SYNTHETIC sample bills (invented households) in the My Meralco statement layout, priced at the REAL rates.json and
 // driven by the REAL weather.json. Run build_rates and fetch_weather first.
-// Writes www/data/fixtures/SYNTHETIC_*.pdf, www/data/reasons.json, tests/SYNTHETIC_truth.json
+// Writes www/data/fixtures/SYNTHETIC_*.pdf and SYNTHETIC_packets.json, www/data/reasons.json, tests/SYNTHETIC_truth.json
 import { readFileSync, writeFileSync } from 'node:fs';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
-import { trackerPeriods, temps, DAY } from '../www/lib/model.js';
-import { lookup } from '../www/lib/explain.js';
+import { trackerPeriods, temps, fit, cdd, DAY } from '../www/lib/model.js';
+import { lookup, explain } from '../www/lib/explain.js';
+import { runChecks } from '../www/lib/checks.js';
+import { billingFlags, disputePacket } from '../www/lib/flags.js';
+import { ercPacket } from '../www/lib/disputes.js';
 
 let seed = 42;
 const rand = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
@@ -42,7 +45,7 @@ async function makeBill(name, perDay) {
   }));
   const cp = r2(charges.reduce((s, c) => s + c.amount_php, 0));
   const bill = {
-    period_start: '2026-09-15', period_end: END, days: 30, kwh: q1, previous_reading: 10000, current_reading: 10000 + q1, multiplier: 1,
+    can: '0000000000', period_start: '2026-09-15', period_end: END, days: 30, kwh: q1, previous_reading: 10000, current_reading: 10000 + q1, multiplier: 1,
     tracker, charges, charges_this_period: cp, remaining_balance: 0, installment_due: 0, total_amount_due: cp, source: 'synthetic',
   };
 
@@ -50,6 +53,7 @@ async function makeBill(name, perDay) {
   const put = (s, x, y, size = 8) => page.drawText(String(s), { x, y, size, font });
   const money = v => (v < 0 ? '-' : '') + Math.abs(v).toLocaleString('en-US', { minimumFractionDigits: 2 });
   put('SYNTHETIC - NOT A REAL MERALCO BILL - FOR TESTING ONLY', 36, 815, 10);
+  put('Customer Account Number (CAN)', 313, 721); put(bill.can, 313, 702);
   put('Billing Period', 36, 707); put('15 Sep 2026 to 14 Oct 2026', 36, 694);
   put('Current Reading', 198, 647); put(bill.current_reading.toLocaleString('en-US'), 198, 633);
   put('Previous Reading', 198, 621); put('-', 188, 617); put(bill.previous_reading.toLocaleString('en-US'), 198, 608);
@@ -71,6 +75,22 @@ async function makeBill(name, perDay) {
 
 const good = await makeBill('SYNTHETIC_bill', t => 6 + 1.5 * Math.max(t - 27, 0) + 0.3 * gauss());
 const weak = await makeBill('SYNTHETIC_weak_bill', () => 9 + 3 * gauss());
+// SYNTHETIC dispute files for the triage dashboard concept: doctored copies of the sample bills, run through the real pipeline.
+function packetFor(bill, answers) {
+  const checks = runChecks(bill), per = trackerPeriods(bill.tracker, bill.period_end), f = fit(per, T);
+  const r = explain(bill, per, f, T, cdd, rates), flags = billingFlags(bill, checks, r, answers);
+  if (!flags.length) throw new Error(`sample dispute ${bill.can} raised no flags`);
+  return { ...disputePacket({ bill, checks, flags, answers, r, rates }), created: '2026-11-01T00:00:00.000Z' };
+}
+const lastMonthZero = b => ({ ...b, tracker: b.tracker.map((t, i, a) => (i === a.length - 2 ? { ...t, kwh: 0 } : t)) });
+const packets = [
+  packetFor({ ...good, can: '0000000001', current_reading: good.current_reading + 150 }, { keys: ['nothing'] }),
+  packetFor({ ...lastMonthZero(good), can: '0000000002' }, { keys: ['nothing'] }),
+  packetFor({ ...weak, can: '0000000003', days: 36 }, { keys: ['people'], note: 'Relatives stayed for two weeks.' }),
+  ercPacket({ sent: '2026-10-20', channel: 'My Meralco app', ref: 'SYN-0004',
+    packet: packetFor({ ...weak, can: '0000000004', total_amount_due: weak.total_amount_due + 480 }, { keys: ['away'] }) }, new Date(2026, 10, 12)),
+];
+writeFileSync('www/data/fixtures/SYNTHETIC_packets.json', JSON.stringify(packets, null, 1));
 writeFileSync('www/data/reasons.json', '{}\n'); // only months where Meralco itself states a reason
 writeFileSync('tests/SYNTHETIC_truth.json', JSON.stringify({ params: { b0: 6, b1: 1.5, bp: 27 }, good, weak }, null, 1));
 console.log('SYNTHETIC bills written. good kWh', good.kwh, 'weak kWh', weak.kwh);

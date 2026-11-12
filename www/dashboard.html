@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TANAW Dispute Triage</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    main { max-width: 960px; }
+    .card { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin: 8px 0; }
+    .card summary { cursor: pointer; }
+    .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; color: #fff; font-size: 12px; font-weight: 600; }
+    .badge.strong { background: var(--bad); } .badge.medium { background: var(--accent); } .badge.weak, .badge.syn { background: #777; }
+    pre { white-space: pre-wrap; font: inherit; font-size: 14px; border-left: 3px solid var(--line); padding-left: 8px; }
+  </style>
+</head>
+<body>
+  <div class="banner">CONCEPT: how Meralco staff could triage TANAW dispute files. No Meralco system is connected; files are loaded by hand.</div>
+  <main>
+    <h1>Dispute triage <small>strongest evidence first</small></h1>
+    <p id="msg" role="alert"></p>
+    <label class="primary">Load dispute files (.json)
+      <input id="files" type="file" accept="application/json,.json" multiple hidden>
+    </label>
+    <p class="hint"><button id="inbox" class="link">Load cases escalated from the app</button> ·
+      <button id="samples" class="link">Load the SYNTHETIC sample files</button></p>
+    <p id="summary"></p>
+    <div id="list"></div>
+  </main>
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>
