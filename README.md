@@ -8,10 +8,10 @@ optional: sending a dispute to the demo dashboard, the Taglish chat's local mode
 Full design: [docs/tech_spec.md](docs/tech_spec.md).
 
 ## What it does
-1. **Read the bill.** Open your My Meralco PDF statement (password-protected PDFs work too), or **scan a paper bill** (beta: the photo is sent to the laptop and read by PaddleOCR; blurry numbers are marked yellow for you to check). TANAW reads every field and the 17-month usage tracker, runs 4 self-checks on page 1 and, for a PDF, recomputes page 2 ("How your bill was computed": every line's base × price, each group's sum, VAT, the totals) from the bill's own numbers, and lets you correct anything before going on.
+1. **Read the bill.** Open your My Meralco PDF statement (password-protected PDFs work too), or **scan a paper bill** (beta: the photo is sent to the laptop and read by PaddleOCR; blurry numbers are marked yellow for you to check). TANAW reads every field and the 17-month usage tracker, runs 4 self-checks on page 1 and, for a PDF, recomputes page 2 ("How your bill was computed": every line's base × price, each group's sum, VAT, the totals; 19 checks listed in `www/data/bill_spec.json`) from the bill's own numbers, and lets you correct anything before going on. A check is skipped, never guessed, when a number it needs wasn't read.
 2. **Explain the change.** It splits the change from last month into pesos: rate changes (real Meralco rate tables, Jan to Oct 2026), weather (real Metro Manila temperatures), and your own usage. It writes this up as a plain sentence and quotes Meralco's own advisory for the reason when one is available.
 3. **Project next month** from a usage model fitted to your tracker history.
-4. **Spot possible billing errors** (9 kinds of flag, each rated strong, medium or weak). A chat in English or Taglish asks "What changed at home?" (new aircon, guests, etc.) so real usage changes aren't mistaken for errors.
+4. **Spot possible billing errors** (9 kinds of flag, each rated strong, medium or weak, plus a strong flag for any page-2 check that doesn't add up). A chat in English or Taglish asks "What changed at home?" (new aircon, guests, etc.) so real usage changes aren't mistaken for errors.
 5. **Send a dispute.** "Send dispute to Meralco" posts a ready-made message plus a dispute file to the case dashboard (you can still send it yourself through the share sheet). **My disputes** keeps track of each one on the phone, shows the staff's reply, and after 14 days without an answer prepares an escalation to the ERC (Energy Regulatory Commission).
 6. **Staff triage dashboard** (`/dashboard.html`, a concept only: it isn't connected to any Meralco system). Disputes sent from the app appear by themselves within a few seconds, sorted by flag strength, days waiting and bill amount. Staff can reply or mark a case resolved, and the customer's phone shows it.
 
@@ -25,10 +25,14 @@ The Android and iOS builds are set up but haven't been tested on a phone yet.
 | `www/` | The app: `index.html`, `app.js`, `style.css`, web app files (`sw.js`, `manifest.webmanifest`, icons), staff `dashboard.*` |
 | `www/lib/` | `extract` (PDF to text) → `parse` (bill fields) → `checks` → `model` (usage model, projection) → `explain` (peso breakdown) → `flags` (billing errors, dispute file) → `disputes` (follow-up, ERC escalation); `chat` (What changed at home?), `ocr` (PaddleOCR words → the same text lines as a PDF), `solar` (outside Challenge 2, not shown) |
 | `www/data/` | `rates.json`, `weather.json`, `reasons.json`, `bill_spec.json` (what to read from a bill and the arithmetic it must satisfy), and SYNTHETIC sample files in `fixtures/` |
-| `scripts/` | The data build scripts, the dev server `serve.mjs` (case inbox, chat model, OCR) and `ocr.py` (PaddleOCR worker) |
-| `tests/` | `selfcheck.mjs`, which is all of `npm test` |
-| `docs/tech_spec.md` | Technical spec that matches the code |
-| `requirements.md`, `tech_spec.md`, `hackathon_challenges.md` | Requirements, the earlier draft of the spec, the official challenge text |
+| `scripts/` | The data build scripts, the dev server `serve.mjs` (case inbox, chat model, OCR), `ocr.py` (PaddleOCR worker) and `validate_bill.mjs` (check real bill PDFs from the command line) |
+| `tests/` | `selfcheck.mjs`, which is all of `npm test`, and its SYNTHETIC expected values and OCR word samples |
+| `docs/` | `tech_spec.md` (technical spec that matches the code), `requirements.md` (v1 requirements), `update.md` (status snapshot) |
+| `hackathon_challenges.md`, `AGENTS.md` | The official challenge text, and rules for AI assistants working in this repo |
+
+Kept on each laptop and not committed (see `.gitignore`): `node_modules/`, `www/vendor/` (made by `npm install`),
+`data/private/` (real bills, dispute cases), `data/rates_pdfs/`, `android/`, `ios/`, and the personal working folders
+`pitch/`, `felice-skills/` and `felice-artifacts/`.
 
 ## Commands
 ```
@@ -79,8 +83,8 @@ Target laptop: i5-11400H, 16 GB RAM, RTX 3050 Ti (4 GB VRAM).
 1. Phone: "Try sample bill" → change "Charges for this billing period" to a wrong number → "Looks right, explain my bill" → "Send dispute to Meralco".
    Laptop `/dashboard.html`: the case appears within about 5 seconds, with no click.
 2. Dashboard: open the case, type a reply, "Send reply". Phone start screen: "Meralco replied: …" appears within about 10 seconds.
-3. Chat: ask five questions in Taglish ("bakit tumaas ang generation charge?"). and about the bill itself ("bakit tumaas ang bill ko?", "ilang kWh
-   ang nagamit ko?"). Each answer must be a "Sa bill mo (from your bill)" line, a quoted advisory paragraph with a
+3. Chat: ask five questions in Taglish, about rates ("bakit tumaas ang generation charge?") and about the bill itself
+   ("bakit tumaas ang bill ko?", "ilang kWh ang nagamit ko?"). Each answer must be a "Sa bill mo (from your bill)" line, a quoted advisory paragraph with a
    meralco.com.ph link, or "Not in your bill or Meralco's advisory".
 4. Scan: print a bill, tap "Scan a paper bill", take the photo flat, in good light, with the page filling the frame.
    The numbers should arrive on "Check the numbers we read"; fix any yellow or red field.
