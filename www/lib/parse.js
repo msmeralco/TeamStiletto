@@ -1,6 +1,6 @@
 // Label-anchored parser over extract.js lines, fitted to the My Meralco PDF statement (2026 layout).
 const NUM = /\(?-?\d[\d,]*(?:\.\d+)?\)?/;
-const toNum = s => (/^[(-]/.test(s) ? -1 : 1) * parseFloat(s.replace(/[(),-]/g, ''));
+export const toNum = s => (/^[(-]/.test(s) ? -1 : 1) * parseFloat(s.replace(/[(),-]/g, ''));
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
 // Page-1 "Bill Computation Summary" categories; they add up to "Charges for this billing period".

@@ -5,27 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TANAW Dispute Triage</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="icon-192.png">
   <style>
-    main { max-width: 960px; }
-    .card { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin: 8px 0; }
-    .card summary { cursor: pointer; }
-    .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; color: #fff; font-size: 12px; font-weight: 600; }
-    .badge.strong { background: var(--bad); } .badge.medium { background: var(--accent); } .badge.weak, .badge.syn { background: #777; }
-    pre { white-space: pre-wrap; font: inherit; font-size: 14px; border-left: 3px solid var(--line); padding-left: 8px; }
+    body { background: var(--soft); }
+    main { max-width: 1280px; }
+    .bar2 { background: #111; color: #fff; padding: 0 16px; }
+    .bar2 > div { max-width: 1248px; margin: 0 auto; display: flex; align-items: center; gap: 10px; min-height: 60px; flex-wrap: wrap; }
+    .bar2 b { font-size: 17px; font-weight: 800; } .bar2 span { color: #bbb; font-size: 13px; }
+    #live { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+    #live i { width: 9px; height: 9px; border-radius: 50%; background: #777; } #live.on i { background: #4cd07d; }
+    .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .head h1 { margin: 0; font-size: 24px; font-weight: 800; }
+    .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 18px 0; }
+    .tile { background: var(--bg); border-radius: 12px; padding: 14px 16px; }
+    .tile span { font-size: 12px; font-weight: 600; color: var(--muted); } .tile b { display: block; font-size: 30px; font-weight: 800; line-height: 1.2; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+    .chips button { min-height: 36px; border-radius: 18px; font-size: 13px; } .chips button[aria-pressed=true] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+    .chips label { margin-left: auto; font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; } .chips input { width: 220px; padding: 8px 12px; }
+    .box { background: var(--bg); border-radius: 12px; overflow-x: auto; }
+    #queue { min-width: 860px; } #queue th { font-size: 12px; color: var(--muted); } #queue td, #queue th { padding: 12px 14px; vertical-align: top; }
+    #queue tbody tr { cursor: pointer; } #queue tbody tr:hover, #queue tr.sel { background: var(--tint); }
+    #queue td button { min-height: 36px; white-space: nowrap; }
+    .new { animation: flash 2.5s; } @keyframes flash { from { background: var(--medbg); } }
+    @media (prefers-reduced-motion: reduce) { .new { animation: none; } }
+    #case { background: var(--bg); border-radius: 12px; padding: 18px; margin-top: 16px; }
+    #case h2 { margin: 0; font-size: 20px; } #case h3 { margin-top: 0; }
+    .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 14px; }
+    .cols > div { background: var(--soft); border-radius: 10px; padding: 14px; font-size: 14px; }
+    .cols td.n { white-space: normal; } .cols td { padding: 7px 4px; }
+    .cols ul { padding-left: 18px; margin: 0; } .cols li { margin-bottom: 6px; }
+    pre { white-space: pre-wrap; font: inherit; font-size: 14px; margin: 0; }
+    #reply { margin: 8px 0; }
+    .empty { padding: 28px; text-align: center; color: var(--muted); }
   </style>
 </head>
 <body>
-  <div class="banner">CONCEPT: how Meralco staff could triage TANAW dispute files. No Meralco system is connected; files are loaded by hand.</div>
+  <div class="banner">CONCEPT: how Meralco staff could triage TANAW dispute files. No Meralco system is connected.</div>
+  <header class="bar2"><div>
+    <svg width="30" height="30" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="18" fill="#F26522"/><path d="M9 26 15 10l4 8 4-8 6 16h-5l-2-7-3 6-3-6-2 7z" fill="#111"/></svg>
+    <b>TANAW</b><span>Dispute triage</span>
+    <span id="live" role="status"><i></i><span id="livetext">Connecting to the inbox…</span></span>
+  </div></header>
   <main>
-    <h1>Dispute triage <small>strongest evidence first</small></h1>
     <p id="msg" role="alert"></p>
-    <label class="primary">Load dispute files (.json)
-      <input id="files" type="file" accept="application/json,.json" multiple hidden>
-    </label>
-    <p class="hint"><button id="inbox" class="link">Load cases escalated from the app</button> ·
-      <button id="samples" class="link">Load the SYNTHETIC sample files</button></p>
-    <p id="summary"></p>
-    <div id="list"></div>
+    <div class="head">
+      <div><h1>Disputes</h1><span class="hint">Strongest evidence first, then longest wait, then bill amount</span></div>
+      <div class="row">
+        <button id="samples">Load the SYNTHETIC samples</button>
+        <label class="primary" style="width:auto;min-height:44px;font-size:14px">Load dispute files (.json)
+          <input id="files" type="file" accept="application/json,.json" multiple class="vh"></label>
+      </div>
+    </div>
+    <div id="tiles" class="tiles"></div>
+    <div class="chips"><span class="hint" style="font-weight:600">Show</span><span id="chips" class="row"></span>
+      <label>Search <input id="q" type="search" placeholder="Account no., flag, answer"></label></div>
+    <div class="box"><table id="queue"></table><p id="empty" class="empty"></p></div>
+    <section id="case" hidden aria-live="polite"></section>
   </main>
   <script type="module" src="dashboard.js"></script>
 </body>

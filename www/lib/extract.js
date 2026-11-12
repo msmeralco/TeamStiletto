@@ -15,6 +15,6 @@ export async function pdfLines(pdfjs, data, password) {
     }
     rows.sort((a, b) => b.y - a.y).forEach(r => { r.items.sort((a, b) => a.x - b.x); lines.push(r); });
   }
-  if (!lines.length) throw new Error('This PDF has no selectable text (scanned image). The photo/OCR path is not built yet.');
+  if (!lines.length) throw new Error('This PDF has no selectable text (scanned image). Use "Scan a paper bill" with a photo of it instead.');
   return lines;
 }

@@ -27,3 +27,6 @@ export function ercMessage(x, now = new Date()) {
 
 export const ercPacket = (x, now = new Date()) =>
   ({ ...x.packet, meralco_follow_up: { sent: x.sent, channel: x.channel, reference: x.ref || null, days_waiting: daysSince(x.sent, now) } });
+
+// One case per bill: the same key in the app, the dev server's inbox and the dashboard.
+export const caseKey = p => `${p.customer_account_number}|${p.bill.period_end}`;

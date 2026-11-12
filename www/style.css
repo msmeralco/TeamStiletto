@@ -1,38 +1,105 @@
-:root { --fg: #1b1b1b; --bg: #fafaf7; --muted: #666; --ok: #1a7f37; --bad: #c62828; --accent: #e65c00; --line: #ddd; }
-@media (prefers-color-scheme: dark) { :root { --fg: #eee; --bg: #151515; --muted: #aaa; --line: #333; } }
+/* Meralco orange + black (the logo's two colours). Text on orange is black: white on #F26522 is only 3:1. */
+:root { --brand: #F26522; --brand-ink: #C24E12; --tint: #FFF3EC; --fg: #111; --bg: #fff; --soft: #F4F4F2; --muted: #555; --line: #E3E3DE;
+  --ok: #1F6E3A; --okbg: #E9F4EC; --bad: #B3261E; --badbg: #FBE3E1; --warn: #7A5A00; --warnbg: #FFF8E1; --warnline: #F2B70F; --medbg: #FDE8D9; --medfg: #8A3A0B; }
+@media (prefers-color-scheme: dark) { :root { --fg: #eee; --bg: #151515; --soft: #222; --muted: #b5b5b5; --line: #3a3a3a; --tint: #3a2416; --brand-ink: #FF9A62;
+  --ok: #7fd69a; --okbg: #173021; --bad: #ff8a80; --badbg: #3d1a18; --warn: #f2d675; --warnbg: #3a3010; --medbg: #40260f; --medfg: #ffc59e; } }
 * { box-sizing: border-box; }
-body { margin: 0; font: 16px/1.45 -apple-system, system-ui, sans-serif; color: var(--fg); background: var(--bg);
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
-main { max-width: 720px; margin: 0 auto; padding: 16px; }
-h1 small { display: block; font-size: 14px; font-weight: normal; color: var(--muted); }
-.banner { background: #ffd54f; color: #000; padding: 8px 16px; font-weight: 600; font-size: 13px; }
-.primary { display: block; width: 100%; padding: 16px; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font-size: 18px; text-align: center; cursor: pointer; }
-.link { background: none; border: 0; color: var(--accent); text-decoration: underline; font: inherit; padding: 0; cursor: pointer; }
-.hint { color: var(--muted); font-size: 14px; }
-.big { font-size: 22px; font-weight: 600; }
-.note { border-left: 4px solid var(--accent); padding: 8px 12px; }
-#msg { color: var(--bad); }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-td, th { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; }
-td.n { text-align: right; white-space: nowrap; }
-input, textarea { font: inherit; width: 100%; padding: 4px; }
+[hidden] { display: none !important; }
+body { margin: 0; font: 16px/1.45 Inter, -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; color: var(--fg); background: var(--bg); }
+main { max-width: 720px; margin: 0 auto; padding: 16px 16px calc(32px + env(safe-area-inset-bottom)); }
+h2 { font-size: 17px; margin: 26px 0 8px; }
+h3 { font-size: 14px; margin: 18px 0 6px; color: var(--muted); }
+a, .link { color: var(--brand-ink); }
+button, select, input, textarea { font: inherit; color: inherit; }
+button { min-height: 44px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); font-weight: 600; cursor: pointer; }
+button:disabled { opacity: .55; cursor: default; }
+:focus-visible, label:focus-within { outline: 3px solid var(--fg); outline-offset: 2px; }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline-offset: 0; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } /* focusable, unlike [hidden] */
+
+.banner { background: #FFD54F; color: #000; padding: 8px 16px; font-weight: 600; font-size: 13px; text-align: center; }
+.top { background: var(--brand); color: #111; padding: calc(14px + env(safe-area-inset-top)) 16px 14px; }
+.top > div { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 10px; min-height: 48px; }
+.top h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -.3px; line-height: 1.2; }
+.top p { margin: 0; font-size: 13px; font-weight: 500; }
+.top .iconbtn { width: 44px; padding: 0; margin-left: -8px; border: 0; background: none; color: #111; display: grid; place-items: center; flex: none; }
+.primary { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 52px; padding: 8px 16px; border: 0; border-radius: 14px;
+  background: var(--brand); color: #111; font-size: 17px; font-weight: 700; text-align: center; cursor: pointer; }
+.link { background: none; border: 0; text-decoration: underline; padding: 0; min-height: 0; font-weight: 600; cursor: pointer; }
+.hint { color: var(--muted); font-size: 13px; }
+.note { background: var(--tint); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+#msg { color: var(--bad); font-weight: 600; margin: 0 0 12px; }
+#msg:empty { display: none; }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: .2px; white-space: nowrap; text-transform: uppercase;
+  background: var(--soft); color: var(--muted); }
+.badge.strong { background: var(--badbg); color: var(--bad); } .badge.medium, .badge.waiting { background: var(--medbg); color: var(--medfg); }
+.badge.resolved, .badge.replied { background: var(--okbg); color: var(--ok); }
+.card { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin: 10px 0; }
+.card.hot { border: 2px solid var(--brand); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.row.between { justify-content: space-between; align-items: flex-start; flex-wrap: nowrap; }
+.progress { height: 8px; border-radius: 4px; background: var(--soft); overflow: hidden; margin: 6px 0; }
+.progress i { display: block; height: 100%; background: var(--brand); }
+
+/* 1. home */
+.drop { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 22px 16px; border: 2px dashed var(--brand); border-radius: 16px; background: var(--tint);
+  text-align: center; cursor: pointer; }
+.drop b { font-size: 17px; }
+.rowbtn { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 8px 14px; margin-top: 12px; border: 1.5px solid var(--fg); border-radius: 14px; cursor: pointer; }
+.rowbtn > span:nth-child(2) { flex: 1; display: flex; flex-direction: column; font-weight: 700; font-size: 15px; }
+.rowbtn small { font-weight: 400; color: var(--muted); font-size: 12px; }
+.privacy { display: flex; gap: 10px; align-items: flex-start; background: var(--soft); border-radius: 12px; padding: 12px 14px; font-size: 13px; margin: 16px 0; }
+.privacy svg { flex: none; color: var(--ok); }
+#pwbox { margin: 12px 0; } #pwbox input { margin: 6px 0; }
+.samples { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#minelist { list-style: none; padding: 0; margin: 0; }
+#minelist .erc textarea { margin: 8px 0; }
+
+/* 2. confirm */
+.checks { border-radius: 12px; padding: 12px 14px; background: var(--okbg); color: var(--ok); font-size: 13px; }
+.checks.fail { background: var(--badbg); color: var(--bad); }
+.checks ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 4px 12px; }
+.checks li::before { content: "✓ "; font-weight: 700; } .checks li.fail::before { content: "✗ "; }
+.checks li.fail { font-weight: 700; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 14px; }
+.f { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; color: var(--muted); }
+.f em { font-style: normal; color: var(--warn); }
+input, textarea, select { width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); font-size: 15px; }
 input[type=checkbox] { width: auto; }
-fieldset { border: 1px solid var(--line); border-radius: 8px; }
-fieldset label, details label { display: block; padding: 4px 0; }
-details { margin: 12px 0; }
-#minelist li { margin-bottom: 12px; }
-input.bad { outline: 2px solid var(--bad); }
-#checks li.ok::marker { content: "✓ "; color: var(--ok); }
-#checks li.fail::marker { content: "✗ "; color: var(--bad); }
-.bar { display: flex; height: 28px; border-radius: 6px; overflow: hidden; margin: 12px 0; }
-.bar div { min-width: 2px; }
-#sources, pre { overflow-wrap: anywhere; } /* long Meralco URLs must not widen the page on a phone */
-svg { width: 100%; max-width: 420px; height: auto; }
-#reason { margin: 8px 0; border-left: 4px solid var(--line); padding: 4px 12px; font-size: 14px; }
-#chatlog { max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; }
-#chatlog p { margin: 0; padding: 8px 12px; border-radius: 12px; max-width: 85%; white-space: pre-wrap; font-size: 15px; }
-#chatlog .bot { align-self: flex-start; background: var(--line); }
-#chatlog .me { align-self: flex-end; background: var(--accent); color: #fff; }
-#chatform { display: flex; gap: 6px; margin-top: 6px; }
-#chatform button { flex: none; padding: 4px 16px; }
+input.low { border-color: var(--warnline); background: var(--warnbg); }
+input.bad { border-color: var(--bad); background: var(--badbg); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+td, th { padding: 9px 4px; border-bottom: 1px solid var(--line); text-align: left; }
+td.n, th.n { text-align: right; white-space: nowrap; }
+td input { padding: 7px 8px; text-align: right; }
+#fields td:last-child { width: 42%; }
+.bars { display: flex; align-items: flex-end; gap: 3px; height: 72px; }
+.bars i { flex: 1; min-height: 2px; background: var(--line); border-radius: 3px 3px 0 0; } .bars i:last-child { background: var(--brand); }
+.axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+details { margin: 12px 0; } summary { cursor: pointer; font-weight: 600; padding: 11px 0; }
+details label { display: block; padding: 4px 0; font-size: 13px; }
+.sticky { position: sticky; bottom: 0; background: var(--bg); padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); margin-top: 16px; }
+
+/* 3. results */
+.hero { background: var(--brand); color: #111; margin: -16px -16px 16px; padding: 4px 16px 20px; }
+.hero > * { max-width: 688px; margin-left: auto; margin-right: auto; }
+.big { font-size: 21px; font-weight: 700; line-height: 1.3; margin-top: 0; }
+#tierc { font-size: 13px; font-weight: 600; }
+.bar { display: flex; height: 16px; border-radius: 8px; overflow: hidden; margin: 12px 0 8px; background: var(--soft); }
+.bar div { min-width: 3px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; }
+#reason { margin: 14px 0; background: var(--soft); border-radius: 12px; padding: 12px 14px; font-size: 13px; }
+#chatlog { max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 12px; }
+#chatlog p { margin: 0; padding: 9px 12px; border-radius: 14px; max-width: 85%; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; }
+#chatlog .bot { align-self: flex-start; background: var(--soft); border-bottom-left-radius: 4px; }
+#chatlog .me { align-self: flex-end; background: var(--brand); color: #111; border-bottom-right-radius: 4px; }
 #chatlog .typing { opacity: .6; }
+#chatform { display: flex; gap: 8px; margin-top: 8px; }
+#chatform button { flex: none; background: var(--fg); color: var(--bg); border: 0; }
+.flag { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
+.flag .badge { flex: none; margin-top: 2px; }
+#dispute { margin: 10px 0; font-size: 14px; }
+#proj { background: var(--tint); border-radius: 12px; padding: 14px; font-weight: 600; }
+#sources, pre { overflow-wrap: anywhere; font-size: 13px; } /* long Meralco URLs must not widen the page on a phone */
+svg.chart { width: 100%; max-width: 420px; height: auto; }

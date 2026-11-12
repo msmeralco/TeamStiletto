@@ -8,24 +8,39 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <meta name="theme-color" content="#e65c00">
+  <meta name="theme-color" content="#F26522">
 </head>
 <body>
   <div id="synthetic" class="banner" hidden>SYNTHETIC sample bill: an invented household, priced at real Meralco rates with real weather.</div>
+  <header class="top"><div>
+    <button id="back" class="iconbtn" aria-label="Back" hidden><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+    <svg id="logo" width="38" height="38" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="18" fill="#111"/><path d="M9 26 15 10l4 8 4-8 6 16h-5l-2-7-3 6-3-6-2 7z" fill="#F26522"/></svg>
+    <div><p id="step"></p><h1 id="title">TANAW</h1><p id="sub">Why did my Meralco bill change?</p></div>
+  </div></header>
   <main>
-    <h1>TANAW <small>why did my Meralco bill change?</small></h1>
     <p id="msg" role="alert"></p>
 
     <section id="upload">
-      <label class="primary">Upload your Meralco PDF statement
-        <input id="file" type="file" accept="application/pdf" hidden>
+      <label class="drop">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C24E12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>
+        <b>Upload your Meralco PDF statement</b>
+        <span class="hint">In the My Meralco app, open your bill and download the PDF. Password-protected PDFs work.</span>
+        <input id="file" type="file" accept="application/pdf" class="vh">
       </label>
-      <p class="hint">In the My Meralco app, open your bill and download the PDF statement.</p>
+      <label id="scanbtn" class="rowbtn" hidden>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.5"/></svg>
+        <span>Scan a paper bill<small>Take a photo. It is sent to the TANAW laptop to be read by PaddleOCR.</small></span>
+        <span class="badge medium">Beta</span>
+        <input id="photo" type="file" accept="image/*" capture="environment" class="vh">
+      </label>
       <div id="pwbox" hidden>
         <label>This PDF is password-protected. Password (never stored): <input id="pw" type="password" autocomplete="off"></label>
         <button id="pwgo">Open</button>
       </div>
-      <p class="hint">No bill yet? <button id="sample" class="link">Try the SYNTHETIC sample</button> or <button id="weak" class="link">the weak-fit sample</button></p>
+      <p class="privacy"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Your PDF is read on this device, with no login. Nothing is sent anywhere unless you choose to send a dispute.</span></p>
+      <p class="hint" style="font-weight:600;margin-bottom:8px">No bill yet? Try a SYNTHETIC one:</p>
+      <div class="samples"><button id="sample">Try sample bill</button><button id="weak">Weak-fit sample</button></div>
       <div id="mine" hidden>
         <h2>My disputes</h2>
         <p class="hint">Saved only on this phone.</p>
@@ -34,17 +49,21 @@
     </section>
 
     <section id="confirm" hidden>
-      <h2>Check the numbers we read</h2>
-      <ul id="checks"></ul>
+      <p id="ocrnote" class="note" hidden></p>
+      <div id="checksbox" class="checks"><b id="checkshead"></b><ul id="checks"></ul></div>
       <div id="fields"></div>
-      <button id="go" class="primary">Looks right, explain my bill</button>
+      <div class="sticky"><button id="go" class="primary">Looks right, explain my bill</button></div>
     </section>
 
     <section id="results" hidden>
-      <p id="tierc" class="note" hidden>We can't reliably separate weather for this household. Here's what we can say.</p>
-      <p id="sentence" class="big"></p>
-      <blockquote id="reason" hidden></blockquote>
+      <div class="hero">
+        <p id="tierc" hidden>We can't reliably separate weather for this household. Here's what we can say.</p>
+        <p id="sentence" class="big"></p>
+      </div>
       <div id="bar" class="bar" aria-hidden="true"></div>
+      <div id="legend" class="legend"></div>
+      <blockquote id="reason" hidden></blockquote>
+      <h2>Peso breakdown</h2>
       <table id="items"></table>
       <h2>Possible billing error?</h2>
       <div id="chat">
@@ -53,24 +72,13 @@
         <form id="chatform"><input id="chatin" type="text" autocomplete="off" aria-label="Your answer" placeholder="hal. bumili kami ng aircon"><button>Send</button></form>
       </div>
       <div id="flags"></div>
+      <h2>Next month</h2>
+      <p id="proj"></p>
       <h2>Your usage vs heat</h2>
       <div id="chart"></div>
       <p id="fitinfo" class="hint"></p>
-      <h2>Next month</h2>
-      <p id="proj"></p>
-      <h2>Does rooftop solar pay off?</h2>
-      <label>How much of the solar power would you use at home? (assumption)
-        <select id="selfuse">
-          <option value="0.25">Mostly away during the day (25%)</option>
-          <option value="0.4" selected>Some daytime use (40%)</option>
-          <option value="0.6">Home most days, aircon by day (60%)</option>
-          <option value="0.8">Home all day, heavy daytime use (80%)</option>
-        </select>
-      </label>
-      <table id="solar"></table>
-      <h2>Sources and assumptions</h2>
-      <ul id="sources"></ul>
-      <button id="again">Start over</button>
+      <details><summary>Sources and assumptions</summary><ul id="sources"></ul></details>
+      <p style="text-align:center"><button id="again" class="link" style="min-height:44px">Start over</button></p>
     </section>
   </main>
   <script type="module" src="app.js"></script>

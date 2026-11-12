@@ -4,10 +4,10 @@ import { parseBill } from './lib/parse.js';
 import { runChecks } from './lib/checks.js';
 import { temps, trackerPeriods, fit, cdd, project } from './lib/model.js';
 import { explain, validateRates } from './lib/explain.js';
-import { solar, SOLAR } from './lib/solar.js';
+import { ocrLines } from './lib/ocr.js';
 import { billingFlags, disputeMessage, disputePacket, unexplainedIncrease, householdExplains, STRENGTH_TEXT } from './lib/flags.js';
-import { startChat, step, answersOf, needsModel, fromModel } from './lib/chat.js';
-import { daysSince, ercMessage, ercPacket, CHANNELS, FOLLOW_UP_DAYS } from './lib/disputes.js';
+import { startChat, step, answersOf, needsModel, fromModel, isQuestion, fromModelPick, advisoryParas } from './lib/chat.js';
+import { daysSince, ercMessage, ercPacket, caseKey, CHANNELS, FOLLOW_UP_DAYS } from './lib/disputes.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
 // Offline web app; the native iOS/Android apps already bundle every file.
@@ -15,14 +15,24 @@ if ('serviceWorker' in navigator && !window.Capacitor?.isNativePlatform?.()) nav
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`); // PDF text is untrusted
 const peso = v => `${v < 0 ? '−' : ''}₱${Math.abs(v).toLocaleString('en-PH', { maximumFractionDigits: 0 })}`;
-const show = id => ['upload', 'confirm', 'results'].forEach(s => ($('#' + s).hidden = s !== id));
+const HEAD = { upload: ['', 'TANAW', 'Why did my Meralco bill change?'], confirm: ['Step 2 of 3', 'Check the numbers we read', ''], results: ['Step 3 of 3', 'Why your bill changed', ''] };
+function show(id) {
+  for (const s of Object.keys(HEAD)) $('#' + s).hidden = s !== id;
+  [$('#step').textContent, $('#title').textContent, $('#sub').textContent] = HEAD[id];
+  for (const el of [$('#step'), $('#sub')]) el.hidden = !el.textContent;
+  $('#back').toggleAttribute('hidden', id === 'upload');
+  $('#logo').toggleAttribute('hidden', id !== 'upload');
+  scrollTo(0, 0);
+}
+$('#back').onclick = () => show($('#results').hidden ? 'upload' : 'confirm');
 const msg = t => ($('#msg').textContent = t ?? '');
+const today = () => new Date().toLocaleDateString('en-CA');
 
 const [rates, weather, reasons] = await Promise.all(['rates', 'weather', 'reasons'].map(n => fetch(`data/${n}.json`).then(r => r.json())));
 const T = temps(weather);
 const rateErrors = validateRates(rates);
 if (rateErrors.length) msg('rates.json failed validation: ' + rateErrors.join('; '));
-let bill, bytes, analysis;
+let bill, bytes, analysis, ocr = null; // ocr: { low, clear, total } when the bill was read from a photo
 const markSynthetic = () => ($('#synthetic').hidden = !(weather.synthetic || Object.values(rates).some(r => r.synthetic) || bill?.source === 'synthetic'));
 markSynthetic();
 
@@ -31,6 +41,7 @@ async function scan() {
   msg();
   try {
     bill = parseBill(await pdfLines(pdfjs, bytes.slice(), $('#pw').value || undefined));
+    ocr = null;
     $('#pwbox').hidden = true;
     $('#pw').value = '';
     markSynthetic();
@@ -47,26 +58,63 @@ const loadSample = name => async () => { bytes = new Uint8Array(await (await fet
 $('#sample').onclick = loadSample('SYNTHETIC_bill');
 $('#weak').onclick = loadSample('SYNTHETIC_weak_bill');
 
+// Photo of a paper bill: read by PaddleOCR on the TANAW laptop (npm start + scripts/ocr.py). The button shows only if that is running.
+// shortcut: the photo leaves the phone for the laptop; on-device OCR (ONNX in the browser) is the upgrade for a public release.
+fetch('api/health').then(r => r.json()).then(h => $('#scanbtn').toggleAttribute('hidden', !h.ocr)).catch(() => {});
+$('#photo').onchange = async e => {
+  const f = e.target.files[0];
+  e.target.value = '';
+  if (!f) return;
+  msg('Reading the photo. This can take up to a minute…');
+  try {
+    const res = await fetch('api/ocr', { method: 'POST', headers: { 'content-type': f.type || 'image/jpeg' }, body: f, signal: AbortSignal.timeout(180000) });
+    const out = await res.json();
+    if (!res.ok) throw new Error(out.error);
+    if (!out.words?.length) throw new Error('no text found. Retake it flat, in good light, with the whole page in the frame.');
+    const o = ocrLines(out.words, out.width), b = parseBill(o.lines);
+    if (!b.period_end || b.charges_this_period == null) throw new Error('this does not look like a Meralco bill, or it is too blurry. Retake it flat, in good light, with the whole page in the frame.');
+    bill = { ...b, source: b.source === 'synthetic' ? 'synthetic' : 'photo_ocr' };
+    ocr = o;
+    msg();
+    markSynthetic();
+    renderConfirm();
+    show('confirm');
+  } catch (e) { msg(`Couldn't read this photo: ${e.message}`); }
+};
+
 // ---------- 2. confirm ----------
 const SCALARS = [['period_start', 'Billing period start'], ['period_end', 'Billing period end'], ['previous_reading', 'Previous Reading'],
   ['current_reading', 'Current Reading'], ['multiplier', 'Multiplier'], ['kwh', 'kWh used'], ['charges_this_period', 'Charges for this billing period'],
   ['remaining_balance', 'Remaining Balance'], ['installment_due', 'Installment Due'], ['total_amount_due', 'Total Amount Due']];
 
+const CHECK_NAMES = { readings: 'Meter readings match kWh', tracker_latest: 'Tracker matches kWh', line_sum: 'Charges add up', total: 'Total adds up' };
+
 function renderConfirm() {
-  const row = (label, attr, v) => `<tr><td>${esc(label)}</td><td><input ${attr} value="${esc(v ?? '')}"></td></tr>`;
+  const low = v => !!ocr?.low.has(v);
+  const row = (label, attr, v) => `<tr><td>${esc(label)}</td><td><input ${attr} class="${low(v) ? 'low' : ''}" aria-label="${esc(label)}" value="${esc(v ?? '')}"></td></tr>`;
+  $('#ocrnote').hidden = !ocr;
+  if (ocr) $('#ocrnote').textContent = `Read from your photo by PaddleOCR: ${ocr.clear} of ${ocr.total} pieces of text were clear. Yellow fields were blurry: please check them against your paper bill.`;
   $('#fields').innerHTML =
-    `<table>${SCALARS.map(([k, l]) => row(l, `data-k="${k}"`, bill[k])).join('')}</table>
+    `<div class="grid2">${SCALARS.map(([k, l]) => `<label class="f"><span>${esc(l)}${low(bill[k]) ? ' <em>· please check</em>' : ''}</span>
+       <input data-k="${k}" class="${low(bill[k]) ? 'low' : ''}" value="${esc(bill[k] ?? '')}"></label>`).join('')}</div>
      <h3>Charges</h3><table>${bill.charges.map((c, i) => row(c.label, `data-c="${i}" inputmode="decimal"`, c.amount_php)).join('')}</table>
-     <h3>Monthly Consumption Tracker (${bill.tracker.length} months)</h3>
-     <table>${bill.tracker.map((t, i) => row(t.month, `data-t="${i}" inputmode="decimal"`, t.kwh)).join('')}</table>`;
+     <h3>Monthly Consumption Tracker (${bill.tracker.length} months, kWh)</h3>
+     <div id="bars" class="bars" aria-hidden="true"></div>
+     <div class="axis"><span>${esc(bill.tracker[0]?.month ?? '')}</span><span>${esc(bill.tracker.at(-1)?.month ?? '')}</span></div>
+     <details><summary>Edit tracker months</summary>
+       <table>${bill.tracker.map((t, i) => row(t.month, `data-t="${i}" inputmode="decimal"`, t.kwh)).join('')}</table></details>`;
   renderChecks();
 }
 
 function renderChecks() {
-  const checks = runChecks(bill), bad = new Set(checks.filter(c => !c.passed).flatMap(c => c.fields));
-  $('#checks').innerHTML = checks.map(c => `<li class="${c.passed ? 'ok' : 'fail'}">${c.name}: expected ${c.expected.toFixed(2)}, found ${Number(c.found).toFixed(2)}</li>`).join('');
+  const checks = runChecks(bill), failed = checks.filter(c => !c.passed), bad = new Set(failed.flatMap(c => c.fields));
+  $('#checksbox').classList.toggle('fail', failed.length > 0);
+  $('#checkshead').textContent = failed.length ? `${failed.length} of ${checks.length} self-checks failed. Fix the red fields.` : `${checks.length} self-checks passed`;
+  $('#checks').innerHTML = checks.map(c => `<li class="${c.passed ? 'ok' : 'fail'}">${CHECK_NAMES[c.name] ?? c.name}${c.passed ? '' : `: expected ${c.expected.toFixed(2)}, found ${Number(c.found).toFixed(2)}`}</li>`).join('');
   document.querySelectorAll('#fields input').forEach(el => el.classList.toggle('bad',
     bad.has(el.dataset.k) || (el.dataset.c && bad.has('charges')) || (el.dataset.t == bill.tracker.length - 1 && bad.has('tracker'))));
+  const max = Math.max(1, ...bill.tracker.map(t => t.kwh || 0));
+  $('#bars').innerHTML = bill.tracker.map(t => `<i style="height:${100 * (t.kwh || 0) / max}%"></i>`).join('');
 }
 
 $('#fields').oninput = e => {
@@ -91,14 +139,16 @@ $('#go').onclick = () => {
   } catch (e) { msg(e.message); }
 };
 
-const COLORS = { weather: '#e65c00', billing_days: '#8d6e63', you: '#1e88e5', usage: '#1e88e5', generation: '#43a047', local_tax_rounding: '#9e9e9e', refund: '#8e24aa' };
+const COLORS = { weather: '#F26522', billing_days: '#8d6e63', you: '#1e88e5', usage: '#1e88e5', generation: '#43a047', local_tax_rounding: '#9e9e9e', refund: '#8e24aa' };
 
 function renderResults() {
   const { per, f, r, proj } = analysis;
   $('#tierc').hidden = f.tier !== 'C_refused';
   $('#sentence').textContent = r.sentence;
   const total = r.breakdown.reduce((s, i) => s + Math.abs(i.php), 0) || 1;
-  $('#bar').innerHTML = r.breakdown.map(i => `<div title="${esc(i.label)} ${peso(i.php)}" style="flex:${Math.abs(i.php) / total};background:${COLORS[i.key] ?? '#26a69a'};opacity:${i.php < 0 ? 0.5 : 1}"></div>`).join('');
+  const color = i => COLORS[i.key] ?? '#26a69a';
+  $('#bar').innerHTML = r.breakdown.map(i => `<div title="${esc(i.label)} ${peso(i.php)}" style="flex:${Math.abs(i.php) / total};background:${color(i)};opacity:${i.php < 0 ? 0.5 : 1}"></div>`).join('');
+  $('#legend').innerHTML = r.breakdown.filter(i => Math.abs(i.php) >= 0.5).map(i => `<span><i style="background:${color(i)};opacity:${i.php < 0 ? 0.5 : 1}"></i>${esc(i.label)} ${peso(i.php)}</span>`).join('');
   $('#items').innerHTML = r.breakdown.filter(i => Math.abs(i.php) >= 0.5).map(i =>
     `<tr><td>${esc(i.label)}<br><small class="hint">${esc(i.source)}</small></td><td class="n">${peso(i.php)}</td></tr>`).join('') +
     `<tr><th>Change vs last month (est. ${peso(r.est_prev_bill)})</th><th class="n">${peso(r.bill_change_php)}</th></tr>` +
@@ -114,7 +164,7 @@ function renderResults() {
   // fit chart: kWh/day vs CDD/day
   const { x, y } = f.points, W = 320, H = 200, mx = Math.max(...x, 0.1) * 1.1, my = Math.max(...y) * 1.1;
   const X = v => 30 + v / mx * (W - 40), Y = v => H - 20 - v / my * (H - 30);
-  $('#chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily usage against cooling degree days">
+  $('#chart').innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily usage against cooling degree days">
     <line x1="30" y1="${H - 20}" x2="${W - 10}" y2="${H - 20}" stroke="currentColor"/><line x1="30" y1="10" x2="30" y2="${H - 20}" stroke="currentColor"/>
     <text x="${W / 2}" y="${H - 4}" font-size="10" fill="currentColor" text-anchor="middle">cooling degree-days per day</text>
     <text x="4" y="12" font-size="10" fill="currentColor">kWh/day</text>
@@ -128,18 +178,15 @@ function renderResults() {
     : `${proj.low != null ? `${peso(proj.low)} to ${peso(proj.high)} (middle ${peso(proj.mid)})` : `About ${peso(proj.mid)}`}, about ${Math.round(proj.kwh)} kWh. ${proj.label}` +
       (proj.backtest_mape != null ? ` Backtest on your last 3 months: off by ${(proj.backtest_mape * 100).toFixed(0)}% on average.` : '');
 
-  renderSolar();
   const rm = m => `Meralco rate table ${m}: ${rates[m].source_url}`;
   $('#sources').innerHTML = [
-    `Bill: ${bill.source === 'synthetic' ? 'SYNTHETIC sample (invented household, priced at real Meralco rates)' : 'your PDF statement'}.`,
+    `Bill: ${bill.source === 'synthetic' ? 'SYNTHETIC sample (invented household, priced at real Meralco rates)' : bill.source === 'photo_ocr' ? 'a photo of your paper bill, read by PaddleOCR and confirmed by you' : 'your PDF statement'}.`,
     rm(r.rate_month), rm(r.prev_rate_month),
     `Rate month detected from your generation ₱/kWh: ${r.rate_month}${r.rate_month_matches_dates ? '' : ' (does not match the billing dates; closest match used)'}.`,
     `Last month's bill is reconstructed from Meralco's table at ${per.at(-2).kwh} kWh, not read from last month's bill.`,
     `Daily temperatures: ${weather.synthetic ? 'SYNTHETIC' : 'Open-Meteo archive (CC BY 4.0)'}, ${weather.city}.`,
     `Tracker months are assumed to end on day ${new Date(bill.period_end).getUTCDate()} of each month, like this bill.`,
     `Weather split: variable-base degree-day change-point regression (ASHRAE Guideline 14 3PC / CalTRACK billing method), fitted to your bill only.`,
-    `Solar yield ${SOLAR.Y} kWh/kWp/yr (Philippine DOE, Global Solar Atlas, Metro Manila); cost ₱${SOLAR.C.toLocaleString()}/kWp (Ember, May 2026); fees ₱${SOLAR.fees.toLocaleString()} (ERC certificate + meter difference).`,
-    'Export credit = the generation charge per kWh on your bill. Home-use share is your own estimate.',
   ].map(s => `<li>${esc(s)}</li>`).join('');
 }
 
@@ -168,6 +215,17 @@ async function modelRead(text) {
     return fromModel(result, model);
   } catch { modelOff = true; return null; }
 }
+// A question: the model may only pick a paragraph of this month's Meralco advisory (or none); we quote it verbatim.
+async function modelPick(text, model) {
+  const reason = analysis.r.reason;
+  if (modelOff || !reason || !isQuestion(chat, text, model)) return undefined;
+  try {
+    const res = await fetch('api/answer', { method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ text, month: analysis.r.rate_month }), signal: AbortSignal.timeout(15000) });
+    if (!res.ok) throw new Error(res.status);
+    return fromModelPick((await res.json()).result, advisoryParas(reason).length);
+  } catch { modelOff = true; return undefined; }
+}
 $('#chatform').onsubmit = async e => {
   e.preventDefault();
   const t = $('#chatin').value;
@@ -176,27 +234,27 @@ $('#chatform').onsubmit = async e => {
   say('me', t);
   $('#chatin').disabled = true;
   say('bot typing', '…');
-  const model = await modelRead(t);
+  const model = await modelRead(t), pick = await modelPick(t, model);
   $('#chatlog .typing')?.remove();
   $('#chatin').disabled = false;
   $('#chatin').focus();
-  const r = step(chat, t, chatCtx(), model);
+  const r = step(chat, t, { ...chatCtx(), pick }, model);
   chat = r.state;
   if (r.reply) say('bot', r.reply);
   renderFlags();
 };
 const answers = () => answersOf(chat, bill.days);
 
-// Demo case inbox on the dev server (npm start), read by dashboard.html. Only on the user's tap, after a confirm.
-async function postCase(packet, button) {
-  if (!confirm('Send this evidence file (account number, meter readings, charges and your answers) to the TANAW case dashboard for ERC review?')) return;
+// "Send dispute" posts the evidence file to the demo case inbox on the TANAW server (npm start); dashboard.html shows it within seconds.
+// No confirm box: the button's own text says what is sent and where. shortcut: no login or HTTPS, a demo inbox only.
+async function postCase(packet) {
   try {
     const res = await fetch('api/cases', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(packet) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    button.textContent = 'Sent to the case dashboard';
-    button.disabled = true;
-  } catch (e) { msg(`Couldn't reach the case dashboard (${e.message}). Use "Send dispute" to send the file yourself.`); }
+    return true;
+  } catch (e) { msg(`Couldn't reach the case dashboard (${e.message}). Use "Send it yourself instead".`); return false; }
 }
+const DASH = 'the TANAW case dashboard';
 
 function renderFlags() {
   const a = answers(), checks = runChecks(bill), flags = billingFlags(bill, checks, analysis.r, a);
@@ -206,35 +264,38 @@ function renderFlags() {
     ? `<p class="note">Your answers may explain the ${peso(u.php)} rise in usage, so a dispute is less likely to help.</p>` : '';
   $('#flags').innerHTML = explained + (!flags.length ? '<p>No signs of a billing error in the numbers we can check.</p>'
     : `<p><b>Evidence strength: ${esc(STRENGTH_TEXT[packet.strength])}</b></p>
-       <ul>${flags.map(f => `<li>${esc(f.text)}</li>`).join('')}</ul>
-       <p>This is worth asking Meralco to recheck. Review the message below, then send it yourself through the My Meralco app or
-       Meralco's Facebook Messenger, or call 16211. If it is not resolved, contact the ERC: consumer@erc.ph, 8687-5577.</p>
-       <textarea id="dispute" rows="14" aria-label="Message to Meralco">${esc(disputeMessage(bill, flags, a))}</textarea>
-       <button id="send" class="primary">Send dispute</button> <button id="escalate">Escalate to the case dashboard (ERC)</button>
-       <p class="hint">Sends this message and an evidence file (your account number, readings, charges and answers) through the app you pick:
-       the My Meralco app, Messenger or email. Nothing is sent until you choose. <button id="copy" class="link">Copy the message only</button></p>
-       <details id="track"><summary>How you sent it, and Meralco's reference number</summary>
+       ${flags.map(f => `<div class="card flag"><span class="badge ${esc(f.strength)}">${esc(f.strength)}</span><span>${esc(f.text)}</span></div>`).join('')}
+       <p>This is worth asking Meralco to recheck. Review the message below, then send it. If it is not resolved, contact the ERC: consumer@erc.ph, 8687-5577.</p>
+       <textarea id="dispute" rows="12" aria-label="Message to Meralco">${esc(disputeMessage(bill, flags, a))}</textarea>
+       <button id="send" class="primary">Send dispute to Meralco</button>
+       <p class="hint">Sends this message and an evidence file (your account number, readings, charges and answers) to the TANAW case dashboard,
+       a demo that is not connected to a real Meralco system, and saves it in My disputes.
+       <button id="share" class="link">Send it yourself instead</button> · <button id="copy" class="link">Copy the message only</button></p>
+       <details id="track"><summary>Sent it yourself? Record how, and Meralco's reference number</summary>
          <label>How did you send it? <select id="channel">${CHANNELS.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>
-         <label>Date sent <input id="sent" type="date" value="${new Date().toLocaleDateString('en-CA')}"></label>
+         <label>Date sent <input id="sent" type="date" value="${today()}"></label>
          <label>Meralco reference number, if they gave one <input id="ref" type="text" autocomplete="off"></label>
          <button id="trackbtn">Save in My disputes</button>
        </details>
-       <p id="tracked" class="hint"></p>`);
+       <p id="tracked" class="hint" role="status"></p>`);
   if (!packet) return;
   const edited = () => ({ ...packet, message: $('#dispute').value }); // keep the user's edits to the message
-  const track = () => {
-    if (!$('#sent').value) return msg('Enter the date you sent it.');
-    const same = x => x.packet.customer_account_number === packet.customer_account_number && x.packet.bill.period_end === packet.bill.period_end;
-    const list = loadDisputes().filter(x => !same(x)); // one record per bill
-    list.unshift({ id: Date.now().toString(36), sent: $('#sent').value, channel: $('#channel').value, ref: $('#ref').value.trim(), status: 'waiting', packet: edited() });
+  const track = (channel = $('#channel').value, sent = $('#sent').value, ref = $('#ref').value.trim()) => {
+    if (!sent) return msg('Enter the date you sent it.');
+    const list = loadDisputes().filter(x => caseKey(x.packet) !== caseKey(packet)); // one record per bill
+    list.unshift({ id: Date.now().toString(36), sent, channel, ref, status: 'waiting', posted: channel === DASH, packet: edited() });
     if (!saveDisputes(list)) return msg("Couldn't save on this phone. Keep the evidence file instead.");
-    $('#tracked').textContent = 'Saved in "My disputes" on the start screen.';
+    $('#tracked').textContent = channel === DASH ? 'Sent to the case dashboard. Follow it in "My disputes" on the start screen.' : 'Saved in "My disputes" on the start screen.';
     renderMine();
   };
   $('#copy').onclick = () => copyText($('#dispute'), $('#copy'));
-  $('#send').onclick = async () => { if (await sendDispute(`tanaw-dispute-${bill.period_end}.json`, edited(), $('#dispute').value)) track(); };
-  $('#trackbtn').onclick = track;
-  $('#escalate').onclick = e => postCase(edited(), e.target);
+  $('#send').onclick = async e => {
+    msg();
+    e.target.disabled = true;
+    if (await postCase(edited())) { track(DASH, today(), ''); e.target.textContent = 'Sent'; } else e.target.disabled = false;
+  };
+  $('#share').onclick = async () => { if (await sendDispute(`tanaw-dispute-${bill.period_end}.json`, edited(), $('#dispute').value)) track(); };
+  $('#trackbtn').onclick = () => track();
 }
 
 async function copyText(area, button) {
@@ -251,16 +312,36 @@ function renderMine() {
   const list = loadDisputes();
   $('#mine').hidden = !list.length;
   $('#minelist').innerHTML = list.map(x => {
-    const n = daysSince(x.sent), b = x.packet.bill;
-    const status = x.status === 'resolved' ? 'Resolved.'
-      : `Waiting ${n} day${n === 1 ? '' : 's'}.${n >= FOLLOW_UP_DAYS ? ' Time to follow up, or escalate to the ERC.' : ''}`;
-    return `<li data-id="${esc(x.id)}"><b>Bill ${esc(b.period_start)} to ${esc(b.period_end)}</b>, ${esc(x.packet.strength)} evidence.<br>
-      Sent ${esc(x.sent)} via ${esc(x.channel)}${x.ref ? `, reference ${esc(x.ref)}` : ''}. ${status}<br>
-      <button data-act="send">Send dispute</button>
-      ${x.status === 'resolved' ? '' : '<button data-act="erc">Escalate to ERC</button> <button data-act="resolve">Mark resolved</button>'}
-      <button data-act="delete">Delete</button><div class="erc"></div></li>`;
+    const n = Math.max(0, daysSince(x.sent)), b = x.packet.bill, done = x.status === 'resolved', badge = done ? 'resolved' : x.reply ? 'replied' : 'waiting';
+    return `<li class="card ${done ? '' : 'hot'}" data-id="${esc(x.id)}">
+      <div class="row between"><div><b>Bill ${esc(b.period_start)} to ${esc(b.period_end)}</b><br>
+        <span class="hint">${peso(b.charges_this_period)} · ${esc(x.packet.strength)} evidence</span></div><span class="badge ${badge}">${badge}</span></div>
+      ${done ? '' : `<div class="row between hint"><span>Day ${n} of ${FOLLOW_UP_DAYS}</span>
+        <span>${n >= FOLLOW_UP_DAYS ? 'Time to follow up, or escalate to the ERC' : `Follow up in ${FOLLOW_UP_DAYS - n} day${FOLLOW_UP_DAYS - n === 1 ? '' : 's'}`}</span></div>
+        <div class="progress"><i style="width:${Math.min(100, 100 * n / FOLLOW_UP_DAYS)}%"></i></div>`}
+      <p class="hint">Sent ${esc(x.sent)} via ${esc(x.channel)}${x.ref ? `, reference ${esc(x.ref)}` : ''}.</p>
+      ${x.reply ? `<p class="note"><b>Meralco replied:</b> ${esc(x.reply)}</p>` : ''}
+      <div class="row"><button data-act="send">Share file</button>
+      ${done ? '' : '<button data-act="erc">Escalate to ERC</button> <button data-act="resolve">Mark resolved</button>'}
+      <button data-act="delete">Delete</button></div><div class="erc"></div></li>`;
   }).join('');
 }
+
+// Replies and "resolved" from the staff dashboard, for disputes this phone sent there. Asks by case key only: no list of other customers.
+async function syncMine() {
+  const list = loadDisputes();
+  let changed = false;
+  for (const x of list.filter(x => x.posted)) {
+    try {
+      const res = await fetch(`api/cases/status?key=${encodeURIComponent(caseKey(x.packet))}`, { cache: 'no-store' });
+      if (!res.ok) continue;
+      const s = await res.json(), status = s.status === 'resolved' ? 'resolved' : x.status;
+      if ((s.reply ?? '') !== (x.reply ?? '') || status !== x.status) { Object.assign(x, { reply: s.reply ?? '', status }); changed = true; }
+    } catch { return; } // no TANAW server (static host or offline): nothing to sync
+  }
+  if (changed && !document.querySelector('#minelist textarea') && saveDisputes(list)) renderMine();
+}
+setInterval(() => !$('#upload').hidden && !document.hidden && syncMine(), 10000);
 
 $('#minelist').onclick = e => {
   const act = e.target.dataset.act, li = e.target.closest('li');
@@ -271,9 +352,14 @@ $('#minelist').onclick = e => {
     const box = li.querySelector('.erc');
     box.innerHTML = `<p>Send this to the ERC at consumer@erc.ph (or call 8687-5577) with the evidence file.</p>
       <textarea rows="12" aria-label="Message to the ERC">${esc(ercMessage(x))}</textarea>
-      <button data-erc="send">Send to ERC</button> <button data-erc="post">Send to the case dashboard</button> <button data-erc="copy">Copy message only</button>`;
+      <button data-erc="post">Send to the case dashboard</button> <button data-erc="send">Share with the ERC yourself</button> <button data-erc="copy">Copy message only</button>`;
     box.querySelector('[data-erc=copy]').onclick = ev => copyText(box.querySelector('textarea'), ev.target);
-    box.querySelector('[data-erc=post]').onclick = ev => postCase({ ...ercPacket(x), message: box.querySelector('textarea').value }, ev.target);
+    box.querySelector('[data-erc=post]').onclick = async ev => {
+      if (!await postCase({ ...ercPacket(x), message: box.querySelector('textarea').value })) return;
+      x.posted = true;
+      saveDisputes(list);
+      Object.assign(ev.target, { textContent: 'Sent to the case dashboard', disabled: true });
+    };
     box.querySelector('[data-erc=send]').onclick = () =>
       sendDispute(`tanaw-erc-${x.packet.bill.period_end}.json`, ercPacket(x), box.querySelector('textarea').value);
     return;
@@ -285,6 +371,7 @@ $('#minelist').onclick = e => {
   renderMine();
 };
 renderMine();
+syncMine();
 
 // Share sheet with the message and the evidence file (Messenger, Mail, Files...), else download the file and copy the message.
 // Returns false only if the user cancelled.
@@ -319,10 +406,4 @@ async function sendDispute(name, packet, text) {
   return true;
 }
 
-function renderSolar() {
-  $('#solar').innerHTML = '<tr><th>Scenario</th><th class="n">Payback</th><th class="n">kWp</th><th class="n">Saves/yr</th></tr>' +
-    solar(bill, bill.tracker, +$('#selfuse').value).map(s =>
-      `<tr><td>${esc(s.name)}</td><td class="n"><b>${s.payback.toFixed(1)} yrs</b></td><td class="n">${s.kWp.toFixed(1)}</td><td class="n">${peso(s.save)}</td></tr>`).join('');
-}
-$('#selfuse').onchange = () => analysis && renderSolar();
-$('#again').onclick = () => { bill = analysis = null; markSynthetic(); show('upload'); };
+$('#again').onclick = () => { bill = analysis = ocr = null; markSynthetic(); show('upload'); };

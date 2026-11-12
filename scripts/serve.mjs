@@ -1,11 +1,18 @@
 // Dev server for www/ on http://localhost:8000 (ES modules don't load from file://). PORT=8001 npm start for another port.
 // Also the demo case inbox: POST /api/cases stores a dispute file the user chose to escalate; GET lists them for dashboard.html.
 // And POST /api/understand: the chat's local-model fallback (Ollama). If Ollama is not running the chat uses rules only.
+// And POST /api/ocr: a photo of a paper bill -> words, read by PaddleOCR (scripts/ocr.py). Without Python + paddleocr the app hides "Scan".
 // shortcut: no login and one local JSON file; a real ERC inbox needs authentication, HTTPS and a database.
 import { createServer } from 'node:http';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { extname, resolve, sep } from 'node:path';
-import { MODEL_PROMPT, MODEL_SCHEMA } from '../www/lib/chat.js';
+import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
+import { extname, resolve, sep, join } from 'node:path';
+import { spawn, execFile } from 'node:child_process';
+import { createInterface } from 'node:readline';
+import { tmpdir } from 'node:os';
+import { randomUUID } from 'node:crypto';
+import { caseKey } from '../www/lib/disputes.js';
+import { MODEL_PROMPT, MODEL_SCHEMA, ANSWER_PROMPT, answerSchema, answerMessage, advisoryParas } from '../www/lib/chat.js';
+import { usableReason } from '../www/lib/explain.js';
 
 const ROOT = resolve('www');
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.pdf': 'application/pdf',
@@ -21,17 +28,74 @@ async function readJson(req, max) {
   try { return JSON.parse(body); } catch { throw Object.assign(new Error('not JSON'), { code: 400 }); }
 }
 
+const saveCases = async list => { await mkdir('data/private', { recursive: true }); await writeFile(CASES, JSON.stringify(list, null, 1)); };
 async function cases(req, res) {
   if (req.method === 'GET') return send(res, 200, await loadCases());
   if (req.method !== 'POST') return send(res, 405, { error: 'GET or POST only' });
   const p = await readJson(req, 1e6);
   if (p?.format !== 'tanaw-dispute/1' || !p.bill || !Array.isArray(p.flags)) return send(res, 400, { error: 'not a TANAW dispute file' });
-  const list = await loadCases();
-  list.push({ ...p, received: new Date().toISOString() });
-  await mkdir('data/private', { recursive: true });
-  await writeFile(CASES, JSON.stringify(list, null, 1));
+  // One case per bill: sending again (an edited message, or the ERC escalation) replaces the old file and reopens the case.
+  const all = await loadCases(), old = all.find(c => caseKey(c) === caseKey(p)), list = all.filter(c => c !== old);
+  list.push({ ...p, received: new Date().toISOString(), first_received: old?.first_received ?? old?.received ?? new Date().toISOString(), status: 'open', reply: old?.reply ?? '' });
+  await saveCases(list);
   send(res, 201, { ok: true, cases: list.length });
 }
+
+// Staff reply / status for one case. GET ?key= is what the customer's app polls: it returns only that case's status, never the list.
+// shortcut: anyone on the network can set a status; a real inbox needs staff login.
+const STATUSES = ['open', 'replied', 'resolved'];
+async function caseStatus(req, res) {
+  const list = await loadCases();
+  if (req.method === 'GET') {
+    const c = list.find(c => caseKey(c) === new URL(req.url, 'http://x').searchParams.get('key'));
+    return c ? send(res, 200, { status: c.status ?? 'open', reply: c.reply ?? '' }) : send(res, 404, { error: 'no such case' });
+  }
+  if (req.method !== 'POST') return send(res, 405, { error: 'GET or POST only' });
+  const { key, status, reply } = (await readJson(req, 1e4)) ?? {}, c = list.find(c => caseKey(c) === key);
+  if (!c || !STATUSES.includes(status)) return send(res, 400, { error: 'unknown case or status' });
+  Object.assign(c, { status, reply: String(reply ?? c.reply ?? '').slice(0, 2000), updated: new Date().toISOString() });
+  await saveCases(list);
+  send(res, 200, { ok: true });
+}
+
+// ---------- PaddleOCR (scripts/ocr.py): one Python process kept alive, because loading the models takes several seconds ----------
+let ocrPy = null, ocrProc = null, ocrWaiting = null, ocrQueue = Promise.resolve();
+const ocrReady = (async () => {
+  // Not the Windows "py" launcher: started from a background process it can take the whole server down. Set OCR_PYTHON instead.
+  for (const py of process.env.OCR_PYTHON ? [process.env.OCR_PYTHON] : ['python', 'python3']) {
+    const ok = await new Promise(done => execFile(py, ['scripts/ocr.py', '--check'], { timeout: 60000 }, (e, out) => done(!e && /ok/.test(out))));
+    if (ok) return (ocrPy = py);
+  }
+  return null;
+})();
+function ocrWorker() {
+  if (ocrProc) return ocrProc;
+  ocrProc = spawn(ocrPy, ['scripts/ocr.py'], { stdio: ['pipe', 'pipe', 'inherit'] });
+  // Results are the lines that start with "TANAW "; anything else on stdout is Paddle's own logging.
+  createInterface({ input: ocrProc.stdout }).on('line', l => { if (l.startsWith('TANAW ')) { ocrWaiting?.ok(JSON.parse(l.slice(6))); ocrWaiting = null; } });
+  ocrProc.on('exit', () => { ocrWaiting?.fail(new Error('the OCR worker stopped')); ocrWaiting = ocrProc = null; });
+  ocrProc.on('error', () => {});
+  return ocrProc;
+}
+const ocrRun = path => (ocrQueue = ocrQueue.catch(() => {}).then(() => new Promise((ok, fail) => {
+  ocrWaiting = { ok, fail };
+  ocrWorker().stdin.write(path + '\n');
+})));
+async function ocr(req, res) {
+  if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
+  if (!await ocrReady) return send(res, 503, { error: 'PaddleOCR is not installed on the TANAW server' });
+  const chunks = [];
+  let size = 0;
+  for await (const c of req) { if ((size += c.length) > 20e6) return send(res, 413, { error: 'photo larger than 20 MB' }); chunks.push(c); }
+  if (!size) return send(res, 400, { error: 'empty' });
+  const file = join(tmpdir(), `tanaw-ocr-${randomUUID()}`); // the photo is deleted right after it is read
+  await writeFile(file, Buffer.concat(chunks));
+  try {
+    const out = await ocrRun(file);
+    send(res, out.error ? 422 : 200, out);
+  } finally { rm(file, { force: true }).catch(() => {}); }
+}
+const health = async (req, res) => send(res, 200, { ocr: !!await ocrReady });
 
 // One chat message -> Ollama, constrained to MODEL_SCHEMA. The browser validates the result again (fromModel).
 async function understand(req, res) {
@@ -48,7 +112,26 @@ async function understand(req, res) {
   send(res, 200, { model: MODEL, result: JSON.parse(out.message?.content ?? 'null') });
 }
 
-const API = { '/api/cases': cases, '/api/understand': understand };
+// A customer question -> the number of the paragraph in that month's scraped Meralco advisory that answers it, or null.
+// The advisory comes from our own www/data/reasons.json (never from the request); the model can only output an index (enum),
+// and the browser quotes that paragraph verbatim. Hard-coded on purpose: no setting turns this into free-text generation.
+const reasons = readFile(resolve(ROOT, 'data/reasons.json'), 'utf8').then(JSON.parse);
+async function answer(req, res) {
+  if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
+  const { text, month } = (await readJson(req, 4000)) ?? {};
+  const reason = usableReason((await reasons)[String(month)]), n = advisoryParas(reason).length;
+  if (!String(text ?? '').trim() || !n) return send(res, 404, { error: 'no advisory for that month' });
+  const r = await fetch(`${OLLAMA}/api/chat`, {
+    method: 'POST', signal: AbortSignal.timeout(20000),
+    body: JSON.stringify({ model: MODEL, stream: false, format: answerSchema(n), keep_alive: '30m', options: { temperature: 0, num_ctx: 4096 },
+      messages: [{ role: 'system', content: ANSWER_PROMPT }, { role: 'user', content: answerMessage(reason, text) }] }),
+  }).catch(e => ({ ok: false, status: 503, text: async () => e.message }));
+  if (!r.ok) return send(res, 503, { error: `local model unavailable: ${await r.text()}` });
+  const out = await r.json();
+  send(res, 200, { model: MODEL, result: JSON.parse(out.message?.content ?? 'null') });
+}
+
+const API = { '/api/cases': cases, '/api/cases/status': caseStatus, '/api/understand': understand, '/api/answer': answer, '/api/ocr': ocr, '/api/health': health };
 createServer(async (req, res) => {
   const route = API[req.url.split('?')[0]];
   if (route) return route(req, res).catch(e => send(res, e.code ?? 500, { error: e.message }));
@@ -65,3 +148,4 @@ createServer(async (req, res) => {
 fetch(`${OLLAMA}/api/generate`, { method: 'POST', body: JSON.stringify({ model: MODEL, keep_alive: '30m' }), signal: AbortSignal.timeout(120000) })
   .then(r => console.log(r.ok ? `Chat model ${MODEL} loaded (Ollama)` : `Ollama has no ${MODEL}: run "ollama pull ${MODEL}". Chat uses rules only.`))
   .catch(() => console.log(`Ollama not running at ${OLLAMA}: chat uses rules only.`));
+ocrReady.then(py => console.log(py ? `Scan a paper bill: PaddleOCR ready (${py} scripts/ocr.py)` : 'PaddleOCR not found (pip install paddlepaddle paddleocr): the app hides "Scan a paper bill".'));

@@ -182,6 +182,26 @@ console.log('chat OK');
 }
 console.log('chat model OK');
 
+// test_advisory_pick: for questions the model can only point at a scraped advisory paragraph; the reply quotes it verbatim
+{
+  const { step, startChat, fromModelPick, answerSchema, answerMessage, isQuestion } = await import('../www/lib/chat.js');
+  const reason = { date: '2026-10-13', text: 'Rates up.', url: 'https://www.meralco.com.ph/media/advisories/x',
+    sections: [{ heading: null, paragraphs: ['Generation charge rose by P0.20 per kWh.', 'Lower peso helped.'] }, { paragraphs: ['Transmission was flat.'] }] };
+  const ctx = pick => ({ sentence: 'Your bill rose ₱900.', reason, days: 30, unexplained_kwh: 0, pick });
+  assert.deepEqual(answerSchema(3).properties.paragraph.enum, [0, 1, 2, null], 'schema allows only real paragraph numbers or null');
+  assert.match(answerMessage(reason, 'bakit?'), /\[2\] Transmission was flat\./);
+  assert.deepEqual([fromModelPick({ paragraph: 2 }, 3), fromModelPick({ paragraph: null }, 3), fromModelPick({ paragraph: 7 }, 3),
+    fromModelPick({ paragraph: '1' }, 3), fromModelPick({ answer: 'made up' }, 3), fromModelPick(null, 3)], [2, null, undefined, undefined, undefined, undefined]);
+  assert.ok(isQuestion(startChat(), 'bakit mas mahal ngayon?') && !isQuestion(startChat(), 'bumili kami ng aircon'));
+  const picked = step(startChat(), 'bakit mas mahal ngayon?', ctx(2)).reply;
+  assert.ok(picked.includes('"Transmission was flat."') && picked.includes(reason.url), 'verbatim quote + source link');
+  const none = step(startChat(), 'paano magbayad online?', ctx(null)).reply;
+  assert.match(none, /Not covered by Meralco's advisory/);
+  assert.ok(!/Generation|peso|Transmission/.test(none), 'no advisory text passed off as an answer it does not contain');
+  assert.match(step(startChat(), 'bakit tumaas ang generation charge?', ctx(undefined)).reply, /Generation charge rose/, 'no model: keyword fallback');
+}
+console.log('advisory pick OK');
+
 // test_reasons: Meralco advisories are quoted only with text, date and a meralco.com.ph link
 {
   const { usableReason } = await import('../www/lib/explain.js');
@@ -202,3 +222,36 @@ console.log('reasons OK');
   for (const f of readdirSync('www/lib')) assert.ok(files.includes(`lib/${f}`), `sw.js does not precache lib/${f}`);
 }
 console.log('pwa OK');
+
+// test_ocr: OCR words (as PaddleOCR returns them for a photo) give the same bill as the PDF's own text
+{
+  const { ocrLines } = await import('../www/lib/ocr.js');
+  const { toNum } = await import('../www/lib/parse.js');
+  const { caseKey } = await import('../www/lib/disputes.js');
+  const f = 'www/data/fixtures/SYNTHETIC_bill.pdf', lines = await pdfLines(pdfjs, new Uint8Array(readFileSync(f)));
+  // A 2000 px wide "photo" of the page: PDF points scaled up, y measured from the top; each tracker row read as ONE run of numbers.
+  const S = 2000 / 612, cells = l => l.items.filter(it => /^(\d[\d,]*|-)$/.test(it.str));
+  const b = parseBill(lines), blurry = str => (str.match(/\d[\d,]*\.\d+/) ?? []).some(n => toNum(n) === b.charges_this_period);
+  const one = (l, it) => ({ str: it.str, x: it.x * S, w: it.str.length * 12, y: (800 - l.y) * S + (it.x % 3), h: 30, conf: blurry(it.str) ? 0.6 : 0.99 });
+  const run = (l, c) => ({ str: c.map(i => i.str).join(' '), x: c[0].x * S, w: (c.at(-1).x - c[0].x) * S * (1 + 1 / 23), y: (800 - l.y) * S, h: 30, conf: 0.99 });
+  const words = lines.flatMap(l => cells(l).length === 12 ? [...l.items.filter(it => !cells(l).includes(it)).map(it => one(l, it)), run(l, cells(l))] : l.items.map(it => one(l, it)));
+  const o = ocrLines(words, 2000), a = parseBill(o.lines);
+  for (const k of FIELDS) assert.deepEqual(a[k], b[k], `ocr ${k}`);
+  assert.deepEqual(a.charges, b.charges, 'ocr charges');
+  assert.deepEqual(a.tracker, b.tracker, 'ocr tracker: a run of numbers is split back into 12 cells');
+  assert.ok(o.low.has(b.charges_this_period) && !o.low.has(b.current_reading), 'only numbers from blurry text are marked "please check"');
+  assert.ok(o.clear < o.total);
+  assert.equal(caseKey({ customer_account_number: '0012345678', bill: { period_end: '2026-05-26' } }), '0012345678|2026-05-26');
+}
+console.log('ocr OK');
+
+// test_ocr_real: what PaddleOCR 3.7 really returned for an image of the SYNTHETIC bill (it dropped one tracker "-") reads as the same bill
+{
+  const { ocrLines } = await import('../www/lib/ocr.js');
+  // _glued: a second real run that also glued tracker numbers together ("194199 210 298 329304")
+  for (const f of ['SYNTHETIC_ocr_words', 'SYNTHETIC_ocr_words_glued']) {
+    const out = json(`tests/${f}.json`);
+    assert.deepEqual(parseBill(ocrLines(out.words, out.width).lines), await readBill('www/data/fixtures/SYNTHETIC_bill.pdf'), f);
+  }
+}
+console.log('ocr real output OK');
