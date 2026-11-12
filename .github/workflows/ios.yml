@@ -4,7 +4,7 @@ name: ios-ipa
 on: [workflow_dispatch, push]
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-latest # macos-14 was rejected: "configuration 'macos-14-arm64-us-default' is not supported"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
