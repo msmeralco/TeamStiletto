@@ -2,3 +2,5 @@ node_modules/
 ios/
 www/vendor/
 /agent_artifacts
+data/private/
+data/rates_pdfs/

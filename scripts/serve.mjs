@@ -10,6 +10,7 @@ createServer(async (req, res) => {
   if (p.endsWith('/')) p += 'index.html';
   const file = resolve(ROOT, '.' + p);
   if (!file.startsWith(ROOT + sep)) return res.writeHead(403).end();
-  try { res.writeHead(200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream' }).end(await readFile(file)); }
-  catch { res.writeHead(404).end('not found'); }
+  let body;
+  try { body = await readFile(file); } catch { return res.writeHead(404).end('not found'); }
+  res.writeHead(200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream' }).end(body);
 }).listen(8000, () => console.log('TANAW on http://localhost:8000'));

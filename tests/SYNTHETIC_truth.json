@@ -2,291 +2,318 @@
  "params": {
   "b0": 6,
   "b1": 1.5,
-  "bp": 26.5
+  "bp": 27
  },
  "good": {
   "period_start": "2026-09-15",
   "period_end": "2026-10-14",
   "days": 30,
-  "kwh": 192,
+  "kwh": 243,
   "previous_reading": 10000,
-  "current_reading": 10192,
+  "current_reading": 10243,
   "multiplier": 1,
   "tracker": [
    {
+    "month": "2025-01",
+    "kwh": 194
+   },
+   {
+    "month": "2025-02",
+    "kwh": 199
+   },
+   {
+    "month": "2025-03",
+    "kwh": 210
+   },
+   {
+    "month": "2025-04",
+    "kwh": 298
+   },
+   {
+    "month": "2025-05",
+    "kwh": 329
+   },
+   {
+    "month": "2025-06",
+    "kwh": 304
+   },
+   {
+    "month": "2025-07",
+    "kwh": 208
+   },
+   {
+    "month": "2025-08",
+    "kwh": 234
+   },
+   {
     "month": "2025-09",
-    "kwh": 214
+    "kwh": 194
    },
    {
     "month": "2025-10",
-    "kwh": 185
+    "kwh": 182
    },
    {
     "month": "2025-11",
-    "kwh": 193
+    "kwh": 222
    },
    {
     "month": "2025-12",
-    "kwh": 187
+    "kwh": 210
    },
    {
     "month": "2026-01",
-    "kwh": 197
+    "kwh": 191
    },
    {
     "month": "2026-02",
-    "kwh": 230
+    "kwh": 188
    },
    {
     "month": "2026-03",
-    "kwh": 226
+    "kwh": 196
    },
    {
     "month": "2026-04",
-    "kwh": 306
-   },
-   {
-    "month": "2026-05",
-    "kwh": 315
-   },
-   {
-    "month": "2026-06",
-    "kwh": 317
-   },
-   {
-    "month": "2026-07",
-    "kwh": 292
-   },
-   {
-    "month": "2026-08",
     "kwh": 259
    },
    {
+    "month": "2026-05",
+    "kwh": 350
+   },
+   {
+    "month": "2026-06",
+    "kwh": 327
+   },
+   {
+    "month": "2026-07",
+    "kwh": 278
+   },
+   {
+    "month": "2026-08",
+    "kwh": 236
+   },
+   {
     "month": "2026-09",
-    "kwh": 220
+    "kwh": 217
    },
    {
     "month": "2026-10",
-    "kwh": 192
+    "kwh": 243
    }
   ],
   "charges": [
    {
     "key": "generation",
-    "label": "Generation Charge",
-    "amount_php": 1594.44
+    "label": "Generation",
+    "amount_php": 2478.72
    },
    {
     "key": "transmission",
-    "label": "Transmission Charge",
-    "amount_php": 202.23
+    "label": "Transmission",
+    "amount_php": 278.04
    },
    {
     "key": "system_loss",
-    "label": "System Loss Charge",
-    "amount_php": 154.25
+    "label": "System Loss",
+    "amount_php": 226.01
    },
    {
     "key": "distribution",
-    "label": "Distribution Charge",
-    "amount_php": 262.41
+    "label": "Distribution (Meralco)",
+    "amount_php": 247.5
    },
    {
-    "key": "supply",
-    "label": "Supply Charge",
-    "amount_php": 120.1
+    "key": "senior_subsidy",
+    "label": "Senior Citizen",
+    "amount_php": 0.02
    },
    {
-    "key": "metering",
-    "label": "Metering Charge",
-    "amount_php": 66.46
-   },
-   {
-    "key": "subsidies",
-    "label": "Lifeline/Senior Citizen Subsidy",
-    "amount_php": 1.96
-   },
-   {
-    "key": "tax_recovery_adj",
-    "label": "Tax Recovery Adj. Charge",
-    "amount_php": 0.4
+    "key": "taxes",
+    "label": "Government Taxes",
+    "amount_php": 291.57
    },
    {
     "key": "universal",
     "label": "Universal Charges",
-    "amount_php": 39.74
+    "amount_php": 93.56
    },
    {
     "key": "fit_all",
-    "label": "FIT-All",
-    "amount_php": 16.09
+    "label": "FiT-All (Renewable)",
+    "amount_php": 81.62
    },
    {
     "key": "gea_all",
-    "label": "GEA-All",
-    "amount_php": 7.12
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
    },
    {
-    "key": "vat",
-    "label": "Value Added Tax",
-    "amount_php": 285.43
-   },
-   {
-    "key": "franchise_tax",
-    "label": "Local Franchise Tax",
-    "amount_php": 20.48
-   },
-   {
-    "key": "refund",
-    "label": "AWAT Refund",
-    "amount_php": -25
+    "key": "lifeline",
+    "label": "Lifeline",
+    "amount_php": 2.43
    }
   ],
-  "charges_this_period": 2746.11,
+  "charges_this_period": 3699.47,
   "remaining_balance": 0,
   "installment_due": 0,
-  "total_amount_due": 2746.11,
-  "city": "Manila",
+  "total_amount_due": 3699.47,
   "source": "synthetic"
  },
  "weak": {
   "period_start": "2026-09-15",
   "period_end": "2026-10-14",
   "days": 30,
-  "kwh": 242,
+  "kwh": 276,
   "previous_reading": 10000,
-  "current_reading": 10242,
+  "current_reading": 10276,
   "multiplier": 1,
   "tracker": [
    {
-    "month": "2025-09",
-    "kwh": 276
+    "month": "2025-01",
+    "kwh": 269
    },
    {
-    "month": "2025-10",
-    "kwh": 256
-   },
-   {
-    "month": "2025-11",
-    "kwh": 259
-   },
-   {
-    "month": "2025-12",
-    "kwh": 280
-   },
-   {
-    "month": "2026-01",
+    "month": "2025-02",
     "kwh": 275
    },
    {
+    "month": "2025-03",
+    "kwh": 257
+   },
+   {
+    "month": "2025-04",
+    "kwh": 279
+   },
+   {
+    "month": "2025-05",
+    "kwh": 275
+   },
+   {
+    "month": "2025-06",
+    "kwh": 270
+   },
+   {
+    "month": "2025-07",
+    "kwh": 265
+   },
+   {
+    "month": "2025-08",
+    "kwh": 266
+   },
+   {
+    "month": "2025-09",
+    "kwh": 294
+   },
+   {
+    "month": "2025-10",
+    "kwh": 261
+   },
+   {
+    "month": "2025-11",
+    "kwh": 287
+   },
+   {
+    "month": "2025-12",
+    "kwh": 281
+   },
+   {
+    "month": "2026-01",
+    "kwh": 265
+   },
+   {
     "month": "2026-02",
-    "kwh": 274
+    "kwh": 301
    },
    {
     "month": "2026-03",
-    "kwh": 248
+    "kwh": 267
    },
    {
     "month": "2026-04",
-    "kwh": 280
+    "kwh": 293
    },
    {
     "month": "2026-05",
-    "kwh": 271
+    "kwh": 278
    },
    {
     "month": "2026-06",
-    "kwh": 276
+    "kwh": 266
    },
    {
     "month": "2026-07",
-    "kwh": 250
+    "kwh": 266
    },
    {
     "month": "2026-08",
-    "kwh": 305
+    "kwh": 281
    },
    {
     "month": "2026-09",
-    "kwh": 251
+    "kwh": 317
    },
    {
     "month": "2026-10",
-    "kwh": 242
+    "kwh": 276
    }
   ],
   "charges": [
    {
     "key": "generation",
-    "label": "Generation Charge",
-    "amount_php": 2009.66
+    "label": "Generation",
+    "amount_php": 2815.34
    },
    {
     "key": "transmission",
-    "label": "Transmission Charge",
-    "amount_php": 254.9
+    "label": "Transmission",
+    "amount_php": 315.8
    },
    {
     "key": "system_loss",
-    "label": "System Loss Charge",
-    "amount_php": 194.42
+    "label": "System Loss",
+    "amount_php": 256.71
    },
    {
     "key": "distribution",
-    "label": "Distribution Charge",
-    "amount_php": 364.52
+    "label": "Distribution (Meralco)",
+    "amount_php": 306.48
    },
    {
-    "key": "supply",
-    "label": "Supply Charge",
-    "amount_php": 147.11
+    "key": "senior_subsidy",
+    "label": "Senior Citizen",
+    "amount_php": 0.03
    },
    {
-    "key": "metering",
-    "label": "Metering Charge",
-    "amount_php": 82.46
-   },
-   {
-    "key": "subsidies",
-    "label": "Lifeline/Senior Citizen Subsidy",
-    "amount_php": 2.47
-   },
-   {
-    "key": "tax_recovery_adj",
-    "label": "Tax Recovery Adj. Charge",
-    "amount_php": 0.51
+    "key": "taxes",
+    "label": "Government Taxes",
+    "amount_php": 334.36
    },
    {
     "key": "universal",
     "label": "Universal Charges",
-    "amount_php": 50.09
+    "amount_php": 106.26
    },
    {
     "key": "fit_all",
-    "label": "FIT-All",
-    "amount_php": 20.28
+    "label": "FiT-All (Renewable)",
+    "amount_php": 92.71
    },
    {
     "key": "gea_all",
-    "label": "GEA-All",
-    "amount_php": 8.98
+    "label": "GEA-All (Renewable)",
+    "amount_php": 0
    },
    {
-    "key": "vat",
-    "label": "Value Added Tax",
-    "amount_php": 363.8
-   },
-   {
-    "key": "franchise_tax",
-    "label": "Local Franchise Tax",
-    "amount_php": 26.08
+    "key": "lifeline",
+    "label": "Lifeline",
+    "amount_php": 2.76
    }
   ],
-  "charges_this_period": 3525.28,
+  "charges_this_period": 4230.45,
   "remaining_balance": 0,
   "installment_due": 0,
-  "total_amount_due": 3525.28,
-  "city": "Manila",
+  "total_amount_due": 4230.45,
   "source": "synthetic"
  }
 }

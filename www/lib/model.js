@@ -14,9 +14,10 @@ export function temps(w) {
 const endOf = (y, m, d) => Date.UTC(y, m - 1, Math.min(d, new Date(Date.UTC(y, m, 0)).getUTCDate()));
 
 // Tracker gives months, not reading dates: assume each period ends on the bill's end day-of-month (shown on screen).
+// A 0-kWh month means no reading that month (seen on a real statement), so it is left out.
 export function trackerPeriods(tracker, periodEnd) {
   const d = new Date(periodEnd).getUTCDate();
-  return tracker.map(t => {
+  return tracker.filter(t => t.kwh > 0).map(t => {
     const [y, m] = t.month.split('-').map(Number);
     const end = endOf(y, m, d), start = endOf(y, m - 1, d) + DAY;
     return { ...t, start, end, days: Math.round((end - start) / DAY) + 1 };

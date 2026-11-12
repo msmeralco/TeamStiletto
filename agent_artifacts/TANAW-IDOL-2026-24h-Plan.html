@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TANAW — Bill Explainer Plan</title>
+<style>
+:root{
+  --bg:#f7f6f3; --surface:#ffffff; --surface-2:#f0eee9; --ink:#1a1916; --ink-2:#55514a;
+  --ink-3:#847e74; --line:#e0dcd4; --accent:#c2410c; --accent-2:#0e5a8a; --ok:#15803d;
+  --warn:#a16207; --bad:#b91c1c; --radius:10px;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#15140f; --surface:#1e1d18; --surface-2:#262520; --ink:#f0ede6; --ink-2:#b8b2a7;
+    --ink-3:#8a8478; --line:#36342c; --accent:#fb923c; --accent-2:#60a5fa; --ok:#4ade80;
+    --warn:#fbbf24; --bad:#f87171;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15140f; --surface:#1e1d18; --surface-2:#262520; --ink:#f0ede6; --ink-2:#b8b2a7;
+  --ink-3:#8a8478; --line:#36342c; --accent:#fb923c; --accent-2:#60a5fa; --ok:#4ade80;
+  --warn:#fbbf24; --bad:#f87171;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:230px 1fr;gap:44px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;gap:0}}
+
+/* nav */
+nav{position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:32px 0 48px}
+@media (max-width:900px){nav{position:static;max-height:none;padding:16px 0;border-bottom:1px solid var(--line)}}
+nav .navtitle{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px;font-weight:700}
+nav ol{list-style:none;margin:0;padding:0;counter-reset:n}
+nav li{counter-increment:n;margin:1px 0}
+nav a{display:block;padding:5px 8px;border-radius:6px;color:var(--ink-2);text-decoration:none;font-size:13.5px;line-height:1.35}
+nav a::before{content:counter(n) ". ";color:var(--ink-3);font-variant-numeric:tabular-nums}
+nav a:hover{background:var(--surface-2);color:var(--ink)}
+
+main{padding:40px 0 100px;min-width:0}
+header.hd{border-bottom:3px solid var(--accent);padding-bottom:22px;margin-bottom:34px}
+.kicker{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-size:clamp(30px,5vw,46px);line-height:1.08;margin:10px 0 8px;letter-spacing:-.025em}
+.sub{font-size:17.5px;color:var(--ink-2);margin:0;max-width:60ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;
+  background:var(--surface);color:var(--ink-2)}
+.chip b{color:var(--ink);font-weight:600}
+
+h2{font-size:25px;letter-spacing:-.018em;margin:54px 0 14px;padding-top:14px;border-top:1px solid var(--line);scroll-margin-top:20px}
+h2 .num{color:var(--ink-3);font-variant-numeric:tabular-nums;font-weight:400;margin-right:10px}
+h3{font-size:17.5px;margin:28px 0 8px;letter-spacing:-.01em}
+h4{font-size:14.5px;margin:20px 0 6px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
+p{margin:0 0 14px;max-width:72ch}
+ul,ol{margin:0 0 14px;padding-left:22px;max-width:72ch}
+li{margin:5px 0}
+a{color:var(--accent-2)}
+code{font-family:var(--mono);font-size:.875em;background:var(--surface-2);padding:1.5px 5px;border-radius:4px;
+  border:1px solid var(--line);word-break:break-word}
+pre{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;
+  overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.55}
+pre code{background:none;border:none;padding:0}
+strong{font-weight:650}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin:18px 0}
+.card.flag{border-left:4px solid var(--warn)}
+.card.good{border-left:4px solid var(--ok)}
+.card.stop{border-left:4px solid var(--bad)}
+.card.hero{border-left:4px solid var(--accent);background:var(--surface)}
+.card > :last-child{margin-bottom:0}
+.card h3:first-child,.card h4:first-child{margin-top:0}
+
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;display:block;overflow-x:auto;white-space:nowrap}
+@media(min-width:700px){table{display:table;white-space:normal}}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);font-weight:700;
+  background:var(--surface-2);position:sticky;top:0}
+tbody tr:hover{background:var(--surface-2)}
+td.num,th.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:4px;
+  text-transform:uppercase;white-space:nowrap}
+.t-ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.t-warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.t-bad{background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
+.t-info{background:color-mix(in srgb,var(--accent-2) 15%,transparent);color:var(--accent-2)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.stat .v{font-size:27px;font-weight:700;letter-spacing:-.025em;line-height:1.1;color:var(--accent)}
+.stat .l{font-size:13px;color:var(--ink-2);margin-top:5px;line-height:1.4}
+
+/* timeline */
+.tl{border-left:2px solid var(--line);margin:20px 0 20px 8px;padding-left:0}
+.blk{position:relative;padding:0 0 4px 26px;margin-bottom:22px}
+.blk::before{content:"";position:absolute;left:-7px;top:7px;width:12px;height:12px;border-radius:50%;
+  background:var(--accent);border:2px solid var(--bg)}
+.blk.gate::before{background:var(--bad)}
+.blk.rest::before{background:var(--accent-2)}
+.blk .hrs{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.03em}
+.blk.gate .hrs{color:var(--bad)}
+.blk.rest .hrs{color:var(--accent-2)}
+.blk .ttl{font-size:16px;font-weight:650;margin:2px 0 6px}
+.blk ul{margin:0;font-size:14.5px}
+
+.who{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:4px;margin-right:6px;
+  background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2)}
+
+.sourcelist{font-size:13.5px;line-height:1.5}
+.sourcelist li{margin:7px 0}
+
+.toggle{position:fixed;right:16px;bottom:16px;z-index:50;background:var(--surface);color:var(--ink);
+  border:1px solid var(--line);border-radius:999px;padding:9px 15px;font-size:13px;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,.14);font-family:inherit}
+.toggle:hover{background:var(--surface-2)}
+
+@media print{
+  nav,.toggle{display:none}
+  .wrap{display:block;max-width:100%}
+  body{background:#fff;color:#000;font-size:11pt}
+  .card,table,.blk,.stat{break-inside:avoid}
+  h2{break-after:avoid;page-break-after:avoid}
+  a{color:#000;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<button class="toggle" id="tg">Dark / light</button>
+<div class="wrap">
+
+<nav>
+  <div class="navtitle">Contents</div>
+  <ol>
+    <li><a href="#s1">Scope decision</a></li>
+    <li><a href="#s2">The idea</a></li>
+    <li><a href="#s3">The method</a></li>
+    <li><a href="#s4">The solar extension</a></li>
+    <li><a href="#s5">Why it wins</a></li>
+    <li><a href="#s6">Scope ladder</a></li>
+    <li><a href="#s7">Architecture</a></li>
+    <li><a href="#s8">Timeline</a></li>
+    <li><a href="#s9">Demo script</a></li>
+    <li><a href="#s10">Citations</a></li>
+    <li><a href="#s11">Do not say</a></li>
+    <li><a href="#s12">Risks</a></li>
+    <li><a href="#s13">Q&amp;A drill</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hd">
+  <div class="kicker">Team Stiletto &middot; Angeles University Foundation</div>
+  <h1>TANAW</h1>
+  <p class="sub">One photo of your paper Meralco bill. No login, no app, no account. Every peso of the change, explained in seconds.</p>
+  <div class="meta">
+    <span class="chip"><b>Team</b> 3</span>
+    <span class="chip"><b>Build</b> software only</span>
+    <span class="chip"><b>Fieldwork</b> none</span>
+    <span class="chip"><b>Primary</b> Challenge 2 — Know Your Bill</span>
+    <span class="chip"><b>Extension</b> Challenge 1 — Clean Energy</span>
+  </div>
+</header>
+
+<!-- 1 -->
+<h2 id="s1"><span class="num">01</span>Scope decision — read before anything</h2>
+
+<div class="card stop">
+<h4>This concept is not Challenge 4, and claiming it is will hurt you</h4>
+<p>You said you were leaning Smarter Field Observation. Taken honestly, a bill scanner is not field observation — Challenge 4's own wording is about <em>utility vehicles, dashcams, smartphones and low-cost environmental sensors</em> capturing <em>environmental and infrastructure data</em>. A photo of a piece of paper is document capture. Judges wrote that challenge; they will see the stretch immediately, and a visible stretch costs more than a narrower claim.</p>
+<p><strong>Submit under Challenge 2, with Challenge 1 as a genuine extension of the same pipeline.</strong> That is an honest two-challenge answer rather than a strained three-challenge one, and it is exactly what your constraint — one problem, properly solved — asks for.</p>
+<p>There is one way to earn Challenge 4 legitimately: photographing the <strong>meter</strong>, not the bill. That is a field asset capturing infrastructure data. Seven-segment digital meters OCR at 99%+ with low-confidence rejection in published work. But analog <strong>dial meters should not be attempted</strong> — the best published whole-meter accuracy starts at 75% and only reaches 98.9% with a custom angle-regression model. Many Philippine legacy meters are dials. <strong>My advice: skip it.</strong> It is a second capture pipeline, a second failure mode, and it buys a challenge tag you do not need.</p>
+</div>
+
+<div class="card flag">
+<h4>The one thing to verify right now</h4>
+<p>Get a real Meralco bill in front of you and confirm four things. The whole build rests on them:</p>
+<ol>
+<li><strong>The "Monthly Consumption Tracker"</strong> — research says it shows <strong>up to 24 months</strong> of monthly kWh as a bar graph <em>with the numeric values printed as text beneath the bars</em>. Confirm the numbers are really there as text, and count how many months carry a number. Meralco's wording is "up to," newer accounts show fewer, so your parser must handle a variable count no matter what you see.</li>
+<li><strong>The temperature row.</strong> The bill reportedly prints each month's average temperature alongside consumption, compared to the same month last year. Confirm it. If it is there, you may not even need an external weather API for the demo.</li>
+<li><strong>The subsidies line.</strong> "Subsidies – Lifeline and Senior Citizen Discounts" reportedly shares one printed line with the Tax Recovery Adjustment Charge — two values, one label. Classic parser trap.</li>
+<li><strong>Which month's rates the bill uses.</strong> TANAW looks up Meralco's published rates by month, so you must know which month's schedule a bill was charged at. Test it: divide this bill's Generation Charge by its kWh and find the matching month in Meralco's tables. Also confirm the "Previous Reading" and "Current Reading" fields — you will use them to check the OCR.</li>
+</ol>
+<p>Source caution: the field-level detail above came from a third-party mirror of Meralco's help center, not from meralco.com.ph, which was not reachable during research. It corroborates independently and reads as verbatim, but <strong>one real bill settles it in two minutes</strong>.</p>
+</div>
+
+<!-- 2 -->
+<h2 id="s2"><span class="num">02</span>The idea</h2>
+
+<div class="card hero">
+<p><strong>The single problem:</strong> a Meralco customer cannot tell <em>why</em> their bill changed. Was it them, was it the weather, or was it the rate? Without that answer, no decision they make about their electricity is an informed one.</p>
+<p><strong>TANAW:</strong> photograph the paper bill — no login, no app, no account. Recover two years of monthly consumption and every charge line from that one photo, and answer the question in a sentence a person can act on, in seconds. Meralco's own published rate schedules supply last month's rates, so the rate change splits line by line from that one photo.</p>
+</div>
+
+<p>Everything else is the same model, read differently. That is what makes this one problem and not three:</p>
+
+<div class="grid3">
+<div class="card">
+<h4>Why it changed</h4>
+<p>One photo: “Your bill rose ₱840. ₱520 was a hotter month. ₱190 was the generation charge. ₱70 was other charges. ₱60 was your usage.” Every rate number from Meralco's own published schedules. The core output, and the thing nobody currently provides.</p>
+</div>
+<div class="card">
+<h4>What's coming</h4>
+<p>The same fitted model, run forward on a temperature forecast. Not a new feature — the model already contains it.</p>
+</div>
+<div class="card">
+<h4>Whether solar pays</h4>
+<p>The same 24-month series, priced. Your consumption shape is precisely the input a solar calculation needs, and no Philippine tool currently uses it.</p>
+</div>
+</div>
+
+<h3>What the explanation covers — and what it cannot</h3>
+<p>The common causes of bill shock in the Philippines fall into four groups. A bill can show some of them exactly, estimate one, and cannot show the rest. Being precise about which is which is part of the product.</p>
+<table>
+<thead><tr><th>Cause</th><th>Can TANAW show it?</th><th>How</th></tr></thead>
+<tbody>
+<tr><td>Generation, transmission, system loss, distribution, taxes, universal charges</td><td><span class="tag t-ok">Exactly</span></td><td>Every charge is printed on its own line. TANAW reads this month's lines from the photo and last month's from Meralco's published rate schedule at the same consumption level, then compares each line. <strong>Your strongest output.</strong></td></tr>
+<tr><td>Hot weather</td><td><span class="tag t-info">Estimated</span></td><td>The degree-day regression on the 24-month tracker.</td></tr>
+<tr><td>Fuel prices, peso–dollar rate, spot-market (WESM) prices</td><td><span class="tag t-warn">Not from the bill</span></td><td>These sit <em>inside</em> the generation charge. TANAW can show that the generation charge rose, not why. If Meralco's monthly rate announcement states a reason, quote it with its date — otherwise say only that the charge rose. Check how consistently Meralco states reasons before relying on it.</td></tr>
+<tr><td>Appliances, phantom load</td><td><span class="tag t-bad">No</span></td><td>Monthly data cannot separate appliances — see section 3. Report the always-on <em>baseload</em> from the regression, but do not call it phantom load: it also includes the refrigerator and anything else running constantly.</td></tr>
+</tbody>
+</table>
+
+<div class="card">
+<h4>The calculation — about 30 lines, every peso traceable</h4>
+<pre><code># usage effect: how much more or less you used, at last month's prices
+usage_effect   = (kwh_now - kwh_prev) * rate_prev_total
+weather_part   = slope * (cdd_now - cdd_prev)          # from the regression, in kWh
+weather_pesos  = weather_part * rate_prev_total
+you_pesos      = usage_effect - weather_pesos
+
+# rate effect: what each charge line did to this month's kWh
+for line in charge_lines:                              # generation, transmission, ...
+    rate_effect[line] = (rate_now[line] - rate_prev[line]) * kwh_now
+
+# check: usage_effect + sum(rate_effect) == bill_now - bill_prev  (± fixed charges)</code></pre>
+<p>Fixed monthly charges (supply, metering) do not scale with kWh — handle them as their own line and the total reconciles. <code>rate_prev</code> comes from Meralco's rate schedule for last month, at the row closest to the customer's kWh.</p>
+</div>
+
+<h3>Where last month's rates come from: Meralco's own schedules</h3>
+<div class="card hero">
+<p>Meralco's <a href="https://www.meralco.com.ph/residential/rates-and-charges">Rates &amp; Charges page</a> links three PDFs per month for January–October 2026. The one to use is <strong>"Residential Bills at Typical Consumption Levels"</strong>: the per-kWh rate of every charge — generation, transmission, system loss, distribution, supply, metering, universal charges, subsidies, taxes — at consumption levels from 50 to 5,000 kWh, with separate lifeline rows. The numbers are readable text. September's 200 kWh row totals <strong>₱14.7424/kWh</strong>, matching the independently confirmed September rate.</p>
+<p>That gives you last month's rates for every charge line, at the customer's own consumption level, from Meralco's own document — no second photo, no hand-typed guesses.</p>
+</div>
+
+<div class="card">
+<h4>Build it once, offline — about 2–3 hours, one person</h4>
+<ol>
+<li><strong>Download the ten "Typical Consumption Levels" PDFs.</strong> The URLs follow three different patterns and the newest months use random file names, so a scraper cannot predict them — open each month's three links and pick the right one.</li>
+<li><strong>Extract the tables</strong> with <code>pdfplumber</code>. Column headers come out jumbled, so map each column to its charge by position, once.</li>
+<li><strong>Validate:</strong> each row's charges must sum to its total, and September at 200 kWh must equal ₱14.7424.</li>
+<li><strong>Save <code>rates.json</code></strong>: month → consumption level → charge → ₱/kWh. Commit it.</li>
+<li><strong>Write <code>reasons.json</code></strong>: one sentence per month, with date and link, from Meralco's own rate announcements. Only where Meralco stated a reason — the rates page itself gives only one example (April: +₱0.53/kWh generation, blamed on the peso weakening against the dollar).</li>
+</ol>
+<p><strong>Do not scrape live during the demo.</strong> No API, unpredictable URLs, venue wifi. In the pitch, the production version is a monthly update job — or Meralco publishing the same table as a data feed. Check the site's robots.txt and terms before downloading; ten public documents fetched once is low-risk.</p>
+</div>
+
+<div class="card flag">
+<h4>Three small differences to label on screen</h4>
+<ul>
+<li>The tables assume a <strong>0.50% local franchise tax</strong>; the real rate varies by city.</li>
+<li>Use the <strong>lifeline rows</strong> for customers at 100 kWh or below.</li>
+<li>From May 2026 an <strong>AWAT refund of ₱0.2511/kWh</strong> appears as its own line, and October's rate includes temporary refunds — keep refund lines separate so they do not hide the underlying change.</li>
+</ul>
+</div>
+
+<div class="card good">
+<h4>The bill checks its own OCR</h4>
+<p>With no login, OCR is on the critical path — and a misread number produces a confidently wrong explanation. The bill contains enough of its own arithmetic to catch most errors:</p>
+<ol>
+<li><strong>Current Reading − Previous Reading = this month's kWh</strong> (allow for a meter multiplier if one is printed).</li>
+<li><strong>The latest bar in the tracker = this month's kWh.</strong></li>
+<li><strong>The charge lines sum to "Charges for this billing period."</strong></li>
+<li><strong>Remaining Balance + Charges for this billing period + Installment Due = Total Amount Due.</strong></li>
+</ol>
+<p>If every check passes, show the explanation instantly. If one fails, highlight the suspect field on a <strong>confirm-and-correct screen</strong> and let the customer fix one number. This turns "OCR is unreliable" into a feature: a judge will be impressed that the app knows when it has misread the bill.</p>
+</div>
+
+<div class="card good">
+<h4>The framing that makes this land with Meralco</h4>
+<p><strong>The bill already prints the kWh and the temperature side by side — and leaves the customer to do the arithmetic in their head.</strong> You are not proposing new data collection. You are doing the calculation Meralco's own bill already implies.</p>
+<p>Two supporting facts worth having ready. Meralco's own Appliance Calculator <strong>instructs customers to read the 12-month average off their bill by hand and multiply it by a rate</strong> — you automate the exact step they tell people to do manually. And <strong>"bill shock" is Meralco's and the ERC's own term</strong> for this problem, not yours.</p>
+<p>Do <strong>not</strong> say Meralco gives customers no consumption history — the printed bill plainly has two years of it, and someone in that room designed it. The defensible claim is narrower and stronger: <strong>Meralco surfaces bills, not explanation.</strong></p>
+</div>
+
+<!-- 3 -->
+<h2 id="s3"><span class="num">03</span>The method</h2>
+<p>This is the part that separates you from an app. The technique is a published standard, not something invented tonight.</p>
+
+<div class="card">
+<h4>Variable-base degree-day change-point regression</h4>
+<p>Known as the <strong>3PC model in ASHRAE Guideline 14</strong>, and as the <strong>billing-period method in CalTRACK</strong>, which US utilities use to settle efficiency payments in money. Originally the PRISM model, Fels 1986. It fits a household's monthly kWh against cooling degree-days, searching for the balance-point temperature at which that home starts cooling, and splits consumption into <strong>baseload</strong> and <strong>weather-driven</strong> components.</p>
+<p>It needs only what you already have: monthly kWh, billing period dates, and temperature. No smart meter. No interval data. No training set. No survey. Roughly six hours of numpy, pandas and scipy.</p>
+</div>
+
+<h4>The algorithm, as CalTRACK §3 specifies it</h4>
+<ul>
+<li>Grid-search candidate balance points, requiring a minimum number of degree-days per candidate</li>
+<li><strong>Days-weighted</strong> least squares — billing periods are not equal length</li>
+<li>Screen out non-negative coefficient violations</li>
+<li>Highest adjusted R² wins</li>
+<li>Apply a CV(RMSE) screen and refuse to report when the fit fails it</li>
+</ul>
+
+<div class="card good">
+<h4>Numbers for the slide</h4>
+<p>Validated against <strong>submetered</strong> end-use data: baseload split error <strong>−5.0%</strong>, total-load adjusted R² mean <strong>0.93</strong>. An independent 2022 study comparing change-point regression against submetered heating and cooling found <strong>r &gt; 0.95</strong> with no significant difference by ANOVA. <strong>Calendarizing</strong> billing periods before fitting gave a <strong>~19% average R² gain</strong> across 50,345 buildings — cheap, large, do it.</p>
+</div>
+
+<div class="card stop">
+<h4>The real technical risk — design around it from the first line of code</h4>
+<p>Every published accuracy figure comes from temperate climates with 30–50 °C annual swings. <strong>Metro Manila's monthly means span roughly 3–5 °C</strong>, so the balance point is weakly identified. This is the thing that could make your output meaningless. Three mitigations:</p>
+<ol>
+<li><strong>Compute cooling degree-days from daily temperature, then aggregate to the billing period.</strong> Never compute them from monthly means. This is what the standard actually prescribes, and it is the difference between the method working and not.</li>
+<li><strong>Use all 24 periods</strong> if the bill provides them.</li>
+<li><strong>Refuse to display a decomposition below R² = 0.7</strong>, falling back to a fixed-base 24 °C two-parameter model and saying so on screen. PRISM used that cutoff in 1986.</li>
+</ol>
+<p>A tool that knows when to stay silent reads as rigorous. One that always produces a number reads as a toy. <strong>Build the refusal path and demo it</strong> — show a household where the fit fails and the app declines to guess. That single screen will do more for your credibility than any feature.</p>
+</div>
+
+<div class="card flag">
+<h4>One design decision the evidence makes for you</h4>
+<p>A field experiment at <strong>PLN in Indonesia</strong> found that economic and appliance-cost information cut consumption <strong>3.15%</strong> — but <strong>social comparison increased it 3.10%</strong>, a boomerang effect. Its explicit recommendation was to put informational nudges on the <strong>monthly bill</strong>.</p>
+<p>So: <strong>do not build a "compare yourself to your neighbours" feature.</strong> It is the obvious thing to add, it is what everyone else will add, and the closest regional evidence says it backfires. Saying this out loud in Q&amp;A is a strong moment.</p>
+</div>
+
+<h4>Why not NILM — and why saying so helps you</h4>
+<p>Appliance-level disaggregation is the glamorous answer and it is ruled out on published grounds: the literature's floor is 15–60 minute data, the sweet spot is 1 Hz, degradation as sampling rate falls is <em>nonlinear</em>, and cross-dataset transfer loses 40–50%. Meralco's AMI customers get <strong>daily totals by SMS</strong> — below anything in the literature. Knowing why you did not do the obvious thing demonstrates command of the field.</p>
+
+<!-- 4 -->
+<h2 id="s4"><span class="num">04</span>The solar extension</h2>
+<p>Two hours of work, and it carries the Clean Energy challenge on the back of the same data. It also contains the single most persuasive screen in your demo.</p>
+
+<div class="card hero">
+<h4>The finding the whole extension rests on</h4>
+<p>Under Philippine net metering, exported energy is credited at the <strong>monthly blended generation cost, not the retail rate</strong> — confirmed from Meralco's own FAQ. Credits carry forward and are <strong>never paid in cash</strong>. Cap is 100 kW.</p>
+<p>Against a March 2026 generation charge of ₱7.86/kWh and an October 2026 retail rate of ₱15.06/kWh, <strong>an exported kWh is worth about half a self-consumed one.</strong></p>
+<p>Of the Philippine solar tools inspected — including the DOE's own sizing guidance and <strong>MSpectrum, Meralco's own solar subsidiary</strong> — <strong>none discloses or uses an export credit rate</strong>, and none separates self-consumption from export. Every one therefore overstates savings, in the same direction. MSpectrum has no calculator at all; its inquiry form asks for your address and account number, not your kWh.</p>
+</div>
+
+<h4>The screen that wins it — a 500 kWh/month household</h4>
+<table>
+<thead><tr><th>Scenario</th><th class="num">Size</th><th class="num">Cost</th><th class="num">Year-1 saving</th><th class="num">Payback</th></tr></thead>
+<tbody>
+<tr><td>Annual offset, all output valued at retail <em>(how it is usually sold)</em></td><td class="num">4.28 kWp</td><td class="num">₱261,300</td><td class="num">₱90,360</td><td class="num"><strong>2.9 yr</strong></td></tr>
+<tr><td>Annual offset, export-aware at 35% self-consumption</td><td class="num">4.28 kWp</td><td class="num">₱261,300</td><td class="num">₱62,280</td><td class="num"><strong>4.2 yr</strong></td></tr>
+<tr><td>Right-sized to self-consumption, 35%</td><td class="num">1.50 kWp</td><td class="num">₱94,500</td><td class="num">₱31,626</td><td class="num"><strong>3.0 yr</strong></td></tr>
+</tbody>
+</table>
+<p><strong>The line to say:</strong> the ₱261,300 “zero-bill” system and the ₱94,500 right-sized system pay back in about the same time — but one puts ₱167,000 less of a household's money at risk. No existing Philippine tool can show this, because none of them uses the export credit rate.</p>
+
+<h4>Constants, each sourced</h4>
+<table>
+<thead><tr><th>Input</th><th>Value</th><th>Source</th></tr></thead>
+<tbody>
+<tr><td>Installed cost</td><td>₱60,000/kWp</td><td>Ember, May 2026 (independent; band ₱45–75k from trade press)</td></tr>
+<tr><td>Yield, Metro Manila</td><td>1,402.1 kWh/kWp/yr</td><td><strong>Philippine DOE</strong>, via Global Solar Atlas. Use this — a government citation on your slide, and no API key needed.</td></tr>
+<tr><td>Retail rate</td><td>Read off the bill: total ₱ ÷ total kWh</td><td>Self-updating and more accurate than any published figure. Context: ₱12.95 Jan 2026 → ₱15.0615 Oct 2026.</td></tr>
+<tr><td>Export credit</td><td>Read the Generation Charge line off the bill</td><td>The absolute current generation charge is not reliably published — reading it from the customer's own bill is both more accurate and a genuine product edge.</td></tr>
+<tr><td>Self-consumption share</td><td>0.25 / 0.40 / 0.60 / 0.80 from three lifestyle questions</td><td><strong>No Philippine daytime-load data exists.</strong> Label it on screen as an assumption. Do not hide it.</td></tr>
+<tr><td>Fees</td><td>ERC certificate ₱1,500; meter difference capped ₱3,000</td><td>Meralco; application and commissioning not billed</td></tr>
+</tbody>
+</table>
+
+<div class="card">
+<p><strong>Supporting literature:</strong> a 2019 study in <em>Sustainable Cities and Society</em> reconstructed hourly demand <strong>from monthly utility bills alone</strong> to within 5% annually and 6% monthly — explicitly motivated by protecting resource-constrained buyers from overzealous suppliers. That is nearly your pitch, peer-reviewed. A 2020 study bounds the honest limit: monthly-average sizing carries <strong>≥40% uncertainty</strong>, falling to 2.2% with sub-30-minute data. <strong>Claim the energy and seasonality baseline; disclose the intraday limit.</strong> Lead the interface with payback years rather than peso savings — published work finds payback stable under load-shape uncertainty while savings swing 10–15%.</p>
+</div>
+
+<!-- 5 -->
+<h2 id="s5"><span class="num">05</span>Why it wins</h2>
+<table>
+<thead><tr><th>Criterion</th><th>Your answer</th></tr></thead>
+<tbody>
+<tr><td><strong>Value Proposition</strong></td><td>“Bill shock” is Meralco's and the ERC's own term. The rate moved from ₱12.95 to ₱15.06/kWh inside 2026 — roughly 11% a year compounding — and no channel tells a customer how much of their increase was rate, weather, or themselves.</td></tr>
+<tr><td><strong>Feasibility</strong></td><td>Needs nothing Meralco does not already print. No smart meter, no API, no integration, no hardware. Works for all 8.3 million customers today, including the ~8 million without AMI.</td></tr>
+<tr><td><strong>Completeness</strong></td><td>One capture, one model, three outputs, running end to end on a real bill. Every 24-hour-format champion shipped software that ran.</td></tr>
+<tr><td><strong>Practicality</strong></td><td>One photo of a paper bill every customer already receives. No login, no app download, no account linking — the people the app's 1.3-star login flow loses are reached too. Their own Appliance Calculator already asks people to do this arithmetic manually.</td></tr>
+<tr><td><strong>Overall Potential</strong></td><td>Digital Customer and Data Platforms and AI in the 7Ds. The output is also exactly what a utility needs to target efficiency programmes — published work finds feedback savings of 6.3% in the top decile against 0.3% in the bottom, and <strong>the fitted cooling slope is the targeting variable</strong>.</td></tr>
+</tbody>
+</table>
+
+<div class="card flag">
+<h4>Your hardest comparison, and how to beat it</h4>
+<p>The 2023 champion, Project One, was a consumption-tracking and bill-projection app — Challenge 2 is the most crowded track in this hackathon's history. <strong>Do not pitch tracking.</strong> Tracking shows you a number you already have. Your difference is <strong>attribution</strong>: a published econometric method that says how much of the change was weather, how much was rate, and how much was behaviour — and that refuses to answer when the data will not support it. Say the word “explanation” and avoid the word “tracker.”</p>
+</div>
+
+<!-- 6 -->
+<h2 id="s6"><span class="num">06</span>Scope ladder</h2>
+<table>
+<thead><tr><th style="width:90px">Priority</th><th>Item</th><th class="num" style="width:80px">By hour</th></tr></thead>
+<tbody>
+<tr><td><span class="tag t-bad">Must</span></td><td>OCR the bill photo → 12–24 monthly kWh + every charge line + readings + totals, into JSON</td><td class="num">H3</td></tr>
+<tr><td><span class="tag t-bad">Must</span></td><td>The four self-checks + confirm-and-correct screen for any field that fails</td><td class="num">H4</td></tr>
+<tr><td><span class="tag t-bad">Must</span></td><td>Meralco's "Typical Consumption Levels" PDFs, Jan–Oct 2026 → <code>rates.json</code>, validated against row totals</td><td class="num">H4</td></tr>
+<tr><td><span class="tag t-bad">Must</span></td><td>Daily temperature for the billing periods, cached locally</td><td class="num">H4</td></tr>
+<tr><td><span class="tag t-bad">Must</span></td><td>Degree-day regression with balance-point search, days-weighted, R² gating</td><td class="num">H6</td></tr>
+<tr><td><span class="tag t-bad">Must</span></td><td><strong>The sentence</strong> — bill change split into weather / each charge line / your usage, in pesos, from one photo</td><td class="num">H9</td></tr>
+<tr><td><span class="tag t-bad">Must</span></td><td><strong>The refusal path</strong> — a poor fit declines to decompose and says why</td><td class="num">H10</td></tr>
+<tr><td><span class="tag t-warn">Should</span></td><td>Next-month projection from the fitted model plus a temperature forecast</td><td class="num">H11</td></tr>
+<tr><td><span class="tag t-warn">Should</span></td><td><code>reasons.json</code> — Meralco's own stated reason per month, with date and link</td><td class="num">H12</td></tr>
+<tr><td><span class="tag t-warn">Should</span></td><td>Export-aware solar sizing — the three-scenario table</td><td class="num">H13</td></tr>
+<tr><td><span class="tag t-warn">Should</span></td><td>Every assumption labelled on screen; citations visible in the UI</td><td class="num">H14</td></tr>
+<tr><td><span class="tag t-info">Could</span></td><td>Second bill from a different household to show the method generalising</td><td class="num">H15</td></tr>
+<tr><td><span class="tag t-ok">Won't</span></td><td>Chatbot, social comparison (evidence says it backfires), NILM, meter-photo OCR, dial meters, account linking, payments, maps, any hardware</td><td class="num">—</td></tr>
+</tbody>
+</table>
+
+<div class="card flag">
+<p><strong>Fallback ladder.</strong> If OCR fights you past H3, <strong>hand-type the 24 kWh values and the charge lines into a JSON fixture and keep building the model</strong>, while one person keeps working on OCR — the regression is the product, OCR is the on-ramp, and a demo that types in a bill still proves the idea. Keep the photo-upload UI and let it fall back to a confirm-and-correct screen, which is more credible to a utility anyway. If the regression will not fit on your test household, demo the refusal path deliberately and show a second household where it does.</p>
+</div>
+
+<!-- 7 -->
+<h2 id="s7"><span class="num">07</span>Architecture</h2>
+<pre><code>  ONE PHOTO OF THE PAPER BILL   (no login, no app)
+      │
+      ▼
+  OCR  ──▶  Tracker, charge lines, readings, totals, period dates
+      │
+      ▼
+  4 self-checks (readings, tracker, line sum, total) ── fail ──▶ confirm-and-correct
+      │ pass
+      ▼
+  12–24 × (month, kWh)  +  this month's charges
+      +  rates.json  (Meralco's schedule, last month, same kWh level)
+      +  reasons.json (Meralco's stated reason, where given)
+   │
+   ▼
+  Daily temperature (Open-Meteo archive, keyless)
+      │
+      ▼
+  CDD from DAILY temps → aggregate to billing periods → calendarize
+      │
+      ▼
+  Change-point regression: grid-search balance point,
+  days-weighted least squares, adjusted R², CV(RMSE) screen
+      │
+      ├── R² < 0.7 ──▶  REFUSE. Fall back to fixed-base 24°C.
+      │                 Say so on screen.
+      ▼
+  baseload kWh + cooling slope + balance point
+      │
+      ├──▶ "why your bill changed"   (weather / each charge line / you, in ₱)
+      ├──▶ "what next month looks like"  (model × forecast)
+      └──▶ "what solar is worth to you"  (× self-consumption × export credit)</code></pre>
+
+<table>
+<thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>OCR</td><td>PaddleOCR or docTR, Apache-2.0</td><td>The tracker numbers are printed as text, not encoded in bar heights. This is text extraction, not chart vision. A vision-language model is a fine fallback if the layout fights you.</td></tr>
+<tr><td>Model</td><td>numpy + scipy, written yourself</td><td>Re-implement CalTRACK §3 directly. The reference package's weather companion pulls US sources only, so it will not help you here.</td></tr>
+<tr><td>Weather</td><td>Open-Meteo archive, keyless, ERA5</td><td>Free, no key, 1940–present. <strong>Verify the endpoint yourself in hour one</strong> — it was not live-tested in research.</td></tr>
+<tr><td>Backend</td><td>Python + FastAPI, SQLite</td><td>One file to run, nothing to debug at 3am.</td></tr>
+<tr><td>Frontend</td><td>Plain HTML + vanilla JS, one chart</td><td>Do not learn a framework tonight. One well-made chart beats five rough ones.</td></tr>
+<tr><td>Deploy</td><td>localhost</td><td>Cache everything. Venue wifi will betray you.</td></tr>
+</tbody>
+</table>
+
+<!-- 8 -->
+<h2 id="s8"><span class="num">08</span>Timeline</h2>
+<p>Twenty hours, relative to now. Write your real start time on the whiteboard and convert the gates once, immediately.</p>
+<div class="meta" style="margin-bottom:20px">
+<span class="chip"><b>A</b> Rastafari — lead, model + backend</span>
+<span class="chip"><b>B</b> Felice — UI, narrative output, deck</span>
+<span class="chip"><b>C</b> Gio — OCR, weather, solar module</span>
+</div>
+
+<div class="tl">
+<div class="blk gate">
+<div class="hrs">H0 → H0:30</div>
+<div class="ttl">⛔ Get a real bill and read it</div>
+<ul>
+<li><span class="who">ALL</span>Photograph three or four real paper bills under different conditions — flat, angled, under glare, slightly crumpled. That is your OCR test set. Confirm the four things in section 1. <strong>Nothing else starts until this is answered.</strong></li>
+<li><span class="who">C</span>Also smoke-test the Open-Meteo archive endpoint, and read the 2026 brief to confirm the challenge list and criteria.</li>
+</ul>
+</div>
+<div class="blk">
+<div class="hrs">H0:30 → H1</div>
+<div class="ttl">Lock scope</div>
+<ul><li><span class="who">ALL</span>Agree the Must list out loud, on paper, taped to the table. Repo, FastAPI skeleton, JSON schema for a parsed bill.</li></ul>
+</div>
+<div class="blk">
+<div class="hrs">H1 → H4</div>
+<div class="ttl">Get the numbers out, and cache everything</div>
+<ul>
+<li><span class="who">C</span>OCR the tracker row and the charge lines into the schema. <strong>Timebox to H3</strong> — past that, hand-type the fixture and keep moving.</li>
+<li><span class="who">A</span>Daily temperature pull for the billing periods; cache to disk and commit.</li>
+<li><span class="who">A</span>Then Meralco's rate PDFs → <code>rates.json</code>, validated. Commit it.</li>
+<li><span class="who">B</span>Upload screen and the parsed-bill confirm view.</li>
+</ul>
+</div>
+<div class="blk">
+<div class="hrs">H4 → H6</div>
+<div class="ttl">The model</div>
+<ul><li><span class="who">A</span>CDD from daily temps, calendarize, balance-point grid search, days-weighted fit, adjusted R², CV(RMSE) screen. Print the fit diagnostics to console as you go — you will need them in Q&amp;A.</li></ul>
+</div>
+<div class="blk gate">
+<div class="hrs">H6 → H7</div>
+<div class="ttl">⛔ Gate 1 — photo to fitted model, end to end</div>
+<ul><li>One real bill in, baseload and cooling slope out, with an R² you believe. If not true at H7, invoke the fixture fallback and carry on. Decide out loud.</li></ul>
+</div>
+<div class="blk">
+<div class="hrs">H7 → H10</div>
+<div class="ttl">The sentence, and the refusal</div>
+<ul>
+<li><span class="who">A+B</span>Decompose the month-over-month change into weather, rate and behaviour, in pesos, in one readable sentence. <strong>Separate rate from usage or the answer is simply wrong</strong> — the rate moved 16% during 2026.</li>
+<li><span class="who">A</span>Build the refusal path. Demo it deliberately.</li>
+</ul>
+</div>
+<div class="blk">
+<div class="hrs">H10 → H13</div>
+<div class="ttl">Projection and solar</div>
+<ul>
+<li><span class="who">A</span>Next-month projection from model plus forecast.</li>
+<li><span class="who">C</span>Solar module and the three-scenario table. Two hours, spec is in section 4.</li>
+</ul>
+</div>
+<div class="blk rest">
+<div class="hrs">H13 → H14</div>
+<div class="ttl">Rotation — plan it, do not skip it</div>
+<ul><li>One person sleeps 90 minutes while two work. Rotate. Tired teams lose on delivery, not on code.</li></ul>
+</div>
+<div class="blk">
+<div class="hrs">H14 → H15</div>
+<div class="ttl">Honesty pass</div>
+<ul><li><span class="who">B</span>Every assumption labelled on screen. Citations visible in the UI. This is cheap and it is exactly what this audience notices.</li></ul>
+</div>
+<div class="blk gate">
+<div class="hrs">H15</div>
+<div class="ttl">⛔ MVP freeze — no new features</div>
+</div>
+<div class="blk">
+<div class="hrs">H15 → H17</div>
+<div class="ttl">Deck and citation check</div>
+<ul><li><span class="who">ALL</span>Build the deck. <strong>Check every number and every citation against sections 10 and 11.</strong> One fabricated reference in front of these judges is unrecoverable.</li></ul>
+</div>
+<div class="blk">
+<div class="hrs">H17 → H19</div>
+<div class="ttl">Rehearse</div>
+<ul><li><span class="who">ALL</span>Three full timed run-throughs, standing, out loud. Record a 90-second backup video.</li></ul>
+</div>
+<div class="blk gate">
+<div class="hrs">H19</div>
+<div class="ttl">⛔ Code freeze — demo-path bugs only</div>
+</div>
+<div class="blk">
+<div class="hrs">H19 → H20</div>
+<div class="ttl">Q&amp;A drill and buffer</div>
+<ul><li>Work section 13. Charge everything. Test the adapter.</li></ul>
+</div>
+</div>
+
+<!-- 9 -->
+<h2 id="s9"><span class="num">09</span>Demo script</h2>
+<table>
+<thead><tr><th class="num" style="width:70px">Time</th><th>Beat</th></tr></thead>
+<tbody>
+<tr><td class="num">0:00</td><td><strong>The hook.</strong> Hold up a bill. “Everyone in this room has seen a customer ask why their bill went up. Right now, the honest answer is that nobody can tell them.” Then the rate: ₱12.95 in January, ₱15.06 in October.</td></tr>
+<tr><td class="num">0:30</td><td><strong>The observation.</strong> Point at the Monthly Consumption Tracker. “Meralco already prints two years of consumption and the temperature for each month, on the same page. It just leaves the arithmetic to the customer.”</td></tr>
+<tr><td class="num">1:00</td><td><strong>Live: one photo.</strong> A phone camera, on stage, on a real paper bill. No login, no app, no account. Twenty-four months of kWh and every charge line appear in seconds, with four green checks showing the bill's own arithmetic agrees.</td></tr>
+<tr><td class="num">1:45</td><td><strong>Live: the sentence.</strong> “Your bill rose ₱840 — ₱520 was a hotter month, ₱190 the generation charge, ₱70 other charges, ₱60 you.” Then show the fit behind the weather number and name the method and the standard. Every rate number on screen comes from Meralco's own published schedule.</td></tr>
+<tr><td class="num">2:45</td><td><strong>Live: the refusal.</strong> Load a household where the fit fails. The app declines and explains why. <em>Do not skip this beat — it is the most persuasive thirty seconds you have.</em></td></tr>
+<tr><td class="num">3:15</td><td><strong>Live: the solar table.</strong> The ₱261,300 system and the ₱94,500 system pay back in about the same time. Then: no Philippine tool shows this, including Meralco's own subsidiary, because none uses the export credit rate.</td></tr>
+<tr><td class="num">4:15</td><td><strong>The ask.</strong> This runs on a photo today. With Meralco's own billing data behind it, it runs for 8.3 million customers with no new metering — and the fitted cooling slope tells you which households efficiency programmes should target first.</td></tr>
+<tr><td class="num">4:45</td><td><strong>Close.</strong> “Malasakit is on your wall. This is the bill explaining itself.” Stop there.</td></tr>
+</tbody>
+</table>
+
+<!-- 10 -->
+<h2 id="s10"><span class="num">10</span>Citations</h2>
+<p>All six verified against Crossref. Put them on a slide; this audience will respect it.</p>
+<ul class="sourcelist">
+<li><strong>Fels, M. (1986).</strong> PRISM: An introduction. <em>Energy and Buildings</em>. doi:10.1016/0378-7788(86)90003-4 — the origin of the method.</li>
+<li><strong>Manfren, Liao &amp; Nastasi (2025–26).</strong> <em>Applied Energy</em> 404:127150. doi:10.1016/j.apenergy.2025.127150 — carries ASHRAE Guideline 14:2023's 3PC at monthly resolution, with open code.</li>
+<li><strong>Kim et al. (2022).</strong> <em>Buildings</em> 12:1717. doi:10.3390/buildings12101717 — change-point regression vs submetered loads, r &gt; 0.95.</li>
+<li><strong>Perez et al. (2017).</strong> <em>Energy and Buildings</em> 139:351. doi:10.1016/j.enbuild.2016.12.084</li>
+<li><strong>Allcott, H. (2011).</strong> Social norms and energy conservation. <em>Journal of Public Economics</em> 95:1082. doi:10.1016/j.jpubeco.2011.03.003 — 2.0% average; 6.3% top decile vs 0.3% bottom.</li>
+<li><strong>CalTRACK Methods §3</strong> and the OpenEEmeter documentation — the operational specification.</li>
+<li><strong>Meralco — <a href="https://www.meralco.com.ph/residential/rates-and-charges">Check Your Rates &amp; Charges</a></strong> and the monthly <a href="https://www.meralco.com.ph/uploads/documents/regulatory/rates/2026-09/09-2026-residential-bills.pdf">Residential Bills at Typical Consumption Levels</a> schedules — the source of every rate number in the app.</li>
+</ul>
+<p>Also usable: a 2020 meta-analysis across 713,002 households putting realistic feedback savings at <strong>1.9–3.9%</strong>, below older reviews — cite the lower number, it is more defensible. The Indonesian PLN field experiment on the social-comparison boomerang. And the 2019 <em>Sustainable Cities and Society</em> paper reconstructing hourly demand from monthly bills to within 5%.</p>
+
+<!-- 11 -->
+<h2 id="s11"><span class="num">11</span>Do not say</h2>
+<div class="card stop">
+<table>
+<thead><tr><th>Do not say</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>“Your generation charge rose because of fuel prices / the peso / WESM”</td><td>The bill cannot tell you why the generation charge moved. Quote Meralco's own stated reason with its date, or say only that it rose.</td></tr>
+<tr><td>“Generation is 50–70% of your bill”</td><td>Use Meralco's own figure from its rates page: generation 64%, transmission 8%, system loss 5%, taxes and subsidies 11%, Meralco's own share 12%.</td></tr>
+<tr><td>“This is your phantom load”</td><td>Monthly data cannot isolate standby power. Call it baseload — always-on consumption, refrigerator included.</td></tr>
+<tr><td>“VAT applies cumulatively”</td><td>Vague and unsourced. A Meralco judge will ask what it means. Say VAT is one of the printed lines.</td></tr>
+<tr><td>Electric fans as a high-consumption appliance</td><td>Fans draw little power compared with air-conditioners. Drop them from any such list.</td></tr>
+<tr><td>“Meralco gives customers no consumption history”</td><td>The printed bill has up to 24 months of it. Say they surface bills, not explanation.</td></tr>
+<tr><td>“This technique is absent from consumer apps”</td><td>No paper asserts it. Say: we found no published consumer-facing deployment in a developing market.</td></tr>
+<tr><td>“First application in the Philippines”</td><td>Say no published application to Philippine data surfaced. Note also that one Philippine household-energy study found neither curtailment nor efficiency investment significantly affected electricity expenditures — know it before a judge raises it.</td></tr>
+<tr><td>Any specific ASHRAE numeric threshold (±5% NMBE, 15% CV(RMSE))</td><td>Only found in secondary sources. Omit, or verify against the Guideline text.</td></tr>
+<tr><td>Kissock, Haberl &amp; Claridge 2003</td><td>Could not be verified in Crossref. <strong>Do not cite it.</strong> Use Manfren et al. instead.</td></tr>
+<tr><td>“Exports are paid at the retail rate”</td><td>One secondary source says this and it contradicts Meralco's own FAQ. Exports are credited at the blended generation cost and never paid in cash.</td></tr>
+<tr><td>A specific current generation charge from memory</td><td>The absolute level is not reliably published. <strong>Read it off the bill.</strong> Last confirmed level: ₱7.8607/kWh, March 2026.</td></tr>
+<tr><td>“Lifeline discount is up to 5%”</td><td>Stale. 2026 ERC rules: 100% at ≤50 kWh, 35% at 51–70, 20% at 71–100, effective April 2026 billing. A demo showing 5% gets caught instantly.</td></tr>
+<tr><td>RA 9513 VAT breaks on a homeowner slide</td><td>Zero-rating applies to RE Developers. A homeowner is not one. Expect full 12% VAT inside the ₱60,000/kWp.</td></tr>
+<tr><td>Any customer-interval-data assumption</td><td>AMI customers get daily totals by SMS. The in-app consumption view was still in development as of 10–11 Nov 2026.</td></tr>
+<tr><td>The 2026 theme or criteria as fact</td><td>“Digital Sparks: Code The Future” was the <strong>2025</strong> theme. Use the organizers' materials.</td></tr>
+<tr><td>Unsourced solar assumptions as facts</td><td>Panel degradation at 0.5%/yr and the self-consumption share have no Philippine source. Label both on screen.</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- 12 -->
+<h2 id="s12"><span class="num">12</span>Risks</h2>
+<table>
+<thead><tr><th>Risk</th><th class="num">Likelihood</th><th>Mitigation</th></tr></thead>
+<tbody>
+<tr><td>The tracker prints fewer than 12 months, or no numerals</td><td class="num">Medium</td><td>Check at H0. Below 12 periods the regression is unreliable — fall back to a fixed-base model and say so.</td></tr>
+<tr><td><strong>Tropical climate defeats the balance-point search</strong></td><td class="num">High</td><td>The main technical risk. Daily CDD, 24 periods, R² gate. The refusal path turns this from a failure into a credibility feature.</td></tr>
+<tr><td>OCR misreads a number on stage</td><td class="num">High</td><td>The four self-checks catch it and the confirm screen asks for one correction. Rehearse with the exact bill you will demo, under the venue's lighting. Keep a pre-taken photo as backup.</td></tr>
+<tr><td>Customer's charges differ slightly from Meralco's table</td><td class="num">Medium</td><td>Local franchise tax varies by city and lifeline customers use different rows. Use the closest consumption row, the lifeline rows where they apply, and label the tax assumption.</td></tr>
+<tr><td>Meralco's site changes or is down during the demo</td><td class="num">Low</td><td>Irrelevant if you did it right: <code>rates.json</code> was built once and committed. Never fetch live on stage.</td></tr>
+<tr><td>OCR eats the night</td><td class="num">High</td><td>OCR is now the pitch's front door, so it gets one owner all night. The model work runs in parallel on a hand-typed fixture and never waits for it.</td></tr>
+<tr><td>Rate change misattributed as behaviour change</td><td class="num">High</td><td>Derive the effective rate per period from the bill itself. Without this the headline sentence is wrong.</td></tr>
+<tr><td>Judge says “this is just the 2023 winner again”</td><td class="num">Medium</td><td>Have the answer ready: that was tracking, this is attribution. Never say “tracker.”</td></tr>
+<tr><td>Scope creep past H15</td><td class="num">High</td><td>One person owns calling the freeze.</td></tr>
+<tr><td>Exhaustion degrades the pitch</td><td class="num">High</td><td>Rotation at H13.</td></tr>
+</tbody>
+</table>
+
+<!-- 13 -->
+<h2 id="s13"><span class="num">13</span>Q&amp;A drill</h2>
+<div class="card">
+<ol>
+<li><strong>How is this different from the 2023 winner, or from any consumption tracker?</strong> → Tracking shows a number you already have. This attributes the change — weather, rate, behaviour — using a published standard, and refuses when the data cannot support it. <em>Rehearse this most.</em></li>
+<li><strong>Does this actually work in a tropical climate?</strong> → Be straight: every published validation is temperate, Manila's seasonal swing is small, and that weakens balance-point identification. So we compute degree-days from daily temperature, use all 24 periods, and gate on R². Show the refusal screen as the answer.</li>
+<li><strong>Where do your rate numbers come from?</strong> → Meralco's own monthly "Residential Bills at Typical Consumption Levels" schedules, at the row matching the customer's consumption. Every peso traces to a Meralco document.</li>
+<li><strong>What if the OCR misreads the bill?</strong> → The bill checks itself: readings, tracker, line sum and total must agree. If any fails, the app asks the customer to confirm one number instead of guessing.</li>
+<li><strong>Why not just put this in the My Meralco app?</strong> → It could live there too. But a photo reaches customers who never get past the login, and it needs no integration to start.</li>
+<li><strong>Can it tell me the generation charge rose because of fuel prices or the peso?</strong> → No, and say so. Those sit inside the generation charge; the bill shows that it moved, not why. Where Meralco has stated a reason, TANAW quotes it with the date.</li>
+<li><strong>Why not appliance-level disaggregation?</strong> → The literature's floor is 15–60 minute data; your AMI customers get daily totals by SMS. NILM below that resolution is not supported by any published result.</li>
+<li><strong>We already have the data — why do we need a photo?</strong> → You do not. The photo is how it works for a customer today with no integration. Behind your billing system it runs for 8.3 million people with no new metering.</li>
+<li><strong>How accurate is the split?</strong> → Published validation against submetered data: baseload error −5.0%, adjusted R² around 0.93. Then volunteer the tropical caveat before they press.</li>
+<li><strong>Where did the solar numbers come from?</strong> → Cost from an independent 2026 analysis, yield from the DOE's own published figure, and the rates from the customer's bill. The self-consumption share is an explicit assumption because no Philippine daytime-load data exists.</li>
+<li><strong>Is your export-credit claim right?</strong> → It is from Meralco's own net metering FAQ: exports are valued at the blended generation cost, not retail, and credits are never paid in cash. One secondary source says otherwise and is wrong.</li>
+<li><strong>Why not add neighbour comparison?</strong> → Deliberately excluded. The nearest regional evidence, a field experiment at PLN in Indonesia, found social comparison <em>increased</em> consumption 3.1% while economic information cut it 3.15%.</li>
+<li><strong>What would you need from us?</strong> → Billing data for a sample of households, and the actual bill template so the parser is robust. Then a pilot measuring whether explanation changes behaviour.</li>
+<li><strong>Why no chatbot?</strong> → Deliberately left out. Every peso TANAW shows comes from the bill or Meralco's published schedules, and a chatbot can invent a reason that sounds right. Meralco already has an AI assistant in MIDAS; TANAW's job is a precise, traceable explanation, not conversation.</li>
+<li><strong>Privacy?</strong> → The bill carries an account number. Parse locally, store nothing identifying, and say so. Have the answer even if it is not built.</li>
+</ol>
+</div>
+
+<p style="margin-top:34px;color:var(--ink-3);font-size:13.5px;border-top:1px solid var(--line);padding-top:16px">
+Prepared 12 November 2026 for Team Stiletto — Rastafari Sarzona, Felice Louise Vicencio, Gio Ferreras. Claims are traceable to sourced research; anything unverified is marked. Verify the bill and the 2026 brief before writing code.
+</p>
+
+</main>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('tg');
+  b.addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    if(!cur){cur=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}
+    document.documentElement.setAttribute('data-theme',cur==='dark'?'light':'dark');
+  });
+})();
+</script>
+
+</body>
+</html>
