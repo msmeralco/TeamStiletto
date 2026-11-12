@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>TANAW</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="synthetic" class="banner" hidden>SYNTHETIC DATA: rates, weather and sample bills are invented for testing. Not real Meralco numbers.</div>
+  <main>
+    <h1>TANAW <small>why did my Meralco bill change?</small></h1>
+    <p id="msg" role="alert"></p>
+
+    <section id="upload">
+      <label class="primary">Upload your Meralco PDF statement
+        <input id="file" type="file" accept="application/pdf" hidden>
+      </label>
+      <p class="hint">In the My Meralco app, open your bill and download the PDF statement.</p>
+      <div id="pwbox" hidden>
+        <label>This PDF is password-protected. Password (never stored): <input id="pw" type="password" autocomplete="off"></label>
+        <button id="pwgo">Open</button>
+      </div>
+      <p class="hint">No bill yet? <button id="sample" class="link">Try the SYNTHETIC sample</button> or <button id="weak" class="link">the weak-fit sample</button></p>
+    </section>
+
+    <section id="confirm" hidden>
+      <h2>Check the numbers we read</h2>
+      <ul id="checks"></ul>
+      <div id="fields"></div>
+      <button id="go" class="primary">Looks right, explain my bill</button>
+    </section>
+
+    <section id="results" hidden>
+      <p id="tierc" class="note" hidden>We can't reliably separate weather for this household. Here's what we can say.</p>
+      <p id="sentence" class="big"></p>
+      <div id="bar" class="bar" aria-hidden="true"></div>
+      <table id="items"></table>
+      <h2>Your usage vs heat</h2>
+      <div id="chart"></div>
+      <p id="fitinfo" class="hint"></p>
+      <h2>Next month</h2>
+      <p id="proj"></p>
+      <h2>Does rooftop solar pay off?</h2>
+      <label>How much of the solar power would you use at home? (assumption)
+        <select id="selfuse">
+          <option value="0.25">Mostly away during the day (25%)</option>
+          <option value="0.4" selected>Some daytime use (40%)</option>
+          <option value="0.6">Home most days, aircon by day (60%)</option>
+          <option value="0.8">Home all day, heavy daytime use (80%)</option>
+        </select>
+      </label>
+      <table id="solar"></table>
+      <h2>Sources and assumptions</h2>
+      <ul id="sources"></ul>
+      <button id="again">Start over</button>
+    </section>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

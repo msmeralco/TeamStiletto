@@ -1,0 +1,292 @@
+{
+ "params": {
+  "b0": 6,
+  "b1": 1.5,
+  "bp": 26.5
+ },
+ "good": {
+  "period_start": "2026-09-15",
+  "period_end": "2026-10-14",
+  "days": 30,
+  "kwh": 192,
+  "previous_reading": 10000,
+  "current_reading": 10192,
+  "multiplier": 1,
+  "tracker": [
+   {
+    "month": "2025-09",
+    "kwh": 214
+   },
+   {
+    "month": "2025-10",
+    "kwh": 185
+   },
+   {
+    "month": "2025-11",
+    "kwh": 193
+   },
+   {
+    "month": "2025-12",
+    "kwh": 187
+   },
+   {
+    "month": "2026-01",
+    "kwh": 197
+   },
+   {
+    "month": "2026-02",
+    "kwh": 230
+   },
+   {
+    "month": "2026-03",
+    "kwh": 226
+   },
+   {
+    "month": "2026-04",
+    "kwh": 306
+   },
+   {
+    "month": "2026-05",
+    "kwh": 315
+   },
+   {
+    "month": "2026-06",
+    "kwh": 317
+   },
+   {
+    "month": "2026-07",
+    "kwh": 292
+   },
+   {
+    "month": "2026-08",
+    "kwh": 259
+   },
+   {
+    "month": "2026-09",
+    "kwh": 220
+   },
+   {
+    "month": "2026-10",
+    "kwh": 192
+   }
+  ],
+  "charges": [
+   {
+    "key": "generation",
+    "label": "Generation Charge",
+    "amount_php": 1594.44
+   },
+   {
+    "key": "transmission",
+    "label": "Transmission Charge",
+    "amount_php": 202.23
+   },
+   {
+    "key": "system_loss",
+    "label": "System Loss Charge",
+    "amount_php": 154.25
+   },
+   {
+    "key": "distribution",
+    "label": "Distribution Charge",
+    "amount_php": 262.41
+   },
+   {
+    "key": "supply",
+    "label": "Supply Charge",
+    "amount_php": 120.1
+   },
+   {
+    "key": "metering",
+    "label": "Metering Charge",
+    "amount_php": 66.46
+   },
+   {
+    "key": "subsidies",
+    "label": "Lifeline/Senior Citizen Subsidy",
+    "amount_php": 1.96
+   },
+   {
+    "key": "tax_recovery_adj",
+    "label": "Tax Recovery Adj. Charge",
+    "amount_php": 0.4
+   },
+   {
+    "key": "universal",
+    "label": "Universal Charges",
+    "amount_php": 39.74
+   },
+   {
+    "key": "fit_all",
+    "label": "FIT-All",
+    "amount_php": 16.09
+   },
+   {
+    "key": "gea_all",
+    "label": "GEA-All",
+    "amount_php": 7.12
+   },
+   {
+    "key": "vat",
+    "label": "Value Added Tax",
+    "amount_php": 285.43
+   },
+   {
+    "key": "franchise_tax",
+    "label": "Local Franchise Tax",
+    "amount_php": 20.48
+   },
+   {
+    "key": "refund",
+    "label": "AWAT Refund",
+    "amount_php": -25
+   }
+  ],
+  "charges_this_period": 2746.11,
+  "remaining_balance": 0,
+  "installment_due": 0,
+  "total_amount_due": 2746.11,
+  "city": "Manila",
+  "source": "synthetic"
+ },
+ "weak": {
+  "period_start": "2026-09-15",
+  "period_end": "2026-10-14",
+  "days": 30,
+  "kwh": 242,
+  "previous_reading": 10000,
+  "current_reading": 10242,
+  "multiplier": 1,
+  "tracker": [
+   {
+    "month": "2025-09",
+    "kwh": 276
+   },
+   {
+    "month": "2025-10",
+    "kwh": 256
+   },
+   {
+    "month": "2025-11",
+    "kwh": 259
+   },
+   {
+    "month": "2025-12",
+    "kwh": 280
+   },
+   {
+    "month": "2026-01",
+    "kwh": 275
+   },
+   {
+    "month": "2026-02",
+    "kwh": 274
+   },
+   {
+    "month": "2026-03",
+    "kwh": 248
+   },
+   {
+    "month": "2026-04",
+    "kwh": 280
+   },
+   {
+    "month": "2026-05",
+    "kwh": 271
+   },
+   {
+    "month": "2026-06",
+    "kwh": 276
+   },
+   {
+    "month": "2026-07",
+    "kwh": 250
+   },
+   {
+    "month": "2026-08",
+    "kwh": 305
+   },
+   {
+    "month": "2026-09",
+    "kwh": 251
+   },
+   {
+    "month": "2026-10",
+    "kwh": 242
+   }
+  ],
+  "charges": [
+   {
+    "key": "generation",
+    "label": "Generation Charge",
+    "amount_php": 2009.66
+   },
+   {
+    "key": "transmission",
+    "label": "Transmission Charge",
+    "amount_php": 254.9
+   },
+   {
+    "key": "system_loss",
+    "label": "System Loss Charge",
+    "amount_php": 194.42
+   },
+   {
+    "key": "distribution",
+    "label": "Distribution Charge",
+    "amount_php": 364.52
+   },
+   {
+    "key": "supply",
+    "label": "Supply Charge",
+    "amount_php": 147.11
+   },
+   {
+    "key": "metering",
+    "label": "Metering Charge",
+    "amount_php": 82.46
+   },
+   {
+    "key": "subsidies",
+    "label": "Lifeline/Senior Citizen Subsidy",
+    "amount_php": 2.47
+   },
+   {
+    "key": "tax_recovery_adj",
+    "label": "Tax Recovery Adj. Charge",
+    "amount_php": 0.51
+   },
+   {
+    "key": "universal",
+    "label": "Universal Charges",
+    "amount_php": 50.09
+   },
+   {
+    "key": "fit_all",
+    "label": "FIT-All",
+    "amount_php": 20.28
+   },
+   {
+    "key": "gea_all",
+    "label": "GEA-All",
+    "amount_php": 8.98
+   },
+   {
+    "key": "vat",
+    "label": "Value Added Tax",
+    "amount_php": 363.8
+   },
+   {
+    "key": "franchise_tax",
+    "label": "Local Franchise Tax",
+    "amount_php": 26.08
+   }
+  ],
+  "charges_this_period": 3525.28,
+  "remaining_balance": 0,
+  "installment_due": 0,
+  "total_amount_due": 3525.28,
+  "city": "Manila",
+  "source": "synthetic"
+ }
+}
