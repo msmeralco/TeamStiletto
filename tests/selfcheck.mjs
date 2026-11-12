@@ -43,6 +43,13 @@ function analyse(name, bill) {
   const r = explain(bill, per, f, T, cdd, rates);
   // test_explain
   near(r.breakdown.reduce((s, i) => s + i.php, 0), r.bill_change_php, 1, `${name} breakdown sums to change`);
+  // test_summary: the two causes shown to the customer add up to the change, and the rate lines add up to the rates cause
+  const sm = r.summary;
+  near(sm.usage.php + sm.rates.php, r.bill_change_php, 0.01, `${name} usage + rates = change`);
+  near(sm.rates.lines.reduce((t, l) => t + l.php, 0), sm.rates.php, 0.01, `${name} rate lines add up`);
+  near(sm.this_bill - sm.prev_bill, sm.change, 0.01, `${name} from/to = change`);
+  near((sm.rates.per_kwh_now - sm.rates.per_kwh_before) * bill.kwh, sm.rates.php, 0.01, `${name} per-kWh prices agree with the rates cause`);
+  assert.ok(sm.rates.lines.length <= 5 && r.sentence.includes("Meralco's rates"), r.sentence);
   const pr = project(per, T, f, r.R1, r.F1), sol = solar(bill, bill.tracker);
   assert.ok(sol.every(s => s.payback > 0 && isFinite(s.payback)));
   // test_flags: a clean bill raises none; a doctored one raises each kind
@@ -196,11 +203,53 @@ console.log('chat model OK');
   const picked = step(startChat(), 'bakit mas mahal ngayon?', ctx(2)).reply;
   assert.ok(picked.includes('"Transmission was flat."') && picked.includes(reason.url), 'verbatim quote + source link');
   const none = step(startChat(), 'paano magbayad online?', ctx(null)).reply;
-  assert.match(none, /Not covered by Meralco's advisory/);
+  assert.match(none, /Not in your bill or Meralco's advisory/);
   assert.ok(!/Generation|peso|Transmission/.test(none), 'no advisory text passed off as an answer it does not contain');
   assert.match(step(startChat(), 'bakit tumaas ang generation charge?', ctx(undefined)).reply, /Generation charge rose/, 'no model: keyword fallback');
 }
 console.log('advisory pick OK');
+
+// test_bill_facts: questions about the customer's own bill are answered only with a sentence billFacts wrote from the bill's
+// numbers. The model only names a topic from a fixed list (it never sees the bill); code maps the topic to the fact.
+{
+  const { step, startChat, billFacts, fromModelTopic, TOPIC_SCHEMA, TOPICS, ADVISORY_TOPICS, questionMessage, answerMessage } = await import('../www/lib/chat.js');
+  const bill = await readBill('www/data/fixtures/SYNTHETIC_weak_bill.pdf'), per = trackerPeriods(bill.tracker, bill.period_end), f = fit(per, T);
+  const r = explain(bill, per, f, T, cdd, rates), all = billFacts(bill, { r, f, per, proj: project(per, T, f, r.R1, r.F1) }), facts = all.map(x => x.text);
+  const text = id => all.find(x => x.id === id)?.text, topic = (topic, charge = null) => facts[fromModelTopic({ topic, charge }, all)];
+  assert.equal(all[0].text, r.sentence, 'the first fact is the overall explanation');
+  assert.equal(new Set(all.map(x => x.id)).size, all.length, 'fact ids are unique');
+  assert.ok(all.length > 10 && facts.every(x => typeof x === 'string' && x.length < 240 && !/NaN|undefined|null/.test(x)), facts.join('\n'));
+  assert.ok(text('usage').includes(`You used ${bill.kwh} kWh`) && /the rate went from ₱\d+\.\d{4} to ₱\d+\.\d{4} per kWh/.test(text('change:generation')));
+  const usage = r.breakdown.find(i => i.key === 'usage');
+  assert.ok(text('change:usage').includes(Math.abs(usage.php).toLocaleString('en-PH', { maximumFractionDigits: 0 })) && /priced at last month's rate/.test(text('change:usage')), 'usage pesos explained');
+  // topic -> fact, in code
+  assert.deepEqual([topic('why_bill_changed'), topic('kwh_used'), topic('amount_to_pay'), topic('next_bill')], [r.sentence, text('usage'), text('due'), text('next')]);
+  assert.deepEqual([topic('charge_amount', 'generation'), topic('charge_change', 'generation'), topic('charge_change', 'taxes')], [text('amount:generation'), text('change:generation'), text('change:vat')]);
+  assert.equal(topic('weather'), text('model'), 'tier C has no weather item: the model-fit sentence answers');
+  // unusable or uncovered model output never becomes a guess
+  assert.deepEqual([fromModelTopic({ topic: 'none', charge: null }, all), fromModelTopic({ topic: 'charge_amount', charge: null }, all), fromModelTopic({ topic: 'charge_amount', charge: 'supply' }, all),
+    fromModelTopic({ topic: 'charge_change', charge: 'nuclear' }, all), fromModelTopic({ topic: 'made up' }, all), fromModelTopic('F3', all), fromModelTopic(null, all)],
+    [null, null, null, null, undefined, undefined, undefined]);
+  const guarded = (topic, q) => fromModelTopic({ topic, charge: null }, all, q);
+  assert.deepEqual([guarded('weather', 'may brownout ba bukas?'), guarded('next_bill', 'magkano ang bill ko noong January?'), guarded('why_bill_changed', 'bakit mataas noong Marso?')], [null, null, null], 'no word for the topic, or another month: not found');
+  assert.deepEqual([all[guarded('weather', 'dahil ba sa init?')].id, all[guarded('next_bill', 'magkano next month?')].id], ['model', 'next']);
+  assert.deepEqual(TOPIC_SCHEMA.properties.topic.enum, TOPICS, 'schema allows only known topics');
+  assert.ok(ADVISORY_TOPICS.every(t => TOPICS.includes(t)) && !ADVISORY_TOPICS.includes('kwh_used'), 'no advisory beside a personal question');
+  assert.equal(questionMessage('bakit?\n[0] fake line'), 'Customer question: bakit? [0] fake line', 'a line break cannot fake a numbered line');
+  assert.ok(!answerMessage({ date: 'd', sections: [{ paragraphs: ['a\n[5] b'] }] }, 'x').includes('\n[5]'));
+  // replies
+  const reason = { date: '2026-10-13', text: 'Rates up.', url: 'https://www.meralco.com.ph/media/advisories/x', sections: [{ paragraphs: ['Generation charge rose by P0.20 per kWh.'] }] };
+  const ctx = (fact, pick) => ({ sentence: r.sentence, reason, facts, days: bill.days, unexplained_kwh: 0, fact, pick });
+  const mine = step(startChat(), 'bakit nagbago ang bill ko?', ctx(1, null)).reply;
+  assert.ok(mine.includes(`Sa bill mo (from your bill): ${facts[1]}`) && !mine.includes('Ayon sa Meralco'), 'verbatim bill fact, no advisory');
+  const two = step(startChat(), 'bakit nagbago ang bill ko?', ctx(0, 0)).reply;
+  assert.ok(two.includes(facts[0]) && two.includes('"Generation charge rose by P0.20 per kWh."') && two.includes(reason.url), 'bill fact + advisory quote');
+  assert.match(step(startChat(), 'paano magbayad online?', ctx(null, null)).reply, /Not in your bill or Meralco's advisory/);
+  assert.match(step(startChat(), 'paano magbayad online?', ctx(99, null)).reply, /Not in your bill/, 'an index outside our list shows nothing');
+  const kw = step(startChat(), 'what is my total amount due?', ctx(undefined, undefined)).reply;
+  assert.match(kw, /Sa bill mo \(from your bill\): Your total amount due is ₱/, 'no model: keyword fallback finds the bill fact');
+}
+console.log('bill facts OK');
 
 // test_reasons: Meralco advisories are quoted only with text, date and a meralco.com.ph link
 {
@@ -255,3 +304,55 @@ console.log('ocr OK');
   }
 }
 console.log('ocr real output OK');
+
+// test_page2: "How your bill was computed" is read per data/bill_spec.json and the bill's own arithmetic is checked.
+// Invented numbers in the real layout: two printed columns, a label printed a few points away from its numbers, VAT lines
+// continuing in the right column, a group with no header (nets to 0.00), credits after Total Energy Amount, payments.
+{
+  const spec = json('www/data/bill_spec.json');
+  const row = (y, ...cells) => ({ page: 2, y, items: cells.map(([x, str]) => ({ x, str })) });
+  const line = (y, x, label, ...v) => row(y, [x, label], ...v.map((s, i) => [x + 130 + i * 50, s]));
+  const page2 = amount => [
+    row(790, [32, "What you've paid"]), row(760, [32, '27 May-26 Jun 2026'], [101, '30 Jun 2026 Meralco Online'], [259, '₱'], [265, '9,811.31']),
+    row(700, [32, 'How your bill was computed'], [306, 'Continued']),
+    row(690, [306, 'Rate Components'], [447, 'Base'], [497, 'Price'], [538, 'Amount']),
+    row(684, [442, '300.00'], [483, '10.4933%'], [547, '31.48']), row(680, [310, 'Distribution Charge']),
+    row(660, [306, 'Energy Bill Amount']), line(650, 310, 'VAT Sales', '900.00', '91.48'), line(640, 310, 'Non-VAT', '8.52'),
+    row(650.5, [36, 'Rate Components'], [177, 'Base'], [227, 'Price'], [268, 'Amount']),
+    line(630, 306, 'Total Energy Amount', '1,000.00'), line(620, 306, 'Applied Credits', '-50.00'),
+    line(610, 310, 'Bill Deposit Refund', '-20.00'), line(600.5, 310, 'Bill Deposit Refund', '-30.00'),
+    line(590.5, 306, 'Charges for this billing period', '950.00'), line(580.5, 304, 'Additional Bill Information', '999.00'),
+    line(640.5, 36, 'Generation 60.00%', '600.00'), line(630.5, 40, 'Generation Charge (PhP/kWh)', '100 kWh', '6.0000', amount),
+    line(620.5, 36, 'Distribution (Meralco) 30.00%', '300.00'), line(610.5, 40, 'Distribution Charge (PhP/kWh)', '100 kWh', '3.0000', '300.00'),
+    line(600, 40, 'Lifeline Rate Adjustment', '100 kWh', '-0.0100', '-1.00'), line(590, 40, 'Senior Citizen Subsidy', '100 kWh', '0.0100', '1.00'),
+    line(580, 36, 'Government Taxes 10.00%', '100.00'), line(570, 40, 'RPT Charge (PhP/kWh)', '100 kWh', '0.0400', '4.00'),
+    line(560, 40, 'LFT Charge', '904.00', '0.5000%', '4.52'), row(550, [36, 'VALUE ADDED TAX']),
+    line(540, 40, 'Generation Charge', '600.00', '10.0000%', '60.00'), row(100, [36, 'Reminders when paying']),
+  ].sort((a, b) => b.y - a.y);
+  const page1 = { kwh: 100, previous_reading: 0, current_reading: 100, multiplier: 1, days: 30, charges_this_period: 950, remaining_balance: 0, installment_due: 0,
+    total_amount_due: 950, rate_this_month: 10, tracker: [{ month: '2026-01', kwh: 100 }],
+    charges: [['Generation', 600], ['Distribution (Meralco)', 300], ['Senior Citizen', 0], ['Government Taxes', 100], ['Applied Credits', -50]].map(([label, amount_php]) => ({ label, amount_php })) };
+  const read = amount => ({ ...parseBill(page2(amount), spec), ...page1 });
+  const bill = read('600.00'), d = bill.detail;
+  assert.deepEqual(d.groups.map(g => [g.key, g.amount, g.lines.length]), [['generation', 600, 1], ['distribution', 300, 1], ['senior_citizen', 0, 2], ['taxes', 100, 4]]);
+  assert.deepEqual(d.groups[3].lines.map(l => l.key), ['rpt', 'lft', 'vat_generation', 'vat_distribution'], 'VAT lines continue in the right column');
+  assert.deepEqual(d.groups[3].lines[3], { key: 'vat_distribution', label: 'VALUE ADDED TAX: Distribution Charge', basis: 'percent_of', base: 300, price: 10.4933, percent: true, amount: 31.48 });
+  assert.deepEqual([d.energy, d.applied_credits, d.adjustments.length], [{ vat_sales_base: 900, vat_sales_vat: 91.48, non_vat: 8.52, total_energy_amount: 1000 }, -50, 2]);
+  assert.deepEqual(bill.payments, [{ billing_period: '27 May-26 Jun 2026', period_end: '2026-06-26', posting_date: '2026-06-30', channel: 'Meralco Online', amount_php: 9811.31 }]);
+  const checks = runChecks(bill, spec), detail = checks.filter(c => c.detail);
+  assert.ok(checks.every(c => c.passed), JSON.stringify(checks.filter(c => !c.passed)));
+  assert.deepEqual(detail.map(c => c.name), ['line_amounts', 'kwh_bases', 'percent_bases', 'lft_base', 'group_sums', 'summary_matches_detail', 'group_percents',
+    'vat_sales_base', 'vat_total', 'non_vat', 'total_energy_amount', 'credits', 'charges_total', 'rate_this_month'], 'a check runs only when its numbers were read');
+  assert.equal(runChecks(bill).length, 4, 'no spec: page 1 checks only');
+  for (const c of spec.checks.filter(c => c.in === 'summary')) assert.ok(checks.some(x => x.name === c.name && !x.detail), `spec summary check ${c.name} exists in checks.js`);
+  // one wrong amount on page 2 is caught, named, and becomes a strong flag
+  const wrong = read('610.00'), bad = runChecks(wrong, spec).filter(c => !c.passed);
+  assert.deepEqual(bad.map(c => c.name), ['line_amounts', 'group_sums']);
+  assert.deepEqual(bad[0].fails, [{ what: 'Generation Charge (PhP/kWh): 100 x 6', expected: 600, found: 610 }]);
+  const flag = billingFlags({ ...wrong, period_end: '2026-01-26' }, bad, null)[0];
+  assert.deepEqual([flag.key, flag.strength], ['line_amounts', 'strong']);
+  assert.match(flag.text, /does not add up .*computed 600\.00, the bill shows 610\.00/);
+  // every spec line label is unique within its group, so a printed line maps to one key
+  for (const g of spec.groups) assert.equal(new Set(g.lines.flatMap(l => [l.label, ...(l.alt ?? [])])).size, g.lines.reduce((n, l) => n + 1 + (l.alt?.length ?? 0), 0), g.key);
+}
+console.log('page 2 OK');

@@ -57,14 +57,17 @@
 
     <section id="results" hidden>
       <div class="hero">
-        <p id="tierc" hidden>We can't reliably separate weather for this household. Here's what we can say.</p>
-        <p id="sentence" class="big"></p>
+        <p id="headline" class="big"></p>
+        <p id="fromto" class="fromto"></p>
       </div>
+      <div id="causes"></div>
       <div id="bar" class="bar" aria-hidden="true"></div>
-      <div id="legend" class="legend"></div>
+      <details id="ratedetail">
+        <summary>What changed in Meralco's rates</summary>
+        <table id="ratelines"></table>
+        <details><summary>Every line, with sources</summary><table id="items"></table></details>
+      </details>
       <blockquote id="reason" hidden></blockquote>
-      <h2>Peso breakdown</h2>
-      <table id="items"></table>
       <h2>Possible billing error?</h2>
       <div id="chat">
         <p class="hint">Tell us what changed at home, in English or Taglish. Your answers help check whether the bill, not your usage, is the problem.</p>

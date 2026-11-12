@@ -45,9 +45,10 @@ export function householdExplains(u, a) {
 }
 
 export function billingFlags(bill, checks, r, answers = { keys: [] }) {
-  const flags = checks.filter(c => !c.passed).map(c => ({
-    key: c.name, text: `${CHECK_TEXT[c.name]}: expected ${c.expected.toFixed(2)}, the bill shows ${Number(c.found).toFixed(2)}.`,
-  }));
+  // Page-2 checks (checks.js detailChecks) carry their own formula text and the first number that disagrees.
+  const flags = checks.filter(c => !c.passed).map(c => (c.detail
+    ? { key: c.name, strength: 'strong', text: `The bill's own computation does not add up (${c.formula}). ${c.fails[0].what}: computed ${c.fails[0].expected.toFixed(2)}, the bill shows ${Number(c.fails[0].found).toFixed(2)}.` }
+    : { key: c.name, text: `${CHECK_TEXT[c.name]}: expected ${c.expected.toFixed(2)}, the bill shows ${Number(c.found).toFixed(2)}.` }));
   const [y, m] = bill.period_end.split('-').map(Number);
   const prevMonth = m === 1 ? `${y - 1}-12` : `${y}-${String(m - 1).padStart(2, '0')}`;
   const prev = bill.tracker.find(t => t.month === prevMonth);
@@ -69,7 +70,7 @@ export function billingFlags(bill, checks, r, answers = { keys: [] }) {
       (answers.added_kwh != null ? `; new appliances add about ${answers.added_kwh} kWh of the ${Math.round(u.kwh)} kWh rise` : '') +
       `). Your usual month-to-month change is under ${(50 * u.limit).toFixed(0)}%.` });
   // shortcut: an "estimated reading" marker is not detected; add it once a real bill with an estimated reading is seen.
-  return flags.map(f => ({ ...f, strength: STRENGTH[f.key] }));
+  return flags.map(f => ({ ...f, strength: f.strength ?? STRENGTH[f.key] }));
 }
 
 // Machine-readable evidence for Meralco (or the ERC) to triage without re-reading the bill. Nothing is sent: the user shares it.

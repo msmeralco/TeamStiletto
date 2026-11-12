@@ -11,7 +11,7 @@ import { createInterface } from 'node:readline';
 import { tmpdir } from 'node:os';
 import { randomUUID } from 'node:crypto';
 import { caseKey } from '../www/lib/disputes.js';
-import { MODEL_PROMPT, MODEL_SCHEMA, ANSWER_PROMPT, answerSchema, answerMessage, advisoryParas } from '../www/lib/chat.js';
+import { MODEL_PROMPT, MODEL_SCHEMA, ANSWER_PROMPT, answerSchema, answerMessage, advisoryParas, TOPIC_PROMPT, TOPIC_SCHEMA, ADVISORY_TOPICS, questionMessage } from '../www/lib/chat.js';
 import { usableReason } from '../www/lib/explain.js';
 
 const ROOT = resolve('www');
@@ -112,23 +112,32 @@ async function understand(req, res) {
   send(res, 200, { model: MODEL, result: JSON.parse(out.message?.content ?? 'null') });
 }
 
-// A customer question -> the number of the paragraph in that month's scraped Meralco advisory that answers it, or null.
-// The advisory comes from our own www/data/reasons.json (never from the request); the model can only output an index (enum),
-// and the browser quotes that paragraph verbatim. Hard-coded on purpose: no setting turns this into free-text generation.
+// A customer question -> (1) its topic (a fixed list; the browser maps the topic to a sentence it wrote itself from the bill)
+// and (2) the number of the paragraph in that month's scraped Meralco advisory that answers it, or null.
+// The bill never comes here and the model never sees it. The advisory comes from our own www/data/reasons.json (never from
+// the request). The model can only output enum values, and the browser shows its own text for them, so nothing the model
+// returns is ever shown as text. Hard-coded on purpose: no setting turns this into free-text generation.
 const reasons = readFile(resolve(ROOT, 'data/reasons.json'), 'utf8').then(JSON.parse);
 async function answer(req, res) {
   if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
   const { text, month } = (await readJson(req, 4000)) ?? {};
   const reason = usableReason((await reasons)[String(month)]), n = advisoryParas(reason).length;
-  if (!String(text ?? '').trim() || !n) return send(res, 404, { error: 'no advisory for that month' });
-  const r = await fetch(`${OLLAMA}/api/chat`, {
-    method: 'POST', signal: AbortSignal.timeout(20000),
-    body: JSON.stringify({ model: MODEL, stream: false, format: answerSchema(n), keep_alive: '30m', options: { temperature: 0, num_ctx: 4096 },
-      messages: [{ role: 'system', content: ANSWER_PROMPT }, { role: 'user', content: answerMessage(reason, text) }] }),
-  }).catch(e => ({ ok: false, status: 503, text: async () => e.message }));
-  if (!r.ok) return send(res, 503, { error: `local model unavailable: ${await r.text()}` });
-  const out = await r.json();
-  send(res, 200, { model: MODEL, result: JSON.parse(out.message?.content ?? 'null') });
+  if (!String(text ?? '').trim()) return send(res, 400, { error: 'empty' });
+  // Two short single-purpose calls: a 3B model sorts a question into a topic far better than it picks from a long mixed list.
+  const pick = async (system, user, format) => {
+    const r = await fetch(`${OLLAMA}/api/chat`, {
+      method: 'POST', signal: AbortSignal.timeout(20000),
+      body: JSON.stringify({ model: MODEL, stream: false, format, keep_alive: '30m', options: { temperature: 0, num_ctx: 4096 },
+        messages: [{ role: 'system', content: system }, { role: 'user', content: user }] }),
+    });
+    if (!r.ok) throw new Error(await r.text());
+    return JSON.parse((await r.json()).message?.content ?? 'null');
+  };
+  try {
+    const t = await pick(TOPIC_PROMPT, questionMessage(text), TOPIC_SCHEMA);
+    const p = n && ADVISORY_TOPICS.includes(t?.topic) ? await pick(ANSWER_PROMPT, answerMessage(reason, text), answerSchema(n)) : null;
+    send(res, 200, { model: MODEL, result: { topic: t?.topic, charge: t?.charge ?? null, paragraph: p ? p.paragraph : null } });
+  } catch (e) { send(res, 503, { error: `local model unavailable: ${e.message}` }); }
 }
 
 const API = { '/api/cases': cases, '/api/cases/status': caseStatus, '/api/understand': understand, '/api/answer': answer, '/api/ocr': ocr, '/api/health': health };

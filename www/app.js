@@ -6,7 +6,7 @@ import { temps, trackerPeriods, fit, cdd, project } from './lib/model.js';
 import { explain, validateRates } from './lib/explain.js';
 import { ocrLines } from './lib/ocr.js';
 import { billingFlags, disputeMessage, disputePacket, unexplainedIncrease, householdExplains, STRENGTH_TEXT } from './lib/flags.js';
-import { startChat, step, answersOf, needsModel, fromModel, isQuestion, fromModelPick, advisoryParas } from './lib/chat.js';
+import { startChat, step, answersOf, needsModel, fromModel, isQuestion, fromModelPick, fromModelTopic, advisoryParas, billFacts } from './lib/chat.js';
 import { daysSince, ercMessage, ercPacket, caseKey, CHANNELS, FOLLOW_UP_DAYS } from './lib/disputes.js';
 
 pdfjs.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
@@ -14,7 +14,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
 if ('serviceWorker' in navigator && !window.Capacitor?.isNativePlatform?.()) navigator.serviceWorker.register('sw.js').catch(() => {});
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`); // PDF text is untrusted
-const peso = v => `${v < 0 ? '−' : ''}₱${Math.abs(v).toLocaleString('en-PH', { maximumFractionDigits: 0 })}`;
+const peso = (v, d = 0) => `${v < 0 ? '−' : ''}₱${Math.abs(v).toLocaleString('en-PH', { minimumFractionDigits: d, maximumFractionDigits: d })}`;
 const HEAD = { upload: ['', 'TANAW', 'Why did my Meralco bill change?'], confirm: ['Step 2 of 3', 'Check the numbers we read', ''], results: ['Step 3 of 3', 'Why your bill changed', ''] };
 function show(id) {
   for (const s of Object.keys(HEAD)) $('#' + s).hidden = s !== id;
@@ -28,7 +28,7 @@ $('#back').onclick = () => show($('#results').hidden ? 'upload' : 'confirm');
 const msg = t => ($('#msg').textContent = t ?? '');
 const today = () => new Date().toLocaleDateString('en-CA');
 
-const [rates, weather, reasons] = await Promise.all(['rates', 'weather', 'reasons'].map(n => fetch(`data/${n}.json`).then(r => r.json())));
+const [rates, weather, reasons, billSpec] = await Promise.all(['rates', 'weather', 'reasons', 'bill_spec'].map(n => fetch(`data/${n}.json`).then(r => r.json())));
 const T = temps(weather);
 const rateErrors = validateRates(rates);
 if (rateErrors.length) msg('rates.json failed validation: ' + rateErrors.join('; '));
@@ -40,7 +40,7 @@ markSynthetic();
 async function scan() {
   msg();
   try {
-    bill = parseBill(await pdfLines(pdfjs, bytes.slice(), $('#pw').value || undefined));
+    bill = parseBill(await pdfLines(pdfjs, bytes.slice(), $('#pw').value || undefined), billSpec);
     ocr = null;
     $('#pwbox').hidden = true;
     $('#pw').value = '';
@@ -71,7 +71,7 @@ $('#photo').onchange = async e => {
     const out = await res.json();
     if (!res.ok) throw new Error(out.error);
     if (!out.words?.length) throw new Error('no text found. Retake it flat, in good light, with the whole page in the frame.');
-    const o = ocrLines(out.words, out.width), b = parseBill(o.lines);
+    const o = ocrLines(out.words, out.width), b = parseBill(o.lines, billSpec);
     if (!b.period_end || b.charges_this_period == null) throw new Error('this does not look like a Meralco bill, or it is too blurry. Retake it flat, in good light, with the whole page in the frame.');
     bill = { ...b, source: b.source === 'synthetic' ? 'synthetic' : 'photo_ocr' };
     ocr = o;
@@ -107,10 +107,14 @@ function renderConfirm() {
 }
 
 function renderChecks() {
-  const checks = runChecks(bill), failed = checks.filter(c => !c.passed), bad = new Set(failed.flatMap(c => c.fields));
+  const checks = runChecks(bill, billSpec), failed = checks.filter(c => !c.passed), bad = new Set(failed.flatMap(c => c.fields));
   $('#checksbox').classList.toggle('fail', failed.length > 0);
   $('#checkshead').textContent = failed.length ? `${failed.length} of ${checks.length} self-checks failed. Fix the red fields.` : `${checks.length} self-checks passed`;
-  $('#checks').innerHTML = checks.map(c => `<li class="${c.passed ? 'ok' : 'fail'}">${CHECK_NAMES[c.name] ?? c.name}${c.passed ? '' : `: expected ${c.expected.toFixed(2)}, found ${Number(c.found).toFixed(2)}`}</li>`).join('');
+  // Page 1 checks one per line; page 2 ("How your bill was computed") as one line, plus a line for each check that fails.
+  const page2 = checks.filter(c => c.detail), li = (ok, t) => `<li class="${ok ? 'ok' : 'fail'}">${esc(t)}</li>`;
+  $('#checks').innerHTML = checks.filter(c => !c.detail).map(c => li(c.passed, `${CHECK_NAMES[c.name] ?? c.name}${c.passed ? '' : `: expected ${c.expected.toFixed(2)}, found ${Number(c.found).toFixed(2)}`}`)).join('') +
+    (page2.length ? li(page2.every(c => c.passed), `Page 2 computation: ${page2.filter(c => c.passed).length} of ${page2.length} checks add up (${page2.reduce((s, c) => s + c.n, 0)} numbers compared)`) : '') +
+    page2.filter(c => !c.passed).map(c => li(false, `${c.formula}. ${c.fails[0].what}: computed ${c.fails[0].expected.toFixed(2)}, the bill shows ${Number(c.fails[0].found).toFixed(2)}`)).join('');
   document.querySelectorAll('#fields input').forEach(el => el.classList.toggle('bad',
     bad.has(el.dataset.k) || (el.dataset.c && bad.has('charges')) || (el.dataset.t == bill.tracker.length - 1 && bad.has('tracker'))));
   const max = Math.max(1, ...bill.tracker.map(t => t.kwh || 0));
@@ -139,19 +143,30 @@ $('#go').onclick = () => {
   } catch (e) { msg(e.message); }
 };
 
-const COLORS = { weather: '#F26522', billing_days: '#8d6e63', you: '#1e88e5', usage: '#1e88e5', generation: '#43a047', local_tax_rounding: '#9e9e9e', refund: '#8e24aa' };
+const CAUSE = { usage: '#1e88e5', rates: '#26a69a' };
 
 function renderResults() {
-  const { per, f, r, proj } = analysis;
-  $('#tierc').hidden = f.tier !== 'C_refused';
-  $('#sentence').textContent = r.sentence;
-  const total = r.breakdown.reduce((s, i) => s + Math.abs(i.php), 0) || 1;
-  const color = i => COLORS[i.key] ?? '#26a69a';
-  $('#bar').innerHTML = r.breakdown.map(i => `<div title="${esc(i.label)} ${peso(i.php)}" style="flex:${Math.abs(i.php) / total};background:${color(i)};opacity:${i.php < 0 ? 0.5 : 1}"></div>`).join('');
-  $('#legend').innerHTML = r.breakdown.filter(i => Math.abs(i.php) >= 0.5).map(i => `<span><i style="background:${color(i)};opacity:${i.php < 0 ? 0.5 : 1}"></i>${esc(i.label)} ${peso(i.php)}</span>`).join('');
+  const { per, f, r, proj } = analysis, s = r.summary, signed = (v, d = 0) => (v >= 0 ? '+' : '') + peso(v, d);
+  // One total, two causes that add up to it (how much you used, Meralco's rates). Everything else is behind "details".
+  $('#headline').textContent = `Your bill ${s.change >= 0 ? 'rose' : 'fell'} ${peso(Math.abs(s.change))}`;
+  $('#fromto').textContent = `${peso(s.prev_bill)} last bill${s.prev_exact ? '' : ' (estimated)'} → ${peso(s.this_bill)} this bill` +
+    (s.credits_php ? ` (before ${peso(Math.abs(s.credits_php))} of applied credits)` : '');
+  const dq = s.usage.kwh_now - s.usage.kwh_before;
+  const cause = (key, title, amount, lines) => `<div class="cause"><div><b><i class="dot" style="background:${CAUSE[key]}"></i>${esc(title)}</b>
+    ${lines.filter(Boolean).map(l => `<span class="hint">${esc(l)}</span>`).join('')}</div><b class="amt">${signed(amount)}</b></div>`;
+  $('#causes').innerHTML =
+    cause('usage', dq > 0 ? 'You used more electricity' : dq < 0 ? 'You used less electricity' : 'You used the same electricity', s.usage.php, [
+      `${s.usage.kwh_now} kWh this period vs ${s.usage.kwh_before} kWh last period${dq ? ` (${Math.abs(Math.round(dq))} kWh ${dq > 0 ? 'more' : 'less'})` : ''}`,
+      ...s.usage.parts.map(p => `${p.label}: ${signed(p.php)}`), s.usage.note]) +
+    cause('rates', "Meralco's rates", s.rates.php, [`${s.rates.verdict}: ${peso(s.rates.per_kwh_now, 2)} per kWh now vs ${peso(s.rates.per_kwh_before, 2)} before`]);
+  const span = Math.abs(s.usage.php) + Math.abs(s.rates.php) || 1;
+  $('#bar').innerHTML = [['usage', s.usage.php], ['rates', s.rates.php]].map(([k, v]) =>
+    `<div style="flex:${Math.abs(v) / span};background:${CAUSE[k]};opacity:${v < 0 ? 0.5 : 1}"></div>`).join('');
+  $('#ratelines').innerHTML = s.rates.lines.map(l => `<tr><td>${esc(l.label)}</td><td class="n">${signed(l.php)}</td></tr>`).join('') +
+    `<tr><th>Meralco's rates, all together</th><th class="n">${signed(s.rates.php)}</th></tr>`;
   $('#items').innerHTML = r.breakdown.filter(i => Math.abs(i.php) >= 0.5).map(i =>
     `<tr><td>${esc(i.label)}<br><small class="hint">${esc(i.source)}</small></td><td class="n">${peso(i.php)}</td></tr>`).join('') +
-    `<tr><th>Change vs last month (est. ${peso(r.est_prev_bill)})</th><th class="n">${peso(r.bill_change_php)}</th></tr>` +
+    `<tr><th>Change vs last bill (${s.prev_exact ? '' : 'est. '}${peso(s.prev_bill)})</th><th class="n">${peso(r.bill_change_php)}</th></tr>` +
     (r.warn_residual ? `<tr><td colspan="2" class="note">Local tax and rounding is over 3% of the bill: the rate table and the bill disagree.</td></tr>` : '');
 
   const why = r.reason;
@@ -183,7 +198,8 @@ function renderResults() {
     `Bill: ${bill.source === 'synthetic' ? 'SYNTHETIC sample (invented household, priced at real Meralco rates)' : bill.source === 'photo_ocr' ? 'a photo of your paper bill, read by PaddleOCR and confirmed by you' : 'your PDF statement'}.`,
     rm(r.rate_month), rm(r.prev_rate_month),
     `Rate month detected from your generation ₱/kWh: ${r.rate_month}${r.rate_month_matches_dates ? '' : ' (does not match the billing dates; closest match used)'}.`,
-    `Last month's bill is reconstructed from Meralco's table at ${per.at(-2).kwh} kWh, not read from last month's bill.`,
+    r.summary.prev_exact ? `Last month's bill (${peso(r.summary.prev_bill, 2)}) is the payment this bill lists for the previous billing period.`
+      : `Last month's bill is reconstructed from Meralco's table at ${per.at(-2).kwh} kWh, not read from last month's bill.`,
     `Daily temperatures: ${weather.synthetic ? 'SYNTHETIC' : 'Open-Meteo archive (CC BY 4.0)'}, ${weather.city}.`,
     `Tracker months are assumed to end on day ${new Date(bill.period_end).getUTCDate()} of each month, like this bill.`,
     `Weather split: variable-base degree-day change-point regression (ASHRAE Guideline 14 3PC / CalTRACK billing method), fitted to your bill only.`,
@@ -193,7 +209,7 @@ function renderResults() {
 // ---------- "what changed at home?" chat (lib/chat.js) ----------
 let chat;
 const say = (who, t) => { $('#chatlog').insertAdjacentHTML('beforeend', `<p class="${who}">${esc(t)}</p>`); $('#chatlog').scrollTop = 1e9; };
-const chatCtx = () => ({ sentence: analysis.r.sentence, reason: analysis.r.reason, days: bill.days, unexplained_kwh: unexplainedIncrease(bill, analysis.r).kwh });
+const chatCtx = () => ({ sentence: analysis.r.sentence, reason: analysis.r.reason, facts: billFacts(bill, analysis).map(x => x.text), days: bill.days, unexplained_kwh: unexplainedIncrease(bill, analysis.r).kwh });
 function startChatUI() {
   chat = startChat();
   $('#chatlog').innerHTML = '';
@@ -215,16 +231,21 @@ async function modelRead(text) {
     return fromModel(result, model);
   } catch { modelOff = true; return null; }
 }
-// A question: the model may only pick a paragraph of this month's Meralco advisory (or none); we quote it verbatim.
+// A question: the model may only name its topic (mapped here to one of our own bill facts) and/or pick a paragraph of this
+// month's Meralco advisory; we show our own text for both. Only the question is sent, never the bill.
+// Returns {} when the model is not used (keyword fallback).
 async function modelPick(text, model) {
   const reason = analysis.r.reason;
-  if (modelOff || !reason || !isQuestion(chat, text, model)) return undefined;
+  if (modelOff || !isQuestion(chat, text, model)) return {};
   try {
     const res = await fetch('api/answer', { method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ text, month: analysis.r.rate_month }), signal: AbortSignal.timeout(15000) });
+      body: JSON.stringify({ text, month: analysis.r.rate_month }), signal: AbortSignal.timeout(20000) });
     if (!res.ok) throw new Error(res.status);
-    return fromModelPick((await res.json()).result, advisoryParas(reason).length);
-  } catch { modelOff = true; return undefined; }
+    const { result } = await res.json();
+    const pick = fromModelPick(result, advisoryParas(reason).length), fact = fromModelTopic(result, billFacts(bill, analysis), text);
+    // One side unusable while the other is fine: treat the unusable side as "not there", never as a guess.
+    return pick === undefined && fact === undefined ? {} : { pick: pick ?? null, fact: fact ?? null };
+  } catch { modelOff = true; return {}; }
 }
 $('#chatform').onsubmit = async e => {
   e.preventDefault();
@@ -234,11 +255,11 @@ $('#chatform').onsubmit = async e => {
   say('me', t);
   $('#chatin').disabled = true;
   say('bot typing', '…');
-  const model = await modelRead(t), pick = await modelPick(t, model);
+  const ctx = chatCtx(), model = await modelRead(t), picks = await modelPick(t, model);
   $('#chatlog .typing')?.remove();
   $('#chatin').disabled = false;
   $('#chatin').focus();
-  const r = step(chat, t, { ...chatCtx(), pick }, model);
+  const r = step(chat, t, { ...ctx, ...picks }, model);
   chat = r.state;
   if (r.reply) say('bot', r.reply);
   renderFlags();
@@ -257,7 +278,7 @@ async function postCase(packet) {
 const DASH = 'the TANAW case dashboard';
 
 function renderFlags() {
-  const a = answers(), checks = runChecks(bill), flags = billingFlags(bill, checks, analysis.r, a);
+  const a = answers(), checks = runChecks(bill, billSpec), flags = billingFlags(bill, checks, analysis.r, a);
   const u = unexplainedIncrease(bill, analysis.r);
   const packet = flags.length && disputePacket({ bill, checks, flags, answers: a, r: analysis.r, rates });
   const explained = u.php > 0 && householdExplains(u, a)

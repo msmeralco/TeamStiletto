@@ -1,0 +1,569 @@
+{
+ "format": "tanaw-bill-spec/1",
+ "layout": "Meralco residential statement (My Meralco PDF, 2026 layout), 2 pages",
+ "about": "What the app reads from an uploaded Meralco PDF (www/lib/parse.js) and the arithmetic the bill itself must satisfy (www/lib/checks.js). Every formula uses only numbers printed on the bill. Run on a file: node scripts/validate_bill.mjs <bill.pdf>.",
+ "tolerance_php": 0.01,
+ "fields": [
+  {
+   "key": "can",
+   "page": 1,
+   "label": "Customer Account Number (CAN)",
+   "type": "text"
+  },
+  {
+   "key": "period_start",
+   "page": 1,
+   "label": "Billing Period (first date)",
+   "type": "date"
+  },
+  {
+   "key": "period_end",
+   "page": 1,
+   "label": "Billing Period (second date)",
+   "type": "date"
+  },
+  {
+   "key": "previous_reading",
+   "page": 1,
+   "label": "Previous Reading",
+   "type": "number"
+  },
+  {
+   "key": "current_reading",
+   "page": 1,
+   "label": "Current Reading",
+   "type": "number"
+  },
+  {
+   "key": "multiplier",
+   "page": 2,
+   "label": "Metering Information: Multi",
+   "type": "number"
+  },
+  {
+   "key": "kwh",
+   "page": 1,
+   "label": "Actual Consumption",
+   "type": "number",
+   "unit": "kWh"
+  },
+  {
+   "key": "rate_this_month",
+   "page": 1,
+   "label": "Your rate this month",
+   "type": "number",
+   "unit": "PhP/kWh"
+  },
+  {
+   "key": "remaining_balance",
+   "page": 1,
+   "label": "Remaining Balance from previous bill",
+   "type": "number",
+   "unit": "PhP"
+  },
+  {
+   "key": "charges_this_period",
+   "page": 1,
+   "label": "Charges for this billing period",
+   "type": "number",
+   "unit": "PhP"
+  },
+  {
+   "key": "total_amount_due",
+   "page": 1,
+   "label": "Total Amount Due",
+   "type": "number",
+   "unit": "PhP"
+  },
+  {
+   "key": "avg_monthly_kwh",
+   "page": 1,
+   "label": "Ave. monthly consumption (last 12 months)",
+   "type": "number",
+   "unit": "kWh"
+  },
+  {
+   "key": "avg_daily_kwh",
+   "page": 1,
+   "label": "Ave. daily consumption this bill period",
+   "type": "number",
+   "unit": "kWh"
+  },
+  {
+   "key": "avg_daily_cost",
+   "page": 1,
+   "label": "Ave. daily cost this bill period",
+   "type": "number",
+   "unit": "PhP"
+  },
+  {
+   "key": "ghg_tco2",
+   "page": 1,
+   "label": "Equiv. GHG Emissions",
+   "type": "number",
+   "unit": "tCO2"
+  },
+  {
+   "key": "vs_previous_kwh",
+   "page": 1,
+   "label": "This bill is N% higher/lower (+/-X kWh) vs previous billing period",
+   "type": "number",
+   "unit": "kWh"
+  },
+  {
+   "key": "vs_previous_pct",
+   "page": 1,
+   "label": "same line, the percent",
+   "type": "number",
+   "unit": "%"
+  },
+  {
+   "key": "vs_last_year_kwh",
+   "page": 1,
+   "label": "This bill is N% higher/lower (+/-X kWh) vs same period last year",
+   "type": "number",
+   "unit": "kWh"
+  },
+  {
+   "key": "vs_last_year_pct",
+   "page": 1,
+   "label": "same line, the percent",
+   "type": "number",
+   "unit": "%"
+  },
+  {
+   "key": "installment_due",
+   "page": 1,
+   "label": "Installment Due",
+   "type": "number",
+   "unit": "PhP"
+  }
+ ],
+ "summary": {
+  "page": 1,
+  "label": "Bill Computation Summary",
+  "note": "One amount per group below, plus \"Applied Credits\" when the bill has credits. They add up to Charges for this billing period."
+ },
+ "tracker": {
+  "page": 1,
+  "label": "Your monthly consumption",
+  "this_year": "upper row of 12 cells, Jan..Dec, '-' for months not billed yet",
+  "last_year": "lower row of 12 cells, Jan..Dec",
+  "note": "The lower row's cell for the bill's own month is not reliable (seen holding 0, or this year's value). The parser sets last year's same month to kwh - vs_last_year_kwh."
+ },
+ "payments": {
+  "page": 2,
+  "label": "What you've paid",
+  "columns": [
+   "billing_period",
+   "posting_date",
+   "channel",
+   "amount_php"
+  ]
+ },
+ "groups": [
+  {
+   "key": "generation",
+   "label": "Generation",
+   "lines": [
+    {
+     "key": "generation_charge",
+     "label": "Generation Charge (PhP/kWh)",
+     "basis": "kwh"
+    },
+    {
+     "key": "power_act_reduction",
+     "label": "Power Act Reduction",
+     "basis": "amount_only"
+    }
+   ]
+  },
+  {
+   "key": "transmission",
+   "label": "Transmission",
+   "lines": [
+    {
+     "key": "transmission_charge",
+     "label": "Transmission Charge(PhP/kWh)",
+     "basis": "kwh"
+    },
+    {
+     "key": "ancillary_service",
+     "label": "Ancillary Service Charge",
+     "basis": "kwh"
+    }
+   ]
+  },
+  {
+   "key": "system_loss",
+   "label": "System Loss",
+   "lines": [
+    {
+     "key": "system_loss_charge",
+     "label": "System Loss Charge (PhP/kWh)",
+     "basis": "kwh",
+     "alt": [
+      "System Loss (Govt-Mandated)"
+     ]
+    }
+   ]
+  },
+  {
+   "key": "distribution",
+   "label": "Distribution (Meralco)",
+   "lines": [
+    {
+     "key": "distribution_charge",
+     "label": "Distribution Charge (PhP/kWh)",
+     "basis": "kwh"
+    },
+    {
+     "key": "metering_fixed",
+     "label": "Fixed Metering Charge (PhP/mo)",
+     "basis": "months"
+    },
+    {
+     "key": "metering_per_kwh",
+     "label": "Metering Charge per kWh",
+     "basis": "kwh"
+    },
+    {
+     "key": "supply_fixed",
+     "label": "Fixed Supply Charge (PhP/mo)",
+     "basis": "months"
+    },
+    {
+     "key": "supply_per_kwh",
+     "label": "Supply Charge per kWh",
+     "basis": "kwh"
+    },
+    {
+     "key": "awat_1",
+     "label": "AWAT (Refund)/Collect 1",
+     "basis": "kwh",
+     "alt": [
+      "AWAT(Refund)/Collect(PhP/kWh)"
+     ]
+    },
+    {
+     "key": "awat_2",
+     "label": "AWAT (Refund)/Collect 2",
+     "basis": "kwh"
+    },
+    {
+     "key": "reg_reset_fee_adj",
+     "label": "Regulatory Reset Fee Adj",
+     "basis": "kwh"
+    }
+   ]
+  },
+  {
+   "key": "senior_citizen",
+   "label": "Senior Citizen",
+   "lines": [
+    {
+     "key": "lifeline_rate_adj",
+     "label": "Lifeline Rate Adjustment",
+     "basis": "kwh"
+    },
+    {
+     "key": "senior_subsidy",
+     "label": "Senior Citizen Subsidy",
+     "basis": "kwh"
+    }
+   ]
+  },
+  {
+   "key": "taxes",
+   "label": "Government Taxes",
+   "lines": [
+    {
+     "key": "rpt",
+     "label": "RPT Charge (PhP/kWh)",
+     "basis": "kwh"
+    },
+    {
+     "key": "rpt_adj",
+     "label": "RPT Adj.",
+     "basis": "kwh"
+    },
+    {
+     "key": "lft",
+     "label": "LFT Charge",
+     "basis": "percent_of",
+     "base": "vat_sales_base + rpt + rpt_adj"
+    },
+    {
+     "key": "lft_adj",
+     "label": "LFT Adj.",
+     "basis": "kwh"
+    },
+    {
+     "key": "energy_tax",
+     "label": "ENERGY TAX / FIRST",
+     "basis": "kwh_block",
+     "base": "kwh - 650 (first 650 kWh exempt); seen on bills of 706 to 857 kWh, brackets above 1,000 kWh not seen yet"
+    },
+    {
+     "key": "vat_generation",
+     "label": "VALUE ADDED TAX: Generation Charge",
+     "basis": "percent_of",
+     "base": "group generation"
+    },
+    {
+     "key": "vat_power_act_reduction",
+     "label": "VALUE ADDED TAX: Power Act Reduction",
+     "basis": "amount_only"
+    },
+    {
+     "key": "vat_transmission",
+     "label": "VALUE ADDED TAX: Transmission Charge",
+     "basis": "percent_of",
+     "base": "line transmission_charge"
+    },
+    {
+     "key": "vat_ancillary",
+     "label": "VALUE ADDED TAX: Ancillary Service Charge",
+     "basis": "percent_of",
+     "base": "line ancillary_service"
+    },
+    {
+     "key": "vat_system_loss",
+     "label": "VALUE ADDED TAX: System Loss Charge",
+     "basis": "percent_of",
+     "base": "group system_loss"
+    },
+    {
+     "key": "vat_distribution",
+     "label": "VALUE ADDED TAX: Distribution Charge",
+     "basis": "percent_of",
+     "base": "group distribution"
+    },
+    {
+     "key": "vat_senior",
+     "label": "VALUE ADDED TAX: Senior Citizen",
+     "basis": "percent_of",
+     "base": "group senior_citizen"
+    }
+   ]
+  },
+  {
+   "key": "universal",
+   "label": "Universal Charges",
+   "lines": [
+    {
+     "key": "missionary_npc_spug",
+     "label": "Missionary Elec for NPC-SPUG",
+     "basis": "kwh"
+    },
+    {
+     "key": "missionary_redci",
+     "label": "Missionary Elec for REDCI",
+     "basis": "kwh"
+    },
+    {
+     "key": "environmental_fund",
+     "label": "Environmental Fund",
+     "basis": "kwh"
+    },
+    {
+     "key": "npc_stranded_contract",
+     "label": "NPC Stranded Contract Costs",
+     "basis": "amount_only"
+    },
+    {
+     "key": "npc_stranded_debts",
+     "label": "NPC Stranded Debts",
+     "basis": "kwh"
+    },
+    {
+     "key": "du_stranded_contract",
+     "label": "DU Stranded Contract Costs",
+     "basis": "amount_only"
+    },
+    {
+     "key": "equalization_taxes",
+     "label": "Equalization Taxes & Royalties",
+     "basis": "amount_only"
+    }
+   ]
+  },
+  {
+   "key": "fit_all",
+   "label": "FiT-All (Renewable)",
+   "lines": [
+    {
+     "key": "fit_all",
+     "label": "FiT-All (Renewable)",
+     "basis": "kwh"
+    }
+   ]
+  },
+  {
+   "key": "gea_all",
+   "label": "GEA-All (Renewable)",
+   "lines": [
+    {
+     "key": "gea_all",
+     "label": "GEA-All (Renewable)",
+     "basis": "amount_only"
+    }
+   ]
+  },
+  {
+   "key": "lifeline",
+   "label": "Lifeline",
+   "lines": [
+    {
+     "key": "lifeline_subsidy",
+     "label": "Lifeline Subsidy Rate (PhP/kWh)",
+     "basis": "kwh"
+    }
+   ]
+  }
+ ],
+ "group_fields": "For each group: its amount on page 1 (Bill Computation Summary) and, on page 2 (How your bill was computed), its amount and percent. For each line: base (kWh, months or pesos), price (rate or percent) and amount. A line the spec does not list is still read and still counted in its group's sum.",
+ "energy_bill_amount": {
+  "page": 2,
+  "label": "Energy Bill Amount",
+  "fields": [
+   "vat_sales_base",
+   "vat_sales_vat",
+   "vat_zero_rated",
+   "non_vat",
+   "total_energy_amount"
+  ]
+ },
+ "credits": {
+  "page": 2,
+  "label": "Applied Credits",
+  "note": "Printed after Total Energy Amount when credits were applied (bill deposit refunds, interest refunds), followed by one line per credit."
+ },
+ "checks": [
+  {
+   "name": "readings",
+   "in": "summary",
+   "formula": "(current_reading - previous_reading) x multiplier = kwh"
+  },
+  {
+   "name": "tracker_latest",
+   "in": "summary",
+   "formula": "this year's last tracker cell = kwh"
+  },
+  {
+   "name": "line_sum",
+   "in": "summary",
+   "formula": "page 1 summary amounts add up to charges_this_period"
+  },
+  {
+   "name": "total",
+   "in": "summary",
+   "formula": "remaining_balance + charges_this_period + installment_due = total_amount_due"
+  },
+  {
+   "name": "line_amounts",
+   "in": "detail",
+   "formula": "every line with a base and a price: base x price = amount (percent lines: base x price / 100)"
+  },
+  {
+   "name": "kwh_bases",
+   "in": "detail",
+   "formula": "every per-kWh line is billed on the same kWh as Actual Consumption"
+  },
+  {
+   "name": "percent_bases",
+   "in": "detail",
+   "formula": "each VAT line is charged on the amount of the group or line it taxes"
+  },
+  {
+   "name": "lft_base",
+   "in": "detail",
+   "formula": "LFT base = VAT Sales base + RPT + RPT Adj."
+  },
+  {
+   "name": "energy_tax_base",
+   "in": "detail",
+   "formula": "energy tax is charged on kWh above 650"
+  },
+  {
+   "name": "group_sums",
+   "in": "detail",
+   "formula": "the lines of each group add up to the group's amount"
+  },
+  {
+   "name": "summary_matches_detail",
+   "in": "detail",
+   "formula": "each group's amount on page 1 = its amount on page 2"
+  },
+  {
+   "name": "group_percents",
+   "in": "detail",
+   "formula": "group amount / Total Energy Amount = the printed percent"
+  },
+  {
+   "name": "vat_sales_base",
+   "in": "detail",
+   "formula": "Generation + Transmission + System Loss + Distribution + Senior Citizen = VAT Sales base"
+  },
+  {
+   "name": "vat_total",
+   "in": "detail",
+   "formula": "the VALUE ADDED TAX lines add up to VAT Sales VAT"
+  },
+  {
+   "name": "non_vat",
+   "in": "detail",
+   "formula": "other taxes + Universal + FiT-All + GEA-All + Lifeline = Non-VAT"
+  },
+  {
+   "name": "total_energy_amount",
+   "in": "detail",
+   "formula": "VAT Sales base + VAT + VAT Zero Rated + Non-VAT = Total Energy Amount = sum of the groups"
+  },
+  {
+   "name": "credits",
+   "in": "detail",
+   "formula": "the credit lines add up to Applied Credits"
+  },
+  {
+   "name": "charges_total",
+   "in": "detail",
+   "formula": "Total Energy Amount + Applied Credits = Charges for this billing period"
+  },
+  {
+   "name": "rate_this_month",
+   "in": "detail",
+   "formula": "Total Energy Amount / kWh = Your rate this month"
+  },
+  {
+   "name": "vs_previous",
+   "in": "detail",
+   "formula": "kWh - last month's kWh = the printed change vs previous billing period"
+  },
+  {
+   "name": "vs_last_year_pct",
+   "in": "detail",
+   "formula": "change vs last year / last year's kWh = the printed percent"
+  },
+  {
+   "name": "avg_daily",
+   "in": "detail",
+   "formula": "kWh / days = average daily consumption; Total Energy Amount / days = average daily cost"
+  },
+  {
+   "name": "ghg",
+   "in": "detail",
+   "formula": "kWh x 0.0006935 = Equiv. GHG Emissions"
+  }
+ ],
+ "derived": [
+  {
+   "key": "previous_period_paid_php",
+   "formula": "sum of What you've paid rows whose billing period ends the day before period_start (payments, so not always the full bill)"
+  },
+  {
+   "key": "kwh_last_year_same_month",
+   "formula": "kwh - vs_last_year_kwh"
+  }
+ ]
+}

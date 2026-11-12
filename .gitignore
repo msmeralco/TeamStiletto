@@ -7,6 +7,27 @@ data/rates_pdfs/
 android/
 .opencode/
 
+# personal / pitch working folders (kept local)
+pitch/
+felice-skills/
+felice-artifacts/
+
+# python (PaddleOCR / local model helpers)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# caches / temp
+.cache/
+.npm/
+coverage/
+.nyc_output/
+*.tmp
+*.bak
+*.swp
+~$*
+
 # OS / editor
 .DS_Store
 Thumbs.db

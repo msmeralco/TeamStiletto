@@ -205,7 +205,8 @@
    ],
    "note": null,
    "gadgets": [],
-   "added_kwh": null
+   "added_kwh": null,
+   "parser": "rules"
   },
   "meralco_advisory": null,
   "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000001).\nCharges for this billing period: ₱3,747.32. Consumption: 243 kWh (previous reading 10000, current reading 10393).\n\nWhat I noticed:\n- Meter readings do not match the kWh billed (current − previous reading × multiplier): expected 393.00, the bill shows 243.00.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
@@ -416,7 +417,8 @@
    ],
    "note": null,
    "gadgets": [],
-   "added_kwh": null
+   "added_kwh": null,
+   "parser": "rules"
   },
   "meralco_advisory": null,
   "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000002).\nCharges for this billing period: ₱3,747.32. Consumption: 243 kWh (previous reading 10000, current reading 10243).\n\nWhat I noticed:\n- Last month (2026-09) shows 0 kWh. This bill may include usage carried over from a missed or estimated reading.\n\nChanges at home this period (my answers):\n- Nothing changed at home\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
@@ -627,7 +629,8 @@
    ],
    "note": "Relatives stayed for two weeks.",
    "gadgets": [],
-   "added_kwh": null
+   "added_kwh": null,
+   "parser": "rules"
   },
   "meralco_advisory": null,
   "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000003).\nCharges for this billing period: ₱4,253.34. Consumption: 276 kWh (previous reading 10000, current reading 10276).\n\nWhat I noticed:\n- This billing period is 36 days long; Meralco normally bills about every 30 days.\n\nChanges at home this period (my answers):\n- More people at home (guests, new member, work or school from home)\n- Relatives stayed for two weeks.\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you."
@@ -838,7 +841,8 @@
    ],
    "note": null,
    "gadgets": [],
-   "added_kwh": null
+   "added_kwh": null,
+   "parser": "rules"
   },
   "meralco_advisory": null,
   "message": "Good day, Meralco.\n\nI would like to request a review of my bill for 2026-09-15 to 2026-10-14 (Customer Account Number 0000000004).\nCharges for this billing period: ₱4,253.34. Consumption: 276 kWh (previous reading 10000, current reading 10276).\n\nWhat I noticed:\n- Remaining balance + this period + installment do not add up to \"Total Amount Due\": expected 4253.34, the bill shows 4733.34.\n\nChanges at home this period (my answers):\n- We were away or home less\n\nPlease recheck the meter reading and the computation, and adjust the bill if there is an error. Thank you.",
