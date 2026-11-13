@@ -28,11 +28,12 @@ The Android and iOS builds are set up but haven't been tested on a phone yet.
 | `scripts/` | The data build scripts, the dev server `serve.mjs` (case inbox, chat model, OCR), `ocr.py` (PaddleOCR worker) and `validate_bill.mjs` (check real bill PDFs from the command line) |
 | `tests/` | `selfcheck.mjs`, which is all of `npm test`, and its SYNTHETIC expected values and OCR word samples |
 | `docs/` | `tech_spec.md` (technical spec that matches the code), `requirements.md` (v1 requirements), `update.md` (status snapshot) |
+| `pitch/` | The pitch slides (`index.html`, speaker notes inside), `brief.md`, and `serve.mjs` (`node pitch/serve.mjs` → http://localhost:8080) |
 | `hackathon_challenges.md`, `AGENTS.md` | The official challenge text, and rules for AI assistants working in this repo |
 
 Kept on each laptop and not committed (see `.gitignore`): `node_modules/`, `www/vendor/` (made by `npm install`),
 `data/private/` (real bills, dispute cases), `data/rates_pdfs/`, `android/`, `ios/`, and the personal working folders
-`pitch/`, `felice-skills/` and `felice-artifacts/`.
+`felice-skills/` and `felice-artifacts/`.
 
 ## Commands
 ```

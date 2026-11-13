@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="pitch-limit" content="300">
+<meta name="color-scheme" content="light dark">
+<title>TANAW — pitch</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="pitch.css">
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- ===================== MAIN SLIDES ===================== -->
+
+  <section id="title" class="slide" data-layout="close" data-time="8" data-speaker="A">
+    <div class="title-stack">
+      <img class="logo" src="assets/logo.png" width="260" height="260" alt="">
+      <span class="title-word">TANAW</span>
+      <h1 class="title-tag" data-step="1">Tanaw ang dahilan ng bill mo.</h1>
+    </div>
+    <aside class="notes">
+A (0:00): The logo is already on screen. Press next once to bring in the catchphrase, then press next again to start the pitch.
+    </aside>
+  </section>
+
+  <section id="hook" class="slide" data-layout="big-number" data-time="20" data-speaker="A">
+    <div class="brandcorner">
+      <img class="logo" src="assets/logo.png" width="56" height="56" alt="">
+      <span class="wordmark">TANAW</span>
+    </div>
+    <div class="center-col">
+      <div class="bignum">879</div>
+      <h1>billing complaints in one year.</h1>
+      <p class="body">+243 more for bills that were just “unusually high”<br>
+      <span class="source">ERC, 2026 — Rappler, 2026-07-13</span></p>
+    </div>
+    <aside class="notes">
+A: Last year, the Energy Regulatory Commission logged 879 complaints about meter errors, estimated bills and billing adjustments — plus 243 more for bills that were just “unusually high.” Behind every one is a household staring at a total, with no reason.
+    </aside>
+  </section>
+
+  <section id="problem" class="slide" data-layout="statement" data-time="20" data-speaker="A">
+    <h1>The bill gives you a total, not a reason.</h1>
+    <div class="split-cols">
+      <div class="billcard" aria-label="A stylized bill">
+        <div class="billhead"></div>
+        <div class="billrow"><span>generation</span><span class="q">?</span></div>
+        <div class="billrow"><span>transmission</span><span class="q">?</span></div>
+        <div class="billrow"><span>distribution</span><span class="q">?</span></div>
+        <div class="billrow"><span>taxes</span><span class="q">?</span></div>
+      </div>
+      <p class="body big">Which one changed?<br>The bill never says.</p>
+    </div>
+    <aside class="notes">
+A: Your Meralco bill lists every charge: generation, transmission, distribution, taxes. It never says which one changed — or whether the jump came from Meralco’s rates, a hotter month, a longer billing period, or how you used electricity. So people pay bills they don’t trust, or queue at a hotline with no evidence.
+    </aside>
+  </section>
+
+  <section id="challenge" class="slide" data-layout="quote" data-time="15" data-speaker="A">
+    <h1>Challenge 2, taken literally.</h1>
+    <blockquote class="quote">“How might we help customers <strong>understand what makes up their electricity bill</strong>, use <strong>their own consumption data</strong> to <strong>manage their usage</strong>?”</blockquote>
+    <aside class="notes">
+A: The challenge asked: “How might we help customers understand what makes up their electricity bill, use their own consumption data to manage their usage?” We took it literally, both halves: understand the bill, and manage the usage. One customer, one bill, their own data. We’ll show both.
+    </aside>
+  </section>
+
+  <section id="solution" class="slide" data-layout="split" data-time="18" data-speaker="A">
+    <span class="status-label">Built (sample bill)</span>
+    <div class="split-cols">
+      <div class="split-left">
+        <h1>Why your bill changed, and what to do next month.</h1>
+      </div>
+      <div class="split-right">
+        <div class="resultcard">
+          <div class="resulthead">
+            <img class="logo" src="assets/logo.png" width="34" height="34" alt="">
+            <span>TANAW</span>
+          </div>
+          <p class="resulttext">Your bill rose ₱475, from ₱3,272 to ₱3,747. Using 26 kWh more added ₱391 (a hotter month added ₱482, a shorter billing period took off ₱90). Meralco’s rates added ₱84 (higher: ₱15.42 per kWh now, ₱15.08 before).</p>
+          <svg class="chart" viewBox="0 0 980 292" role="img" aria-label="Bar chart: A hotter month +482, Shorter billing period −90, Meralco's rates +84, Total change +475">
+            <line x1="400" y1="0" x2="400" y2="292" class="zeroline"/>
+            <rect x="400" y="8"   width="434" height="48" class="bar-g"/>
+            <rect x="319" y="78"  width="81"  height="48" class="bar-g"/>
+            <rect x="400" y="148" width="76"  height="48" class="bar-g"/>
+            <rect x="400" y="218" width="428" height="48" class="bar-o"/>
+            <text x="290" y="41"  text-anchor="end" class="clabel">A hotter month</text>
+            <text x="290" y="111" text-anchor="end" class="clabel">Shorter billing period</text>
+            <text x="290" y="181" text-anchor="end" class="clabel">Meralco’s rates</text>
+            <text x="290" y="251" text-anchor="end" class="clabel cstrong">Total change</text>
+            <text x="846" y="41"  class="cval">+482</text>
+            <text x="412" y="111" class="cval">−90</text>
+            <text x="488" y="181" class="cval">+84</text>
+            <text x="840" y="251" class="cval cstrong">+475</text>
+          </svg>
+          <p class="caption">Synthetic sample · real Meralco rates</p>
+        </div>
+      </div>
+    </div>
+    <aside class="notes">
+A: So we built TANAW. Give it your bill — the PDF, or a photo of the paper one — and it tells you why it changed, in pesos. Then it shows how your hot and cool months compare, and a range for next month. And when the bill itself is wrong, it helps you prove it. [B] will show you.
+    </aside>
+  </section>
+
+  <section id="demo" class="slide" data-layout="demo" data-time="110" data-speaker="B (C drives)">
+    <span class="status-label">Sample data</span>
+    <div class="demohead">
+      <h1>Live demo</h1>
+      <p class="demopath">sample bill → checks → explain → hot vs cool months → next month → planted ₱500 error → dispute → dashboard</p>
+      <button id="openDemo" type="button" class="openwin">Open in window</button>
+    </div>
+    <div class="demopanes">
+      <div class="phoneframe"><iframe id="appframe" title="TANAW app" data-src="http://localhost:8000"></iframe></div>
+      <div class="dashpane" data-step="1"><iframe id="dashframe" title="Staff dashboard" data-src="http://localhost:8000/dashboard.html"></iframe></div>
+    </div>
+    <p class="hintline">Click outside the frames or press Esc to return to the slides.</p>
+    <aside class="notes">
+B (1:15): This is a sample household — the banner says so — priced at Meralco’s real published rates. We open its statement. TANAW reads it and shows the three numbers that matter: billing period, kilowatt-hours, charges. Behind them, it has already checked the bill against itself — readings versus kWh, the history, the charges against the total — and recomputed page two line by line. All of it adds up. Every number is one tap away if you want to fix it.
+B (1:35): “Looks right — explain my bill.” [pause] There’s the answer, in one sentence. [read it: “Your bill rose ₱475, from ₱3,272 to ₱3,747. Using 26 kWh more added ₱391 (a hotter month added ₱482, a shorter billing period took off ₱90). Meralco’s rates added ₱84.”] The bar shows two causes: how you used electricity, and Meralco’s rates. Tap for the detail; every line names its source.
+B (2:05): Now the second half of the challenge — managing usage. [C scrolls to “Hot months vs cool months” and taps the hottest month] This month: this many kWh a day, this far above your average. Orange bars are hotter months, grey are cooler. And next month — a range, not a forecast: ₱2,984 to ₱3,061, about 195 kWh. That’s the target.
+B (2:30): But what if the bill itself is wrong? We go back, tap “See or fix every number we read”, and make this bill overcharge by five hundred pesos. [C edits “Charges for this billing period” +500] The self-check fails instantly — and TANAW grades the evidence: strong, because the bill’s own arithmetic doesn’t add up. One tap: send ticket to Meralco. On a normal bill, sending is still possible, but it stays one tap away.
+B (2:50): Now the staff side. [C reveals the dashboard pane — build step] The case arrived on its own — ranked by evidence strength, full computation attached. Staff reply, and it’s on the customer’s phone. Reason, evidence, answer.
+    </aside>
+  </section>
+
+  <section id="how" class="slide" data-layout="image" data-time="40" data-speaker="C">
+    <span class="status-label">Built</span>
+    <h1>Reading and explaining run on your phone.</h1>
+    <p class="body">No login · no account · chat, photo scan and case inbox run on the demo laptop</p>
+    <div class="pipeline" aria-label="Pipeline diagram">
+      <div class="prow">
+        <span class="pnode">PDF / photo</span><span class="parrow">→</span>
+        <span class="pnode">read<small>pdf.js / PaddleOCR</small></span><span class="parrow">→</span>
+        <span class="pnode">parse every line</span><span class="parrow">→</span>
+        <span class="pnode">self-checks</span><span class="parrow">→</span>
+        <span class="pnode">you confirm</span>
+      </div>
+      <div class="prow">
+        <span class="pnode">rates + weather model<small>Meralco Jan–Oct 2026 · real Manila temps</small></span><span class="parrow">→</span>
+        <span class="pnode hot">the reason, in pesos</span><span class="parrow">→</span>
+        <span class="pnode">flags → dispute</span>
+      </div>
+      <div class="prow" data-step="1">
+        <span class="pnode chatnode">Taglish chat — caged: bill facts + Meralco advisories + FAQs only · small local model on the laptop</span>
+      </div>
+    </div>
+    <aside class="notes">
+C (3:05): Reading and explaining run in the browser — on your phone, no login, no account. The chat, photo scan and case inbox you saw run on this laptop. pdf.js reads the statement, our parser rebuilds every line, and the checks redo the bill’s own arithmetic. The explanation comes from two things: Meralco’s real rate tables — ten months, each linked to its source — and a standard change-point weather model fitted to this home’s own seventeen-month history against real Manila temperatures.
+C (3:35): There’s also a chat in Taglish for “what changed at home?” It runs on a small model on this laptop, and it’s caged: it can only pick from the bill’s own facts, Meralco’s published advisories and Meralco’s FAQs. It never writes its own answer. Type “restart” and it starts over.
+    </aside>
+  </section>
+
+  <section id="next" class="slide" data-layout="statement" data-time="22" data-speaker="A">
+    <span class="status-label">Planned</span>
+    <h1>Next: real bills, usage tips, lifeline checks.</h1>
+    <ul class="points">
+      <li><b>Ask</b> help us gather a consented set of real Meralco statements.</li>
+      <li><b>Then</b> usage tips from your own bill: which appliance, how many kWh, how many pesos.</li>
+      <li><b>Deploy</b> static files. Every customer’s phone does its own computing.</li>
+    </ul>
+    <aside class="notes">
+A (4:20): Next: prove accuracy on real bills — that’s our ask: help us gather a consented set of real Meralco statements. Then usage tips from your own bill — which appliance costs what, and what to aim for next month. After that, scanned PDFs, and lifeline and senior-citizen checks. Deploying this is trivial — it’s static files; every customer’s phone does its own computing.
+    </aside>
+  </section>
+
+  <section id="close" class="slide" data-layout="close" data-time="13" data-speaker="A">
+    <div class="center-col">
+      <img class="logo" src="assets/logo.png" width="220" height="220" alt="">
+      <h1>Now they have the reason, the evidence, and a plan for next month.</h1>
+      <p class="body">TANAW · why did my Meralco bill change?<br>TeamStiletto</p>
+    </div>
+    
+    <aside class="notes">
+A (4:42): That household with the unexplained bill now has the reason in pesos, a range for next month — and when Meralco owes them, the evidence. That’s TANAW. Salamat po. (Stop talking.)
+    </aside>
+  </section>
+
+  <section id="thanks" class="slide" data-layout="close" data-time="10" data-speaker="A" data-fade>
+    <div class="center-col">
+      <img class="logo" src="assets/logo.png" width="220" height="220" alt="">
+      <h1 class="thanks-h">Thank You</h1>
+      <p class="thanks-team">Team Stiletto</p>
+    </div>
+    <aside class="notes">
+A (4:50): The screen fades to black, the logo grows, then Thank you, Team Stiletto. Let it play. Don't talk over it.
+    </aside>
+  </section>
+
+  <!-- ===================== BACKUP SLIDES (Q&amp;A only) ===================== -->
+
+  <section id="backup-builtvsplanned" class="slide" data-layout="table" data-backup>
+    <h1>Built, beta, concept, planned</h1>
+    <table class="dense">
+      <thead><tr><th>Feature</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>PDF statement upload, incl. password (never stored)</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>4 page-1 self-checks + page-2 line-by-line recompute</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>Peso split: rates / usage (weather and billing days under “details”)</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>Real Meralco rate tables, Jan–Oct 2026, source-linked</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>Real daily Manila temperatures (Open-Meteo archive)</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>Next-month range + 3-month backtest</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>Hot vs cool months chart — tap a bar or card for month details</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>Refusal when weather fit is weak (adjusted R² &lt; 0.7)</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>9 billing-error flags graded strong / medium / weak</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>Dispute message + machine-readable dispute file</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>My disputes tracking + 14-day ERC escalation</td><td><span class="st built">Built</span></td></tr>
+        <tr><td>Taglish chat (rules + Meralco FAQs + local Qwen2.5 3B, caged)</td><td><span class="st built">Built</span> <span class="tail">needs the laptop</span></td></tr>
+        <tr><td>Installable PWA, offline after first visit</td><td><span class="st built">Built</span></td></tr>
+      </tbody>
+    </table>
+    <aside class="notes">
+The bill was synthetic and labeled on screen. The reading, checks, peso split, flags, dispute flow and dashboard are live code. Rates and weather are real. The dashboard is a concept, not a Meralco system.
+    </aside>
+  </section>
+
+  <section id="backup-builtvsplanned-2" class="slide" data-layout="table" data-backup>
+    <h1>Beta, concept, planned</h1>
+    <table>
+      <thead><tr><th>Feature</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Paper-bill photo scan (PaddleOCR, low-confidence fields yellow)</td><td><span class="st beta">Beta</span></td></tr>
+        <tr><td>Staff triage dashboard</td><td><span class="st concept">Concept</span> <span class="tail">not a Meralco system</span></td></tr>
+        <tr><td>Scanned PDFs through OCR · live camera framing · lifeline/senior warnings</td><td><span class="st none">Not built</span></td></tr>
+      </tbody>
+    </table>
+    <aside class="notes">
+A paper-bill photo scan works in beta. The staff dashboard is a concept, not a Meralco system. Scanned PDFs, camera framing and lifeline/senior warnings are not built.
+    </aside>
+  </section>
+
+  <section id="backup-architecture" class="slide" data-layout="image" data-backup>
+    <h1>One codebase, no required backend</h1>
+    <div class="layers">
+      <div class="layer"><span class="layername">Browser (always):</span> pdf.js → parse → checks → confirm → rates + weather model → explain → flags → dispute file</div>
+      <div class="layer optional"><span class="layername">Laptop (optional):</span> Node server — case inbox · Ollama (qwen2.5:3b) chat fallback · PaddleOCR scan</div>
+      <div class="layer installs"><span class="layername">Phone installs:</span> PWA offline · Capacitor Android/iOS builds set up</div>
+    </div>
+    <aside class="notes">
+Static files on any host — each phone does its own computing. The optional extras (chat model, OCR, case inbox) ran on one gaming laptop today. At 1,000× users nothing changes on our side.
+    </aside>
+  </section>
+
+  <section id="backup-privacy" class="slide" data-layout="statement" data-backup>
+    <h1>Nothing leaves the device unless the customer sends it</h1>
+    <ul class="points">
+      <li><b>On the phone</b> read + explain happen in the browser. No account, no upload. PDF password never stored.</li>
+      <li><b>Sending</b> one explicit tap, and a share-sheet route exists instead.</li>
+      <li><b>Records</b> dispute records stay on the phone. Aligned with RA 10173 (Data Privacy Act).</li>
+    </ul>
+    <aside class="notes">
+Reading and explaining never leave the device. Sending a dispute is the customer’s explicit choice, clearly labeled, and they can use their own share sheet instead. Records stay on their phone.
+    </aside>
+  </section>
+
+  <section id="backup-model" class="slide" data-layout="image" data-backup>
+    <h1>The weather model: fit it, or refuse</h1>
+    <div class="ladder">
+      <div class="rung">Tier A — change-point degree-day fit (ASHRAE G14 / CalTRACK), ≥&nbsp;12&nbsp;months, adjusted R²&nbsp;≥&nbsp;0.7</div>
+      <div class="rung">Tier B — fixed 24 °C base, adjusted R²&nbsp;≥&nbsp;0.7</div>
+      <div class="rung refuse">Tier C — refuse to split weather</div>
+    </div>
+    <p class="body">Sample bill: Tier A, adjusted R² 1.00 over 22 months (synthetic)</p>
+    <aside class="notes">
+It fits the bill’s own 17-month tracker against daily Manila temperatures and learns a baseload plus kWh per degree-day. Below adjusted R-squared 0.7 it refuses to split rather than invent numbers.
+    </aside>
+  </section>
+
+  <section id="backup-refusal" class="slide" data-layout="quote" data-backup>
+    <h1>When it can’t tell, it says so</h1>
+    <blockquote class="quote smaller">“Your bill fell ₱621, from ₱4,874 to ₱4,253. Using 41 kWh less took off ₱630. Meralco’s rates added ₱9 (about the same: ₱15.41 per kWh now, ₱15.38 before). We can’t separate weather reliably for this household.”</blockquote>
+    <p class="attribution">— the weak-fit SYNTHETIC sample, verbatim</p>
+    <aside class="notes">
+A calculator gives a total. TANAW gives the reason the total changed — and refuses when it can’t tell. This is the weak-fit sample’s actual output.
+    </aside>
+  </section>
+
+  <section id="backup-chat" class="slide" data-layout="statement" data-backup>
+    <h1>The chat can’t make things up</h1>
+    <ul class="points">
+      <li><b>The model only picks</b> a topic from a fixed list, an advisory paragraph number, or a Meralco FAQ from a shortlist, or null.</li>
+      <li><b>The app then shows</b> its own sentence from the bill’s numbers, or Meralco’s advisory or FAQ word for word, with date and meralco.com.ph link.</li>
+      <li><b>Otherwise</b> “Not in your bill or Meralco’s advisory” → hotline 16211.</li>
+      <li><b>Limits</b> the model never sees the bill. Runs on the laptop (Ollama, qwen2.5:3b); if it is down, keyword rules answer. Type “restart” to start over.</li>
+    </ul>
+    <aside class="notes">
+It can’t write its own answers. The model names a topic or an advisory paragraph; the app renders its own text or Meralco’s, word for word. The model never sees the bill’s numbers — only the question.
+    </aside>
+  </section>
+
+  <section id="backup-ocr" class="slide" data-layout="statement" data-backup>
+    <h1>Paper bills: photo → PaddleOCR → the same checks</h1>
+    <ul class="points">
+      <li><b>How</b> photo goes to the demo laptop; PaddleOCR reads it into the same confirm screen.</li>
+      <li><b>Doubt</b> low-confidence numbers are marked yellow for the customer to check.</li>
+      <li><b>Status</b> beta. Scanned PDFs and live camera framing: not built yet.</li>
+    </ul>
+    <aside class="notes">
+Built, in beta: photo to the laptop, PaddleOCR, then the exact same confirm screen and checks — with blurry numbers marked yellow. Scanned PDFs are next.
+    </aside>
+  </section>
+
+  <section id="backup-disputes" class="slide" data-layout="statement" data-backup>
+    <h1>The dispute doesn’t end at “sent”</h1>
+    <ul class="points">
+      <li><b>Tracking</b> My disputes: each case tracked on the phone; the staff reply appears there.</li>
+      <li><b>Choice</b> the customer decides. Sending is always possible, but one tap away unless the evidence is strong.</li>
+      <li><b>After 14 days</b> no answer → TANAW prepares an escalation to the ERC.</li>
+    </ul>
+    <aside class="notes">
+The app tracks each dispute; after 14 days without an answer it prepares an escalation to the ERC — the customer’s actual legal recourse.
+    </aside>
+  </section>
+
+  <section id="backup-data" class="slide" data-layout="table" data-backup>
+    <h1>Data sources — all bundled, no runtime calls</h1>
+    <table>
+      <thead><tr><th>Source</th><th>What</th></tr></thead>
+      <tbody>
+        <tr><td>Meralco “Residential Bills at Typical Consumption Levels” PDFs</td><td>Rate tables, Jan–Oct 2026, one source URL per month; rows whose parts don’t sum to the total are rejected</td></tr>
+        <tr><td>Open-Meteo archive (CC BY 4.0)</td><td>Daily Metro Manila temperatures</td></tr>
+        <tr><td>Meralco advisories (meralco.com.ph)</td><td>Quoted reasons, with date + link</td></tr>
+        <tr><td>The customer’s own bill</td><td>Everything else</td></tr>
+      </tbody>
+    </table>
+    <aside class="notes">
+Three sources beside the bill itself, all bundled with the app, nothing fetched while it runs. A rate row whose components don’t add up to its printed total is rejected at build time.
+    </aside>
+  </section>
+
+  <section id="backup-dashboard" class="slide" data-layout="statement" data-backup>
+    <h1>Staff triage, from evidence — a concept</h1>
+    <ul class="points">
+      <li><b>In</b> cases arrive as machine-readable dispute files (tanaw-dispute/1), within seconds.</li>
+      <li><b>Sorted by</b> flag strength, days waiting, bill amount. Staff reply or resolve; the phone shows it.</li>
+      <li><b>Customers</b> can always send; with no ticket needed, sending sits behind “Still want Meralco to review it?”</li>
+      <li><b>Concept</b> not connected to any Meralco system.</li>
+    </ul>
+    <aside class="notes">
+A concept, and we say so. It shows what triage could look like: structured evidence in, strongest cases answered first, instead of a phone queue.
+    </aside>
+  </section>
+
+  <section id="backup-limits" class="slide" data-layout="statement" data-backup>
+    <h1>Known limits of the demo</h1>
+    <ul class="points">
+      <li><b>Inbox</b> plain HTTP, no login, one local file on the demo laptop. Not a Meralco system.</li>
+      <li><b>Needs the laptop</b> chat model, photo scan and inbox. If the model is down, keyword rules answer.</li>
+      <li><b>Data</b> parser fitted on one real statement; synthetic bills elsewhere. “Hotter month” is a model estimate, not a fact.</li>
+      <li><b>Not built</b> usage tips, lifeline/senior checks, scanned PDFs.</li>
+    </ul>
+    <aside class="notes">
+Say it before they ask. The inbox is a demo with no authentication. The weather split is a fitted model and TANAW refuses it when the fit is weak. If Ollama dies, the chat falls back to keyword rules, so say that and carry on.
+    </aside>
+  </section>
+
+  <section id="backup-demo-1" class="slide" data-layout="statement" data-backup>
+    <h1>Demo step: the bill, read and checked</h1>
+    <ul class="points">
+      <li><b>Screen</b> SYNTHETIC banner; confirm screen shows 3 numbers (period, kWh, charges). Every field is one tap away under “See or fix every number we read”.</li>
+      <li><b>Checks</b> readings ↔ kWh · tracker ↔ this month · lines ↔ total · balance ↔ amount due · page-2 recompute</li>
+    </ul>
+    <aside class="notes">
+Fallback if the live demo fails at step 1–2. Narrate from this card or play the video (V).
+    </aside>
+  </section>
+
+  <section id="backup-demo-2" class="slide" data-layout="statement" data-backup>
+    <h1>Demo step: the reason, in pesos</h1>
+    <ul class="points">
+      <li><b>Reason</b> “Your bill rose ₱475, from ₱3,272 to ₱3,747. Using 26 kWh more added ₱391 (a hotter month added ₱482, a shorter billing period took off ₱90). Meralco’s rates added ₱84 (higher: ₱15.42 per kWh now, ₱15.08 before).”</li>
+      <li><b>Next month</b> ₱2,984–₱3,061 (about 195 kWh), “not a weather forecast”</li>
+      <li><b>Hot vs cool</b> tap a bar for that month’s kWh a day and how far it is from the average</li>
+    </ul>
+    <aside class="notes">
+The sample’s actual output, verbatim. Fallback for demo step 3.
+    </aside>
+  </section>
+
+  <section id="backup-demo-3" class="slide" data-layout="statement" data-backup>
+    <h1>Demo step: the planted ₱500 error</h1>
+    <ul class="points">
+      <li><b>Edit</b> “See or fix every number we read”: “Charges for this billing period” +₱500. The line-sum check fails and the field is highlighted.</li>
+      <li><b>Flag</b> STRONG: “The charges do not add up to ‘Charges for this billing period’”</li>
+      <li><b>Then</b> → Send ticket to Meralco</li>
+    </ul>
+    <aside class="notes">
+Fallback for demo steps 4–5. Strong = the bill’s own arithmetic or Meralco’s published rates disagree.
+    </aside>
+  </section>
+
+  <section id="backup-demo-4" class="slide" data-layout="statement" data-backup>
+    <h1>Demo step: the case on the staff side</h1>
+    <ul class="points">
+      <li><b>Arrives</b> the dispute appears on the dashboard by itself within seconds, ranked by strength, full computation attached</li>
+      <li><b>Reply</b> staff reply → “Meralco replied” on the customer’s phone</li>
+    </ul>
+    <aside class="notes">
+Fallback for demo step 6.
+    </aside>
+  </section>
+
+  <div id="hud" hidden>
+    <div id="progress"><i></i></div>
+    <div id="slidenum"></div>
+  </div>
+</div>
+
+<div id="black" hidden></div>
+
+<div id="videoLayer" hidden>
+  <video id="bvideo" src="assets/demo.mp4" muted preload="auto" playsinline></video>
+  <div id="vcaption" hidden>backup video not recorded yet</div>
+</div>
+
+<div id="overview" hidden>
+  <div id="ovgrid"></div>
+</div>
+
+<div id="presenter" hidden>
+  <div class="pv-left">
+    <div class="pv-wrap" id="pvCur"></div>
+    <div class="pv-meta"><span id="pvCount"></span><span id="pvSpeaker"></span></div>
+    <div class="pv-notes" id="pvNotes"></div>
+  </div>
+  <div class="pv-right">
+    <div class="pv-timers">
+      <div class="pv-timer"><span class="pv-lab">Total (S starts/resets)</span><strong id="pvTotal">0:00</strong><span class="pv-sub" id="pvLimitLab"></span></div>
+      <div class="pv-timer"><span class="pv-lab">This slide</span><strong id="pvSlideT">0:00</strong><span class="pv-sub" id="pvSlideBudget"></span></div>
+    </div>
+    <div class="pv-nextlab">Next</div>
+    <div class="pv-wrap sm" id="pvNext"></div>
+    <div class="pv-sync" id="pvSync" hidden>Sync needs the local server. This page was opened as a file:// URL, so the presenter window cannot talk to the stage window. Run <code>node pitch/serve.mjs</code> and open <code>http://localhost:8080/</code> instead.</div>
+  </div>
+</div>
+
+<script src="pitch.js"></script>
+</body>
+</html>

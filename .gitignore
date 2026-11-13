@@ -7,8 +7,7 @@ data/rates_pdfs/
 android/
 .opencode/
 
-# personal / pitch working folders (kept local)
-pitch/
+# personal working folders (kept local)
 felice-skills/
 felice-artifacts/
 
